@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Definition block
+# key: definition
+# --
+#+BEGIN_definition
+$0
+#+END_definition

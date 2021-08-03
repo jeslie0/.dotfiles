@@ -1,0 +1,26 @@
+# Posteo
+IMAPAccount jamesleslie
+Host posteo.de
+User jamesleslie@posteo.net
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.password-store/posteo/jamesleslie.gpg"
+Port 993
+SSLType IMAPS
+AuthMechs Login
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore jamesleslie-remote
+Account jamesleslie
+
+MaildirStore jamesleslie-local
+Subfolders Verbatim
+Path ~/.email/Posteo/
+Inbox ~/.email/Posteo/Inbox
+
+Channel jamesleslie
+Far :jamesleslie-remote: # Previously "Master"
+Near :jamesleslie-local: # Previously "Slave"
+Patterns *
+Create Near # Preciously Slave
+Sync All
+Expunge Both
+SyncState *

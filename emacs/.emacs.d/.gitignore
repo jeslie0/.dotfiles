@@ -1,0 +1,16 @@
+.cache/
+.org-id-locations
+auto-save-list/
+eln-cache/
+elpa/
+elpa-bak/
+eshell/
+recentf
+init.el~
+org-roam.db
+projectile-bookmarks.eld
+straight/
+tmp
+tramp
+transient/
+url/
