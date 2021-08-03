@@ -1,5 +1,6 @@
 #+title: James' New Emacs Configuration
 #+PROPERTY:  header-args:elisp :tangle ./init.el
+#+options: toc:t
 * Basic UI configuration
 #+begin_src elisp
 (setq inhibit-startup-message t) ;; Disables the startup message
@@ -2447,7 +2448,7 @@ there are no attachments."
   (jl/mu4e-reply-quote)
   (jl/mu4e-pgp)
   (setq mu4e-maildir "~/.email"
-	mu4e-get-mail-command "mbsync -c ~/.emacs.d/.mbsyncrc -a"
+	mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a"
 	mu4e-compose-signature-auto-include t
 	mu4e-view-show-addresses t
 	mu4e-headers-include-related nil

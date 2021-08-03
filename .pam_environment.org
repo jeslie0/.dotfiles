@@ -1,0 +1,11 @@
+#+title: Pam Environment
+#+PROPERTY:  header-args:bash :tangle ./.pam_environment
+
+#+begin_src bash
+export GEM_HOME="$(ruby -e 'puts Gem.user_dir')"
+XDG_CURRENT_DESKTOP=sway
+GTK_BACKEND=wayland
+MOZ_ENABLE_WAYLAND=1
+PATH=$PATH:/home/james/.cabal/bin:/home/james/.ghcup/bin
+TEXINPUTS=::/home/james/texmf
+#+end_src
