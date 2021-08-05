@@ -10,6 +10,9 @@ eshell/lastdir
 
 recentf
 init.el
+
+.lsp*
+
 org-roam.db
 projectile-bookmarks.eld
 

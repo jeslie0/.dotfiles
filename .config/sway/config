@@ -287,6 +287,3 @@ exec swayidle -w \
 
 # Screensharing
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
-
-#!/bin/bash
-grim -g "$(slurp)" ~/Images/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png

@@ -416,7 +416,7 @@ mode "$mode_gaps_left" {
 }
 #+end_src
 * Partial screenshot
-#+begin_src bash :tangle ./config
+#+begin_src bash :tangle ./partialScreenshot.sh
 #!/bin/bash
 grim -g "$(slurp)" ~/Images/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png
 #+end_src
