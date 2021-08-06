@@ -89,7 +89,7 @@ auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-
 (use-package nord-theme)
 
 (use-package dracula-theme
-  :ensure t
+  :straight t
   :config
   (load-theme 'dracula t))
 #+end_src
@@ -99,7 +99,7 @@ We use doom modeline.
 #+begin_src elisp
   (use-package all-the-icons)
   (use-package doom-modeline
-    :ensure t
+    :straight t
     :init (doom-modeline-mode 1))
 #+end_src
 
@@ -748,7 +748,7 @@ sudo-edit - shamelessly stolen from Spacemacs.
 ** Initialisation
 #+begin_src elisp
 (use-package erc
-  :defer t
+  :straight nil
   :init
   (jl/erc-keys-global)
   :config
@@ -1267,7 +1267,7 @@ sudo-edit - shamelessly stolen from Spacemacs.
 ** Initialisation
 #+begin_src elisp
   (use-package treemacs
-    :ensure t
+    :straight t
     :defer t
     :init
     (jl/treemacs-keys)
@@ -1343,24 +1343,24 @@ sudo-edit - shamelessly stolen from Spacemacs.
 
   (use-package treemacs-evil
     :after (treemacs evil)
-    :ensure t)
+    :straight t)
 
   (use-package treemacs-projectile
     :after (treemacs projectile)
-    :ensure t)
+    :straight t)
 
   (use-package treemacs-icons-dired
     :after (treemacs dired)
-    :ensure t
+    :straight t
     :config (treemacs-icons-dired-mode))
 
   (use-package treemacs-magit
     :after (treemacs magit)
-    :ensure t)
+    :straight t)
 
   (use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
     :after (treemacs persp-mode) ;;or perspective vs. persp-mode
-    :ensure t
+    :straight t
     :config (treemacs-set-scope-type 'Perspectives))
 #+end_src
 * Yasnippet
@@ -1659,7 +1659,7 @@ sudo-edit - shamelessly stolen from Spacemacs.
 ** evil-org
 #+begin_src elisp
 (use-package evil-org
-:ensure t
+:straight t
 :after org
 :hook (org-mode . (lambda () evil-org-mode))
 :config
@@ -2433,7 +2433,7 @@ there are no attachments."
   :after mu4e)
 
 (use-package mu4e
-  :ensure nil
+  :straight nil
   :init
   (jl/mu4e-global-keys)
   (add-hook 'mu4e-compose-mode-hook 'visual-fill-column-mode)
