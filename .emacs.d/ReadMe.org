@@ -2539,3 +2539,101 @@ helllop
 	ranger-show-hidden t)
   )
 #+end_src
+* SQL
+#+begin_src elisp
+ (use-package emacsql)
+ (use-package emacsql-sqlite)
+#+end_src
+* Nix
+#+begin_src elisp
+  (use-package nix-mode
+  :mode "\\.nix\\'")
+#+end_src
+* Pass
+** Functions
+#+begin_src elisp
+  (defun spacemacs//pass-completing-read ()
+  "Read a password entry in the minibuffer, with completion."
+  (completing-read "Password entry: " (password-store-list)))
+
+(defun spacemacs/pass-copy-and-describe (entry)
+  "Copy the password to the clipboard, and show the multiline description for ENTRY"
+  (interactive (list (spacemacs//pass-completing-read)))
+  (password-store-copy entry)
+  (spacemacs/pass-describe entry))
+
+(defun spacemacs/pass-describe (entry)
+  "Show the multiline description for ENTRY"
+  (interactive (list (spacemacs//pass-completing-read)))
+  (let ((description (s-join "\n" (cdr (s-lines (password-store--run-show entry))))))
+    (message "%s" description)))
+#+end_src
+** Ivy-pass
+#+begin_src elisp
+ (use-package ivy-pass)
+#+end_src
+** Password-store
+*** Keybindings
+#+begin_src elisp
+(defun jl/pass-keys ()
+  (jl/SPC-keys
+    "atPy" 'password-store-copy
+    "atPg" 'password-store-generate
+    "atPi" 'password-store-insert
+    "atPc" 'password-store-edit
+    "atPr" 'password-store-rename
+    "atPd" 'password-store-remove
+    "atPD" 'password-store-clear
+    "atPI" 'password-store-init
+    "atPw" 'password-store-url
+    )
+
+  (jl/SPC-keys
+    "atP" '(:ignore t :which-key "pass")
+    )
+  )
+#+end_src
+
+*** Initialsation
+#+begin_src elisp
+(use-package password-store
+  :init
+  (jl/pass-keys)
+  )
+#+end_src
+
+
+
+** Password-store otp
+*** Keybindings
+#+begin_src elisp
+(defun jl/pass-otp-keys ()
+  (jl/SPC-keys
+    "atPoy" 'password-store-otp-token-copy
+    "atPoY" 'password-store-otp-uri-copy
+    "atPoi" 'password-store-otp-insert
+    "atPoa" 'password-store-otp-append
+    "atPoA" 'password-store-otp-append-from-image
+    )
+
+  (jl/SPC-keys
+    "atPo" '(:ignore t :which-key "otp")
+    )
+  )
+#+end_src
+*** Initialisation
+#+begin_src elisp
+(use-package password-store-otp
+  :init
+  (jl/pass-otp-keys)
+  )
+#+end_src
+
+** Auth source pass
+#+begin_src elisp
+(use-package auth-source-pass
+  :after auth-source
+  :config
+  (auth-source-pass-enable)
+  )
+#+end_src
