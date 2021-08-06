@@ -748,6 +748,7 @@ sudo-edit - shamelessly stolen from Spacemacs.
 ** Initialisation
 #+begin_src elisp
 (use-package erc
+  :defer t
   :init
   (jl/erc-keys-global)
   :config
