@@ -20,7 +20,8 @@
   home.stateVersion = "21.05";
 
   home.packages = with pkgs; [
-    
+#    cachix
+     haskellPackages.Agda
   ];
 
 
