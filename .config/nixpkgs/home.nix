@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 
+
 {
+
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -19,13 +22,11 @@
   # changes in each release.
   home.stateVersion = "21.05";
 
-  home.packages = with pkgs; [
-#    cachix
-     haskellPackages.Agda
-     mu
-  ];
-
-
+  home.packages = let unstable = import (builtins.fetchTarball "https://releases.nixos.org/nixpkgs/nixpkgs-21.11pre307598.5f746317f10/nixexprs.tar.xz") {}; in
+                  with pkgs; [
+                    unstable.haskellPackages.Agda
+                    unstable.mu
+                  ];
 
 
 
