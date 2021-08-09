@@ -22,6 +22,7 @@
   home.packages = with pkgs; [
 #    cachix
      haskellPackages.Agda
+     mu
   ];
 
 
