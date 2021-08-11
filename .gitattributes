@@ -1,1 +1,2 @@
 .pam_environment.org filter=git-crypt diff=git-crypt
+test filter=git-crypt diff=git-crypt
