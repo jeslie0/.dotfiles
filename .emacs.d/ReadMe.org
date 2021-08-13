@@ -3,23 +3,27 @@
 #+options: toc:t
 * Basic UI configuration
 #+begin_src elisp
-(setq inhibit-startup-message t) ;; Disables the startup message
+  (setq inhibit-startup-message t) ;; Disables the startup message
 
-(scroll-bar-mode -1)   ; Disables visible scroll bar
-(tool-bar-mode -1)     ; Disable the toolbar
-(tooltip-mode -1)      ; Disable tooltips
-(set-fringe-mode 10)   ; Give some breathing room
-(menu-bar-mode -1)     ; Disable the menu bar
-(blink-cursor-mode -1) ; Makes cursor not blink
+  (scroll-bar-mode -1)   ; Disables visible scroll bar
+  (tool-bar-mode -1)     ; Disable the toolbar
+  (tooltip-mode -1)      ; Disable tooltips
+  (set-fringe-mode 10)   ; Give some breathing room
+  (menu-bar-mode -1)     ; Disable the menu bar
+  (blink-cursor-mode -1) ; Makes cursor not blink
 
 
-(column-number-mode 1) ;; Adds column numbering to the modeline
-(setq warning-minimum-level :emergency) ;; hides comp errors
+  (column-number-mode 1) ;; Adds column numbering to the modeline
+  ;; (setq warning-minimum-level :emergency) ;; hides comp errors
 #+end_src
 ** Font configuration
 #+begin_src elisp
 (set-face-attribute 'default nil :font "Source Code Pro" :height 110)
 (set-face-attribute 'cursor nil :background "DarkGoldenrod2")
+#+end_src
+* Server/daemon
+#+begin_src elisp
+  ;; (server-start)
 #+end_src
 * Misc
 #+begin_src elisp
@@ -763,7 +767,7 @@ sudo-edit - shamelessly stolen from Spacemacs.
 	erc-prompt-for-password nil
 	erc-user-full-name "James Leslie"
 	erc-track-shorten-start 8
-	erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs"))
+	erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs" "##math" "#categorytheory" "#haskell"))
 	erc-kill-buffer-on-part t
 	erc-auto-query 'bury
 	erc-image-inline-rescale 400
@@ -1732,8 +1736,11 @@ sudo-edit - shamelessly stolen from Spacemacs.
 		   :branch "main"
 		   :files ("*.el" "out")
 		   )
-  :after org-roam
-  :hook (org-roam . org-roam-ui-mode)
+  :hook (after-init . org-roam-ui-mode)
+  ;; (setq org-roam-ui-sync-theme t
+  ;; 	org-roam-ui-follow t
+  ;; 	org-roam-ui-update-on-save t
+  ;; 	org-roam-ui-open-on-start t)
   )
 #+end_src
 *** Initialisation
@@ -1743,6 +1750,7 @@ sudo-edit - shamelessly stolen from Spacemacs.
     (setq org-roam-v2-ack t)
     (jl/org-roam-global-keys)
     :config
+    (setq org-roam-v2-ack t)
     (setq org-roam-graph-viewer #'browse-url-firefox
 	  org-roam-directory "~/Documents/Org/Roam"
 	  org-roam-dailies-directory "~/Documents/Org/Roam/Dailies/")
@@ -2581,8 +2589,48 @@ helllop
 #+end_src
 * Nix
 #+begin_src elisp
-  (use-package nix-mode
+(use-package nix-mode
   :mode "\\.nix\\'")
+
+(use-package ivy-nixos-options
+  :straight (:host github
+		   :repo "travisbhartwell/nix-emacs"
+		   :branch "master"
+		   :files ("ivy-nixos-options.el")
+		   )
+  :init
+  (jl/SPC-keys
+    "h>" 'ivy-nixos-options
+    )
+  (setq ivy-nixos-options-default 1)
+  ;; (setq haskell-process-wrapper-function
+  ;;       (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
+  )
+
+
+(use-package nixos-options
+  ;; :straight (:host github
+  ;; 		   :repo "travisbhartwell/nix-emacs"
+  ;; 		   :branch "master"
+  ;; 		   :files ("nixos-options.el")
+  ;; 		   )
+  )
+(use-package company-nixos-options
+  :straight (:host github
+		   :repo "travisbhartwell/nix-emacs"
+		   :branch "master"
+		   :files ("company-nixos-options.el")
+		   )
+  :init
+  (add-to-list 'company-backends 'company-nixos-options)
+  )
+(use-package nix-sandbox
+  :straight (:host github
+		   :repo "travisbhartwell/nix-emacs"
+		   :branch "master"
+		   :files ("nix-sandbox.el")
+		   )
+  )
 #+end_src
 * Pass
 ** Functions

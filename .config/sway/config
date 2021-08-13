@@ -312,6 +312,10 @@ exec swayidle -w \
   timeout 1805 'swaymsg "output * dpms off"' \
   resume 'swaymsg "output * dpms on"'
 
+for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
+  kill
+}
+
 
 # Screensharing
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
