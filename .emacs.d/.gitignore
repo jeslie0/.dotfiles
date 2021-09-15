@@ -13,6 +13,8 @@ init.el
 
 .lsp*
 
+network-security.data
+
 org-roam.db
 projectile-bookmarks.eld
 

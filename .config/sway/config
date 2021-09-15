@@ -316,6 +316,9 @@ for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
   kill
 }
 
+bindsym Ctrl+Mod4+e exec 'emacsclient --create-frame --alternate-editor=""'
+bindsym Ctrl+Mod4+f exec 'firefox'
+
 
 # Screensharing
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: Haskell Block
-# key: hask
+# key: <haskell
 # --
 #+BEGIN_SRC haskell
 $0
