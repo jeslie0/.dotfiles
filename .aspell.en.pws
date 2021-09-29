@@ -1,4 +1,4 @@
-personal_ws-1.1 en 79 
+personal_ws-1.1 en 81 
 Agda
 Coq
 Dinaturality
@@ -8,6 +8,7 @@ Homological
 Isomorphisms
 Mohabat
 Monoidal
+NixOS
 Precategory
 Unitors
 Yoneda
@@ -77,4 +78,5 @@ sheafification
 simplicial
 surjective
 surjectivity
+toposes
 univalence

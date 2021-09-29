@@ -1302,13 +1302,9 @@ Provides better documentation.
 #+end_src
 ** org-src blocks
 #+begin_src elisp
-(with-eval-after-load 'org-src
-  (jl/C-c-keys
-    :hooks 'org-src-mode-hook
-    "c" 'org-edit-src-exit
-    "a" 'org-edit-src-abort
-    "k" 'org-edit-src-abort)
-  )
+(evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
+(evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
+(evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
 #+end_src
 * Languages
 ** Agda
@@ -1391,8 +1387,8 @@ Provides better documentation.
     :keymaps 'haskell-mode-map
     :major-modes t
     :states '(normal visual motion)
-    "=" '(:ignort t :which-key "format")
     "a" '(:ignore t :which-key "code action")
+    "f" '(:ignore t :which-key "format")
     "g" '(:ignore t :which-key "goto")
     "h" '(:ignore t :which-key "help")
     "b" '(:ignore t :which-key "backend")
@@ -1409,18 +1405,19 @@ Provides better documentation.
     :keymaps 'haskell-mode-map
     :major-modes t
     :states '(normal visual motion)
-    ;; format
-    "=b" 'lsp-format-buffer
-    "=r" 'lsp-format-region
-    "=o" 'lsp-organize-imports
     ;; code actions
     "aa" 'lsp-execute-code-action
     "al" 'lsp-avy-lens
+    "as" 'lsp-ui-sideline-apply-code-actions
+    ;; format
+    "fb" 'lsp-format-buffer
+    "fr" 'lsp-format-region
+    "fo" 'lsp-organize-imports
     ;; goto
     ;; N.B. implementation and references covered by xref bindings / lsp provider...
     "gt" #'lsp-find-type-definition
-    "gk" #'spacemacs/lsp-avy-goto-word
-    "gK" #'spacemacs/lsp-avy-goto-symbol
+    ;; "gk" #'spacemacs/lsp-avy-goto-word
+    ;; "gK" #'spacemacs/lsp-avy-goto-symbol
     "gM" #'lsp-ui-imenu
     ;; help
     "hh" #'lsp-describe-thing-at-point
@@ -1433,12 +1430,12 @@ Provides better documentation.
     ;; refactor
     "rR" #'lsp-rename
     ;; toggles
-    "Tld" #'lsp-ui-doc-mode
-    "Tls" #'lsp-ui-sideline-mode
-    "TlF" #'spacemacs/lsp-ui-doc-func
-    "TlS" #'spacemacs/lsp-ui-sideline-symb
-    "TlI" #'spacemacs/lsp-ui-sideline-ignore-duplicate
-    "Tll" #'lsp-lens-mode
+    "Td" #'lsp-ui-doc-mode
+    "Ts" #'lsp-ui-sideline-mode
+    ;; "TF" #'spacemacs/lsp-ui-doc-func
+    ;; "TS" #'spacemacs/lsp-ui-sideline-symb
+    ;; "TI" #'spacemacs/lsp-ui-sideline-ignore-duplicate
+    "Tl" #'lsp-lens-mode
     ;; folders
     "Fs" #'lsp-workspace-folders-switch
     "Fr" #'lsp-workspace-folders-remove
@@ -1463,20 +1460,32 @@ Provides better documentation.
   )
 
 (use-package lsp-ui
-  :commands lsp-ui-mode)
-#+end_src
-*** TODO lsp-treemacs
-#+begin_src elisp
-(use-package lsp-treemacs
+  :commands lsp-ui-mode
   :config
-  (lsp-treemacs-sync-mode 1)
-  )
+  (lsp-lens-mode))
 #+end_src
-**** TODO Keybindings
+*** lsp-treemacs
+**** Keybindings
 #+begin_src elisp
 (defun jl/lsp-treemacs-keys ()
   (jl/major-modes
-    "te" 'lsp-treemacs-error-list)
+    :keymaps 'haskell-mode-map
+    :states '(normal insert visual)
+    :major-modes t
+    "t"  '(:toggle nil :which-key "lsp-treemacs")
+    "te" 'lsp-treemacs-error-list
+    "tr" 'lsp-treemacs-references
+    "ts" 'lsp-treemacs-symbols
+    )
+  )
+#+end_src
+**** Initialisation
+#+begin_src elisp
+(use-package lsp-treemacs
+  :init
+  (jl/lsp-treemacs-keys)
+  :config
+  (lsp-treemacs-sync-mode 1)
   )
 #+end_src
 *** TODO lsp-ivy
@@ -1605,7 +1614,11 @@ Provides better documentation.
     :states 'normal
     :keymaps 'haskell-mode-map
     :major-modes t
-    "f" 'hindent-reformat-decl-or-fill
+    "H" '(:ignore nil :which-key "hindent")
+    "Hb" 'hindent-reformat-buffer
+    "Hd" 'hindent-reformat-decl
+    "Hf" 'hindent-reformat-decl-or-fill
+    "Hr" 'hindent-reformat-region
     )
   )
 #+end_src
