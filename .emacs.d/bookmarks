@@ -7,8 +7,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Org/Roam/20210915104029-cover_letter.org")
+ (filename . "~/Documents/Org/Roam/20211008111512-categories_and_higher_categories.org")
  (front-context-string)
- (rear-context-string . "e: Cover Letter\n")
- (position . 90))
+ (rear-context-string . "gher categories\n")
+ (position . 110))
 )

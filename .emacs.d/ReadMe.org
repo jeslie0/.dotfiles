@@ -996,6 +996,14 @@ Provides better documentation.
    )
   )
 
+(defun jl/org-mode-Cc-keys ()
+  (jl/C-c-keys
+    "a" 'org-agenda
+    "c" 'org-capture
+    "l" 'org-store-link
+    )
+  )
+
 (jl/org-mode-global-keys)
 #+end_src
 ** Font configuration
@@ -1081,11 +1089,23 @@ Provides better documentation.
 		   )
   )
 #+end_src
+*** Templates
+#+BEGIN_SRC elisp
+(defun jl/org-roam-templates ()
+ (setq org-roam-capture-templates '(("t" "default" plain
+				     "%?"
+				     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+				     :unnarrowed t)
+				    )
+       )
+ )
+#+END_Src
 *** Initialisation
 #+begin_src elisp
 (use-package org-roam
   :init
   (jl/org-roam-global-keys)
+  (jl/org-roam-templates)
   (setq org-roam-v2-ack t)
   (setq org-roam-graph-viewer #'browse-url-firefox)
   (setq org-roam-directory "/home/james/Documents/Org/Roam")
@@ -1136,6 +1156,8 @@ Provides better documentation.
 
 (use-package org
   :hook (org-mode . jl/org-mode-setup)
+  :init
+  (jl/org-mode-Cc-keys)
   :config
   (jl/org-roam-key-bindings)
   (jl/org-mode-key-bindings)
@@ -1462,7 +1484,9 @@ Provides better documentation.
 (use-package lsp-ui
   :commands lsp-ui-mode
   :config
-  (lsp-lens-mode))
+  (lsp-lens-mode)
+  (setq lsp-ui-doc-enable nil)
+  )
 #+end_src
 *** lsp-treemacs
 **** Keybindings
@@ -1470,7 +1494,7 @@ Provides better documentation.
 (defun jl/lsp-treemacs-keys ()
   (jl/major-modes
     :keymaps 'haskell-mode-map
-    :states '(normal insert visual)
+    :states '(normal motion visual)
     :major-modes t
     "t"  '(:toggle nil :which-key "lsp-treemacs")
     "te" 'lsp-treemacs-error-list
@@ -1552,6 +1576,8 @@ Provides better documentation.
     "cv"  'haskell-cabal-visit-file
 
     "hd"  'inferior-haskell-find-haddock
+    "hg"  'hoogle
+    "hG"  'haskell-hoogle-lookup-from-local
     "hi"  'haskell-process-do-info
     "ht"  'haskell-process-do-type
     "hT"  'haskell-process-do-type-on-prev-line
@@ -1614,11 +1640,11 @@ Provides better documentation.
     :states 'normal
     :keymaps 'haskell-mode-map
     :major-modes t
-    "H" '(:ignore nil :which-key "hindent")
-    "Hb" 'hindent-reformat-buffer
-    "Hd" 'hindent-reformat-decl
-    "Hf" 'hindent-reformat-decl-or-fill
-    "Hr" 'hindent-reformat-region
+    "f" '(:ignore nil :which-key "format")
+    "fB" 'hindent-reformat-buffer
+    "fd" 'hindent-reformat-decl
+    "ff" 'hindent-reformat-decl-or-fill
+    "fr" 'hindent-reformat-region
     )
   )
 #+end_src
@@ -2653,6 +2679,10 @@ there are no attachments."
   (jl/SPC-keys
     "gs" 'magit-status
     ))
+
+(evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
+(evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel)
+
 #+end_src
 ** Initialisation
 #+begin_src elisp

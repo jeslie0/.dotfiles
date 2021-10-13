@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
-{
+{ # imports = [  ];
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -17,17 +18,19 @@
   # You can update Home Manager without changing this value. See
   # the Home Manager release notes for a list of state version
   # changes in each release.
+
   home.stateVersion = "21.11";
+
   nixpkgs.config.allowUnfree = true;
-  home.packages = let unstable = import (builtins.fetchTarball "https://releases.nixos.org/nixpkgs/nixpkgs-21.11pre307598.5f746317f10/nixexprs.tar.xz") {};
-                  in
-                  with pkgs; [
+
+  home.packages =   with pkgs; [
                     # unstable.haskellPackages.Agda
                     # unstable.mu
                     pinentry_emacs
                     pciutils
                     chromium
                     zoom-us
+                    (import /home/james/Documents/Nix/passbemenu/passbemenu.nix)
                   ];
 
 }

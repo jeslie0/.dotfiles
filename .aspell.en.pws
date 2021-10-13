@@ -1,4 +1,4 @@
-personal_ws-1.1 en 81 
+personal_ws-1.1 en 82 
 Agda
 Coq
 Dinaturality
@@ -73,6 +73,7 @@ profunctor
 profunctors
 pushout
 pushouts
+quasicategories
 representable
 sheafification
 simplicial
