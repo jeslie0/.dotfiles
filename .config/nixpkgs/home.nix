@@ -24,13 +24,12 @@
   nixpkgs.config.allowUnfree = true;
 
   home.packages =   with pkgs; [
-                    # unstable.haskellPackages.Agda
-                    # unstable.mu
                     pinentry_emacs
                     pciutils
                     chromium
                     zoom-us
                     (import /home/james/Documents/Nix/passbemenu/passbemenu.nix)
+
                   ];
 
 }

@@ -544,6 +544,19 @@ If the universal prefix argument is used then kill also the window."
   (persp-mode)
   )
 #+end_src
+** Pretty symbols
+#+BEGIN_SRC elisp
+(defconst haskell-pretty-symbols '(("->" . #x2192)
+			       ("=>" . #x21d2)
+			       ("<-" . #x2190)
+			       ("\\"  . #x03bb)
+			       ("/=" . #x2260)
+			       ("<=" . #x2264)
+			       (">=" . #x2265)
+			       ("&&" . #x22c0)
+			       ("||" . #x22c1)
+			       ))
+#+END_Src
 * Ivy and Counsel completion framework
 #+begin_src elisp
   (use-package ivy
@@ -1527,7 +1540,7 @@ Provides better documentation.
   (setq lsp-log-io t)
 )
 #+end_src
-** Haskell (Spacemacs)
+** Haskell
 *** Functions
 #+begin_src elisp
 (defun haskell-format-imports ()
@@ -1627,6 +1640,8 @@ Provides better documentation.
 #+begin_src elisp
 (use-package haskell-mode
   :hook (haskell-mode . lsp-mode)
+	  (haskell-mode . (lambda ()
+	      (setq prettify-symbols-alist haskell-pretty-symbols)))
   :config
   (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
