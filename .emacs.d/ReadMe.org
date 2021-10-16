@@ -557,6 +557,26 @@ If the universal prefix argument is used then kill also the window."
 			       ("||" . #x22c1)
 			       ))
 #+END_Src
+** Outshine mode
+#+BEGIN_SRC elisp
+(use-package outshine
+  :init
+  (defvar outline-minor-mode-prefix "\M-#")
+  (add-hook 'haskell-mode-hook 'outshine-mode)
+  )
+#+END_Src
+** Fillings
+#+BEGIN_SRC elisp
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+(add-hook 'text-mode-hook 'visual-line-mode)
+#+END_Src
+** Aggressive indent
+#+BEGIN_SRC elisp
+(use-package aggressive-indent
+  :init
+  (global-aggressive-indent-mode 1)
+  )
+#+END_Src
 * Ivy and Counsel completion framework
 #+begin_src elisp
   (use-package ivy
@@ -1409,6 +1429,9 @@ Provides better documentation.
 #+begin_src elisp
 (use-package agda2-mode
   ;; :load-path "/home/james/.cabal/share/x86_64-linux-ghc-8.10.5/Agda-2.6.3/emacs-mode/agda2.el"
+  :init
+  (load-file (let ((coding-system-for-read 'utf-8))
+               (shell-command-to-string "agda-mode locate")))
   :config
   (jl/agda-keys)
   )
@@ -1497,8 +1520,8 @@ Provides better documentation.
 (use-package lsp-ui
   :commands lsp-ui-mode
   :config
-  (lsp-lens-mode)
   (setq lsp-ui-doc-enable nil)
+  (setq lsp-lens-enable 1)
   )
 #+end_src
 *** lsp-treemacs
@@ -1639,9 +1662,10 @@ Provides better documentation.
 *** Initialisation
 #+begin_src elisp
 (use-package haskell-mode
-  :hook (haskell-mode . lsp-mode)
-	  (haskell-mode . (lambda ()
-	      (setq prettify-symbols-alist haskell-pretty-symbols)))
+  :hook
+  (haskell-mode . lsp-mode)
+  (haskell-mode . (lambda ()
+		    (setq prettify-symbols-alist haskell-pretty-symbols)))
   :config
   (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
@@ -2950,3 +2974,37 @@ helllop
         (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
   )
 #+end_src
+* Multiple cursors
+** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/evil-mc-keybindings ()
+  (jl/SPC-keys
+    :states '(normal visual motion)
+    "M" '(:ignore t :which-key "multiple cursors")
+    "Mf" 'evil-mc-make-and-goto-first-cursor
+    "Mh" 'evil-mc-make-cursor-here
+    "Mj" 'evil-mc-make-cursor-move-next-line
+    "Mk" 'evil-mc-make-cursor-move-prev-line
+    "Ml" 'evil-mc-make-and-goto-last-cursor
+    "Mm" 'evil-mc-make-all-cursors
+    "Mn" 'evil-mc-skip-and-goto-next-match
+    "MN" 'evil-mc-skip-and-goto-next-cursor
+    "Mp" 'evil-mc-skip-and-goto-prev-match
+    "MP" 'evil-mc-skip-and-goto-prev-cursor
+    "Mr" 'evil-mc-resume-cursors
+    "Ms" 'evil-mc-pause-cursors
+    "Mq" 'evil-mc-undo-all-cursors
+    "Mu" 'evil-mc-undo-last-added-cursor
+    "MA" 'evil-mc-make-cursor-in-visual-selection-end
+    "MU" 'evil-mc-make-cursor-in-visual-selection-beg)
+  )
+#+END_Src
+** Initialisation
+#+BEGIN_SRC elisp
+(use-package evil-mc
+  :init
+  (add-hook 'prog-mode-hook 'turn-on-evil-mc-mode)
+  (add-hook 'text-mode-hook 'turn-on-evil-mc-mode)
+  (jl/evil-mc-keybindings)
+  )
+#+END_Src
