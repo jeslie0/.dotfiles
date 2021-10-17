@@ -370,12 +370,16 @@ Adds the popup for key commands with mulitple key presses
 ** Themes
 #+begin_src elisp
 (use-package doom-themes)
-(use-package nord-theme)
+(use-package nord-theme
+  :config
+  (load-theme 'doom-palenight t)
+  )
 
 (use-package dracula-theme
   :straight t
   :config
-  (load-theme 'dracula t))
+  ;; (load-theme 'dracula t)
+  )
 #+end_src
 
 ** Modeline
