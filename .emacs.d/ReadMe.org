@@ -9,6 +9,8 @@
 #+begin_src elisp
 (setq default-directory "/home/james/Documents/")
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024))
 #+end_src
 * Cleaning folders and files
 ** Folders
@@ -242,7 +244,7 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   "!" 'shell
   "fc" 'copy-file
   "fd" 'delete-file-and-buffer
-  "ff" 'find-file
+  "ff" '(counsel-find-file :which-key "find file")
   "fed" '(find-dotfile :which-key "Open init file")
   "fE" '(sudo-edit :which-key "Edit with sudo...")
   "fR" 'rename-file-and-buffer
@@ -616,6 +618,10 @@ If the universal prefix argument is used then kill also the window."
 	   ("C-x C-f" . counsel-find-file)
 	   :map minibuffer-local-map
 	   ("C-f" . 'counsel-minibuffer-history)))
+
+(use-package all-the-icons-ivy-rich
+  :init
+  (all-the-icons-ivy-rich-mode 1))
 
 (use-package ivy-rich
   :init
@@ -1348,7 +1354,15 @@ Provides better documentation.
   )
 
 #+end_src
-** TODO Org-present-mode
+** Org-present-mode
+#+BEGIN_SRC elisp
+(use-package org-present
+  :straight (:host github
+		   :repo "rlister/org-present"
+		   :branch "master"
+		   )
+  )
+#+END_Src
 ** org-capture-mode
 #+begin_src elisp
 (with-eval-after-load 'org-capture
@@ -1526,7 +1540,9 @@ Provides better documentation.
   (jl/lsp-keys)
   (jl/lsp-keys-descr)
   :config
+  (setq lsp-idle-delay 0.500)
   (setq lsp-lens-place-position 'above-line)
+  (setq lsp-log-io nil)
   )
 
 (use-package lsp-ui
@@ -1564,20 +1580,34 @@ Provides better documentation.
 #+begin_src elisp
  (use-package lsp-ivy)
 #+end_src
-*** Haskell
+** Haskell
+*** lsp-haskell
 #+begin_src elisp
   (use-package lsp-haskell
   :after haskell-mode
-  :config
-  (setq lsp-haskell-server-path "haskell-language-server-wrapper")
-  (setq lsp-haskell-server-args ())
-  ;; Comment/uncomment this line to see interactions between lsp client/server.
-  (setq lsp-log-io t)
+  :custom
+  (lsp-haskell-server-path "haskell-language-server-wrapper")
+  (lsp-haskell-server-args ())
 )
 #+end_src
-** Haskell
 *** Functions
+To get evil's "o" and "O" keys to work with indentation as expected, we use these two functions from [[https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026][hatashiro]].
 #+begin_src elisp
+(defun haskell-evil-open-above ()
+  (interactive)
+  (evil-digit-argument-or-evil-beginning-of-line)
+  (haskell-indentation-newline-and-indent)
+  (evil-previous-line)
+  (haskell-indentation-indent-line)
+  (evil-append-line nil))
+
+(defun haskell-evil-open-below ()
+  (interactive)
+  (evil-append-line nil)
+  (haskell-indentation-newline-and-indent))
+#+END_Src
+
+#+BEGIN_SRC elisp
 (defun haskell-format-imports ()
 "Sort and align import statements from anywhere in the source file."
 (interactive)
@@ -1669,16 +1699,19 @@ Provides better documentation.
     "P"   'haskell-cabal-previous-section
     "f"   'haskell-cabal-find-or-create-source-file
     )
+
+  (evil-define-key 'normal haskell-mode-map "o" 'haskell-evil-open-below
+    "O" 'haskell-evil-open-above)
   )
 #+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package haskell-mode
   :hook
-  (haskell-mode . lsp-mode)
+  (haskell-mode . lsp)
   (haskell-mode . (lambda ()
 		    (setq prettify-symbols-alist haskell-pretty-symbols)))
-  :config
+  :init
   (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
   )
@@ -2680,12 +2713,23 @@ there are no attachments."
 (use-package haskell-snippets)
 #+end_src
 * Company mode
+** Initialisation
 #+begin_src elisp
- (use-package company
-   :config
-   )
- (global-company-mode 1)
+(use-package company
+  :custom
+  (company-selection-wrap-around t)
+  (global-company-mode t)
+  )
 #+end_src
+** company-box
+#+BEGIN_SRC elisp
+;; (use-package company-box
+;;   :hook (company-mode . company-box-mode)
+;;   :custom
+;;   (company-box-icons-alist company-box-icons-all-the-icon)
+;;   (company-box-doc-delay 2)
+;;   )
+#+END_Src
 * Projectile
 ** Keybindings
 #+begin_src elisp
