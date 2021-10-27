@@ -138,7 +138,7 @@ shamelessly stolen from Spacemacs.
               (call-interactively #'projectile-invalidate-cache))
             (message "File deleted: '%s'" filename))
         (message "Canceled: File deletion"))))
-#+END_Src
+#+END_SRC
 *** renaming
 Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][emacsredux]].
 #+BEGIN_SRC elisp
@@ -155,7 +155,7 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
           (rename-file filename new-name t)
           (set-visited-file-name new-name t t)))))))
 
-#+END_Src
+#+END_SRC
 
 ** General
 #+begin_src elisp
@@ -192,7 +192,6 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   )
 
 (general-auto-unbind-keys)
-(jl/SPC-keys)
 #+end_src
 *** SPC keys
 #+begin_src elisp
@@ -298,21 +297,16 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 ** Evil mode
 #+begin_src elisp
 (use-package evil
-  :init
-  ;; :hook (evil-mode . jl/evil-hook)
-  (setq evil-want-keybinding nil)
-  (setq evil-normal-state-cursor '("#DAA520" box))
-  (setq evil-insert-state-cursor '("#50FA7B" bar))
+  :custom
+  (evil-want-keybinding nil)
+  (evil-normal-state-cursor '("#DAA520" box))
+  (evil-insert-state-cursor '("#50FA7B" bar))
   :config
   (evil-mode 1)
-
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
-
-
   )
 #+end_src
 *** Evil collection
@@ -321,7 +315,9 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
     :after evil
     :config
     (evil-collection-init))
-
+#+end_src
+*** Evil commentary
+#+begin_src elisp
   (use-package evil-commentary
     :diminish t
     :after evil
@@ -329,21 +325,27 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
     (evil-commentary-mode 1)
     )
 #+end_src
+*** Evil surround
+#+BEGIN_SRC elisp
+  (use-package evil-surround
+    ;; :hook ((text-mode prog-mode) . turn-on-surround-mode)
+    )
+#+END_SRC
 ** Which-key
 Adds the popup for key commands with mulitple key presses
 #+begin_src elisp
 (use-package which-key
   :init (which-key-mode)
   :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 0.4
-        which-key-idle-secondary-delay 0.01
-        which-key-sort-order 'which-key-prefix-then-key-order
-        which-key-sort-uppercase-first nil
-        which-key-min-display-lines 6
-        which-key-max-description-length 32
-        which-key-add-column-padding 1
-        which-key-allow-multiple-replacements t)
+  :custom
+  (which-key-idle-delay 0.4)
+  (which-key-idle-secondary-delay 0.01)
+  (which-key-sort-order 'which-key-prefix-then-key-order)
+  (which-key-sort-uppercase-first nil)
+  (which-key-min-display-lines 6)
+  (which-key-max-description-length 32)
+  (which-key-add-column-padding 1)
+  (which-key-allow-multiple-replacements t)
   )
 #+end_src
 * UI configuration
@@ -362,7 +364,6 @@ Adds the popup for key commands with mulitple key presses
 #+begin_src elisp
 (setq warning-suppress-types '((comp) (org-roam) (:warning)))
 #+end_src
-
 ** Font configuration
 #+begin_src elisp
 (set-face-attribute 'default nil :font "Source Code Pro" :height 110)
@@ -378,101 +379,101 @@ Adds the popup for key commands with mulitple key presses
 
 (use-package dracula-theme
   :straight t
-  :config
-  ;; (load-theme 'dracula t)
   )
 #+end_src
-
 ** Modeline
 We use doom modeline.
 #+begin_src elisp
   (use-package all-the-icons)
   (use-package doom-modeline
     :straight t
-    :init (doom-modeline-mode 1))
+    :init (doom-modeline-mode 1)
+    )
 #+end_src
-
 ** Emacs-winum
+*** Keybindings
+#+begin_src elisp
+(defun jl/winum-keys ()
+  (defhydra window-transient-state ()
+    "Window Transient State"
+    ;; Select
+    ("j" evil-window-down)
+    ("<down>" evil-window-down)
+    ("k" evil-window-up)
+    ("<up>" evil-window-up)
+    ("h" evil-window-left)
+    ("<left>" evil-window-left)
+    ("l" evil-window-right)
+    ("<right>" evil-window-right)
+    ("0" winum-select-window-0)
+    ("1" winum-select-window-1)
+    ("2" winum-select-window-2)
+    ("3" winum-select-window-3)
+    ("4" winum-select-window-4)
+    ("5" winum-select-window-5)
+    ("6" winum-select-window-6)
+    ("7" winum-select-window-7)
+    ("8" winum-select-window-8)
+    ("9" winum-select-window-9)
+    ("a" ace-window)
+    ("o" other-frame)
+    ("w" other-window)
+    ;; Move
+    ("J" evil-window-move-very-bottom)
+    ("<S-down>" evil-window-move-very-bottom)
+    ("K" evil-window-move-very-top)
+    ("<S-up>" evil-window-move-very-top)
+    ("H" evil-window-move-far-left)
+    ("<S-left>" evil-window-move-far-left)
+    ("L" evil-window-move-far-right)
+    ("<S-right>" evil-window-move-far-right)
+    ("r" rotate-windows-forward)
+    ("R" rotate-windows-backward)
+    ;; Split
+    ("s" split-window-below)
+    ("S" split-window-below-and-focus)
+    ("-" split-window-below-and-focus)
+    ("v" split-window-right)
+    ("V" split-window-right-and-focus)
+    ("/" split-window-right-and-focus)
+    ("m" toggle-maximize-buffer)
+    ("|" maximize-vertically)
+    ("_" maximize-horizontally)
+    ;; Resize
+    ("[" shrink-window-horizontally)
+    ("]" enlarge-window-horizontally)
+    ("{" shrink-window)
+    ("}" enlarge-window)
+    ;; Other
+    ("d" delete-window)
+    ("D" delete-other-windows)
+    ("u" winner-undo)
+    ("U" winner-redo)
+    ("q" nil :exit t)
+    )
+
+  (jl/SPC-keys
+    "0" '(winum-select-window-0 :which-key "Select window 0")
+    "1" '(winum-select-window-1 :which-key "Select window 1")
+    "2" '(winum-select-window-2 :which-key "Select window 2")
+    "3" '(winum-select-window-3 :which-key "Select window 3")
+    "4" '(winum-select-window-4 :which-key "Select window 4")
+    "5" '(winum-select-window-5 :which-key "Select window 5")
+    "6" '(winum-select-window-6 :which-key "Select window 6")
+    "7" '(winum-select-window-7 :which-key "Select window 7")
+    "8" '(winum-select-window-8 :which-key "Select window 8")
+    "9" '(winum-select-window-9 :which-key "Select window 9")
+    "w." 'window-transient-state/body
+    )
+  )
+#+end_src
+*** Initialisation
 #+begin_src elisp
 (use-package winum
   :init (winum-mode)
   :diminish winum-mode
   :config
-#+end_src
-*** Keybindings
-#+begin_src elisp
-(defhydra window-transient-state ()
-  "Window Transient State"
-  ;; Select
-  ("j" evil-window-down)
-  ("<down>" evil-window-down)
-  ("k" evil-window-up)
-  ("<up>" evil-window-up)
-  ("h" evil-window-left)
-  ("<left>" evil-window-left)
-  ("l" evil-window-right)
-  ("<right>" evil-window-right)
-  ("0" winum-select-window-0)
-  ("1" winum-select-window-1)
-  ("2" winum-select-window-2)
-  ("3" winum-select-window-3)
-  ("4" winum-select-window-4)
-  ("5" winum-select-window-5)
-  ("6" winum-select-window-6)
-  ("7" winum-select-window-7)
-  ("8" winum-select-window-8)
-  ("9" winum-select-window-9)
-  ("a" ace-window)
-  ("o" other-frame)
-  ("w" other-window)
-  ;; Move
-  ("J" evil-window-move-very-bottom)
-  ("<S-down>" evil-window-move-very-bottom)
-  ("K" evil-window-move-very-top)
-  ("<S-up>" evil-window-move-very-top)
-  ("H" evil-window-move-far-left)
-  ("<S-left>" evil-window-move-far-left)
-  ("L" evil-window-move-far-right)
-  ("<S-right>" evil-window-move-far-right)
-  ("r" rotate-windows-forward)
-  ("R" rotate-windows-backward)
-  ;; Split
-  ("s" split-window-below)
-  ("S" split-window-below-and-focus)
-  ("-" split-window-below-and-focus)
-  ("v" split-window-right)
-  ("V" split-window-right-and-focus)
-  ("/" split-window-right-and-focus)
-  ("m" toggle-maximize-buffer)
-  ("|" maximize-vertically)
-  ("_" maximize-horizontally)
-  ;; Resize
-  ("[" shrink-window-horizontally)
-  ("]" enlarge-window-horizontally)
-  ("{" shrink-window)
-  ("}" enlarge-window)
-  ;; Other
-  ("d" delete-window)
-  ("D" delete-other-windows)
-  ("u" winner-undo)
-  ("U" winner-redo)
-  ("q" nil :exit t)
-  )
-
- (jl/SPC-keys
-  "0" '(winum-select-window-0 :which-key "Select window 0")
-  "1" '(winum-select-window-1 :which-key "Select window 1")
-  "2" '(winum-select-window-2 :which-key "Select window 2")
-  "3" '(winum-select-window-3 :which-key "Select window 3")
-  "4" '(winum-select-window-4 :which-key "Select window 4")
-  "5" '(winum-select-window-5 :which-key "Select window 5")
-  "6" '(winum-select-window-6 :which-key "Select window 6")
-  "7" '(winum-select-window-7 :which-key "Select window 7")
-  "8" '(winum-select-window-8 :which-key "Select window 8")
-  "9" '(winum-select-window-9 :which-key "Select window 9")
-  "w." 'window-transient-state/body
-  )
-)
+  (jl/winum-keys))
 #+end_src
 ** Perspective
 *** Functions
@@ -512,33 +513,32 @@ If the universal prefix argument is used then kill also the window."
 ;;     (writeroom-mode 1)
 ;;     (spacemacs/centered-buffer-mode-transient-state/body)))
 #+end_src
-
 *** Keybindings
 #+begin_src elisp
-(defun jl/persp-keys ()
-  (jl/SPC-keys
-    "b'" 'persp-switch-by-number
-    "ba" 'persp-add-buffer
-    "bA" 'persp-set-buffer
-    "bb" '(persp-ivy-switch-buffer :which-key "show local buffers")
-    "bB" '(counsel-ibuffer :which-key "show all buffers")
-    "bD" 'persp-remove-buffer
-    "bd" '(jl/kill-this-buffer :which-key: "kill-this-buffer")
-    "bi" 'persp-import
-    "bk" '(persp-kill :which-key "kill perspective")
-    "bn" 'next-buffer
-    "bN" 'persp-next
-    "bp" 'previous-buffer
-    "bP" 'persp-prev
-    "bs" '(persp-switch :which-key "switch perspective")
-    "bS" 'persp-state-save
-    "bL" 'persp-state-load
+  (defun jl/persp-keys ()
+    (jl/SPC-keys
+      "b'" 'persp-switch-by-number
+      "ba" 'persp-add-buffer
+      "bA" 'persp-set-buffer
+      "bb" '(persp-ivy-switch-buffer :which-key "show local buffers")
+      "bB" '(counsel-ibuffer :which-key "show all buffers")
+      "bD" 'persp-remove-buffer
+      "bd" '(jl/kill-this-buffer :which-key: "kill-this-buffer")
+      "bi" 'persp-import
+      "bk" '(persp-kill :which-key "kill perspective")
+      "bn" 'next-buffer
+      "bN" 'persp-next
+      "bp" 'previous-buffer
+      "bP" 'persp-prev
+      "bs" '(persp-switch :which-key "switch perspective")
+      "bS" 'persp-state-save
+      "bL" 'persp-state-load
 
-    "bh" 'buffer-visit-dashboard
-    "bR" 'revert-buffer
+      "bh" 'buffer-visit-dashboard
+      "bR" 'revert-buffer
 
+      )
     )
-  )
 #+end_src
 *** Initialisation
 #+begin_src elisp
@@ -561,37 +561,12 @@ If the universal prefix argument is used then kill also the window."
 			       ("&&" . #x22c0)
 			       ("||" . #x22c1)
 			       ))
-#+END_Src
-** Outshine mode
-#+BEGIN_SRC elisp
-(use-package outshine
-  :hook
-  (prog-mode . outshine-mode)
-  :init
-  (defvar outline-minor-mode-prefix "\M-#")
-  )
-#+END_Src
+#+END_SRC
 ** Fillings
 #+BEGIN_SRC elisp
 (add-hook 'prog-mode-hook 'auto-fill-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
-#+END_Src
-** Aggressive indent
-#+BEGIN_SRC elisp
-(use-package aggressive-indent
-  :custom
-  (global-aggressive-indent-mode 1)
-  )
-#+END_Src
-** Highlight-indent-guides
-#+BEGIN_SRC elisp
-(use-package highlight-indent-guides
-  :custom
-  (highlight-indent-guides-method 'character)
-  :config
-  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-  )
-#+END_Src
+#+END_SRC
 * Ivy and Counsel completion framework
 #+begin_src elisp
   (use-package ivy
@@ -689,21 +664,65 @@ Provides better documentation.
 ** Rainbow Delimiters
 #+begin_src elisp
 (use-package rainbow-delimiters
-  :hook ((prog-mode . rainbow-delimiters-mode)
-	 (agda2-mode . rainbow-delimiters-mode)
-	 )
+  :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode)
   )
 #+end_src
 ** Outshine
 #+begin_src elisp
 (use-package outshine
-  :hook
-  (emacs-lisp-mode . outshine-mode)
-  (latex-mode . outshine-mode)
+  :hook ((emacs-lisp-mode latex-mode prog-mode) . outshine-mode)
   :init
   (defvar outline-minor-mode-prefix "\M-#")
   )
 #+end_src
+** Aggressive indent
+#+BEGIN_SRC elisp
+(use-package aggressive-indent
+  :custom
+  (global-aggressive-indent-mode 1)
+  )
+#+END_SRC
+** Highlight-indent-guides
+#+BEGIN_SRC elisp
+(use-package highlight-indent-guides
+  :hook ((prog-mode LaTeX-mode). highlight-indent-guides-mode)
+  :custom
+  (highlight-indent-guides-method 'character)
+  )
+#+END_SRC
+* Multiple cursors
+** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/evil-mc-keybindings ()
+  (jl/SPC-keys
+    :states '(normal visual motion)
+    "M" '(:ignore t :which-key "multiple cursors")
+    "Mf" 'evil-mc-make-and-goto-first-cursor
+    "Mh" 'evil-mc-make-cursor-here
+    "Mj" 'evil-mc-make-cursor-move-next-line
+    "Mk" 'evil-mc-make-cursor-move-prev-line
+    "Ml" 'evil-mc-make-and-goto-last-cursor
+    "Mm" 'evil-mc-make-all-cursors
+    "Mn" 'evil-mc-skip-and-goto-next-match
+    "MN" 'evil-mc-skip-and-goto-next-cursor
+    "Mp" 'evil-mc-skip-and-goto-prev-match
+    "MP" 'evil-mc-skip-and-goto-prev-cursor
+    "Mr" 'evil-mc-resume-cursors
+    "Ms" 'evil-mc-pause-cursors
+    "Mq" 'evil-mc-undo-all-cursors
+    "Mu" 'evil-mc-undo-last-added-cursor
+    "MA" 'evil-mc-make-cursor-in-visual-selection-end
+    "MU" 'evil-mc-make-cursor-in-visual-selection-beg)
+  )
+#+END_SRC
+** Initialisation
+#+BEGIN_SRC elisp
+  (use-package evil-mc
+    :hook ((prog-mode text-mode) . turn-on-evil-mc-mode)
+    :init
+    (jl/evil-mc-keybindings)
+    )
+#+END_SRC
 * Pin entry
 #+begin_src elisp
 (setq epa-pinentry-mode 'loopback)
@@ -1150,7 +1169,7 @@ Provides better documentation.
 				    )
        )
  )
-#+END_Src
+#+END_SRC
 *** Initialisation
 #+begin_src elisp
 (use-package org-roam
@@ -1355,7 +1374,7 @@ Provides better documentation.
 		   :branch "master"
 		   )
   )
-#+END_Src
+#+END_SRC
 ** org-capture-mode
 #+begin_src elisp
 (with-eval-after-load 'org-capture
@@ -1582,7 +1601,7 @@ Provides better documentation.
     "iS" 'lsp-ivy-global-workspace-symbol
     )
   )
-#+END_Src
+#+END_SRC
 **** Initialisation
 #+begin_src elisp
 (use-package lsp-ivy
@@ -1615,7 +1634,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   (interactive)
   (evil-append-line nil)
   (haskell-indentation-newline-and-indent))
-#+END_Src
+#+END_SRC
 
 #+BEGIN_SRC elisp
 (defun haskell-format-imports ()
@@ -2316,13 +2335,53 @@ there are no attachments."
   )
 #+end_src
 * LaTeX
+** Functions
+#+begin_src elisp
+ (defun latex/build ()
+  (interactive)
+  (progn
+    (let ((TeX-save-query nil))
+      (TeX-save-document (TeX-master-file)))
+    (TeX-command latex-build-command 'TeX-master-file -1)))
+;; (setq build-proc (TeX-command latex-build-command 'TeX-master-
+
+(defun latex/auto-fill-mode ()
+  "Toggle auto-fill-mode using the custom auto-fill function."
+  (interactive)
+  (auto-fill-mode)
+  (setq auto-fill-function 'latex//autofill))
+
+;; Rebindings for TeX-font
+(defun latex/font-bold () (interactive) (TeX-font nil ?\C-b))
+(defun latex/font-medium () (interactive) (TeX-font nil ?\C-m))
+(defun latex/font-code () (interactive) (TeX-font nil ?\C-t))
+(defun latex/font-emphasis () (interactive) (TeX-font nil ?\C-e))
+(defun latex/font-italic () (interactive) (TeX-font nil ?\C-i))
+(defun latex/font-clear () (interactive) (TeX-font nil ?\C-d))
+(defun latex/font-calligraphic () (interactive) (TeX-font nil ?\C-a))
+(defun latex/font-small-caps () (interactive) (TeX-font nil ?\C-c))
+(defun latex/font-sans-serif () (interactive) (TeX-font nil ?\C-f))
+(defun latex/font-normal () (interactive) (TeX-font nil ?\C-n))
+(defun latex/font-serif () (interactive) (TeX-font nil ?\C-r))
+(defun latex/font-oblique () (interactive) (TeX-font nil ?\C-s))
+(defun latex/font-upright () (interactive) (TeX-font nil ?\C-u))
+#+end_src
 ** Keybindings
 #+begin_src elisp
 (defun jl/auctex-keys ()
   (jl/major-modes
     :keymaps 'LaTeX-mode-map
-    :states 'normal
-    :major-modes t
+    :states '(normal visual motion)
+    ;; :major-modes t
+    "xf" '(:ignore t :which-key "fonts")
+    "f" '(:ignore t :which-key "fill")
+    "h" '(:ignore t :which-key "help")
+    "x" '(:ignore t :which-key "text/fonts")
+    "z" '(:ignore t :which-key "fold")
+    "i" '(:ignore t :which-key "insert")
+    "p" '(:ignore t :which-key "preview")
+    "r" '(:ignore t :which-key "reftex")
+
     "\\"  'TeX-insert-macro                            ;; C-c C-m
     "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
     "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
@@ -2401,51 +2460,12 @@ there are no attachments."
     "rv" 'reftex-view-crossref
     )
 
-  (jl/major-modes
-    :keymaps 'LaTeX-mode-map
-    :states 'normal
-    :major-modes t
-    "xf" '(:ignore t :which-key "fonts")
-    "f" '(:ignore t :which-key "fill")
-    "h" '(:ignore t :which-key "help")
-    "x" '(:ignore t :which-key "text/fonts")
-    "z" '(:ignore t :which-key "fold")
-    "i" '(:ignore t :which-key "insert")
-    "p" '(:ignore t :which-key "preview")
-    "r" '(:ignore t :which-key "reftex")
-    )
+  ;; (jl/major-modes
+  ;;   :keymaps 'LaTeX-mode-map
+  ;;   :states '(normal visual motion)
+  ;;   :major-modes t
+  ;;   )
   )
-#+end_src
-** Functions
-#+begin_src elisp
- (defun latex/build ()
-  (interactive)
-  (progn
-    (let ((TeX-save-query nil))
-      (TeX-save-document (TeX-master-file)))
-    (TeX-command latex-build-command 'TeX-master-file -1)))
-;; (setq build-proc (TeX-command latex-build-command 'TeX-master-
-
-(defun latex/auto-fill-mode ()
-  "Toggle auto-fill-mode using the custom auto-fill function."
-  (interactive)
-  (auto-fill-mode)
-  (setq auto-fill-function 'latex//autofill))
-
-;; Rebindings for TeX-font
-(defun latex/font-bold () (interactive) (TeX-font nil ?\C-b))
-(defun latex/font-medium () (interactive) (TeX-font nil ?\C-m))
-(defun latex/font-code () (interactive) (TeX-font nil ?\C-t))
-(defun latex/font-emphasis () (interactive) (TeX-font nil ?\C-e))
-(defun latex/font-italic () (interactive) (TeX-font nil ?\C-i))
-(defun latex/font-clear () (interactive) (TeX-font nil ?\C-d))
-(defun latex/font-calligraphic () (interactive) (TeX-font nil ?\C-a))
-(defun latex/font-small-caps () (interactive) (TeX-font nil ?\C-c))
-(defun latex/font-sans-serif () (interactive) (TeX-font nil ?\C-f))
-(defun latex/font-normal () (interactive) (TeX-font nil ?\C-n))
-(defun latex/font-serif () (interactive) (TeX-font nil ?\C-r))
-(defun latex/font-oblique () (interactive) (TeX-font nil ?\C-s))
-(defun latex/font-upright () (interactive) (TeX-font nil ?\C-u))
 #+end_src
 ** Initialisation
 #+begin_src elisp
@@ -2473,9 +2493,9 @@ there are no attachments."
   (TeX-view-program-selection '((output-pdf "Zathura")))
   (TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
   :straight auctex
-  :config
+  :init
   (jl/auctex-keys)
-
+  :config
   ;; Folding environments
   (defun latex-fold-env-all ()
     (interactive)
@@ -2517,7 +2537,7 @@ there are no attachments."
     "m" 'ivy-bibtex
     )
   )
-#+END_Src
+#+END_SRC
 *** Initialisation
 #+begin_src elisp
 (use-package ivy-bibtex
@@ -2736,7 +2756,7 @@ there are no attachments."
 ;;   (company-box-icons-alist company-box-icons-all-the-icon)
 ;;   (company-box-doc-delay 2)
 ;;   )
-#+END_Src
+#+END_SRC
 * Projectile
 ** Keybindings
 #+begin_src elisp
@@ -2929,7 +2949,7 @@ SCOPE can be:
     "au" 'undo-tree-visualize
     )
   )
-#+END_Src
+#+END_SRC
 ** Initialisation
 #+begin_src elisp
 (use-package undo-tree
@@ -2959,7 +2979,7 @@ SCOPE can be:
     "P" '(pandoc-main-hydra/body :which-key "Pandoc")
     )
   )
-#+END_Src
+#+END_SRC
 ** Initialisation
 #+begin_src elisp
 (use-package pandoc-mode
@@ -3020,6 +3040,9 @@ SCOPE can be:
 		   )
   :init
   (jl/SPC-keys
+    "fn" '(:ignore t :which-key "nix")
+    "fnc" 'find-nixos-configuration
+    "fnh" 'find-homemanager-configuration
     "h>" 'ivy-nixos-options
     )
   :custom
@@ -3050,36 +3073,16 @@ SCOPE can be:
    (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
   )
 #+end_src
-* Multiple cursors
-** Keybindings
+** Functions
 #+BEGIN_SRC elisp
-(defun jl/evil-mc-keybindings ()
-  (jl/SPC-keys
-    :states '(normal visual motion)
-    "M" '(:ignore t :which-key "multiple cursors")
-    "Mf" 'evil-mc-make-and-goto-first-cursor
-    "Mh" 'evil-mc-make-cursor-here
-    "Mj" 'evil-mc-make-cursor-move-next-line
-    "Mk" 'evil-mc-make-cursor-move-prev-line
-    "Ml" 'evil-mc-make-and-goto-last-cursor
-    "Mm" 'evil-mc-make-all-cursors
-    "Mn" 'evil-mc-skip-and-goto-next-match
-    "MN" 'evil-mc-skip-and-goto-next-cursor
-    "Mp" 'evil-mc-skip-and-goto-prev-match
-    "MP" 'evil-mc-skip-and-goto-prev-cursor
-    "Mr" 'evil-mc-resume-cursors
-    "Ms" 'evil-mc-pause-cursors
-    "Mq" 'evil-mc-undo-all-cursors
-    "Mu" 'evil-mc-undo-last-added-cursor
-    "MA" 'evil-mc-make-cursor-in-visual-selection-end
-    "MU" 'evil-mc-make-cursor-in-visual-selection-beg)
-  )
-#+END_Src
-** Initialisation
-#+BEGIN_SRC elisp
-(use-package evil-mc
-  :hook (((prog-mode text-mode) . turn-on-evil-mc-mode))
-  :init
-  (jl/evil-mc-keybindings)
-  )
-#+END_Src
+(defun find-nixos-configuration ()
+  "Edit the `dotfile', in the current window."
+  (interactive)
+  (find-file-existing "/etc/nixos/configuration.nix"))
+
+
+(defun find-homemanager-configuration ()
+  "Edit the `dotfile', in the current window."
+  (interactive)
+  (find-file-existing "~/.config/nixpkgs/home.nix"))
+#+END_SRC
