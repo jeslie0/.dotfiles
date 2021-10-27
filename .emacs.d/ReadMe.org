@@ -160,15 +160,15 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 ** General
 #+begin_src elisp
 (use-package general
-  :init
-  (setq general-override-states '(insert
-                                  emacs
-                                  hybrid
-                                  normal
-                                  visual
-                                  motion
-                                  operator
-                                  replace))
+  :custom
+  (general-override-states '(insert
+                             emacs
+                             hybrid
+                             normal
+                             visual
+                             motion
+                             operator
+                             replace))
   :config
   (general-create-definer jl/SPC-keys
     ;; :keymaps '(normal visual motion)
@@ -177,19 +177,18 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
     :prefix "SPC"
     )
 
-
   (general-create-definer jl/major-modes
-                          ;; :keymaps '(normal visual motion)
-                          :states '(normal visual motion)
-                          :prefix "SPC m"
-                          :global-prefix ","
-                          )
+    ;; :keymaps '(normal visual motion)
+    :states '(normal visual motion)
+    :prefix "SPC m"
+    :global-prefix ","
+    )
 
   (general-create-definer jl/C-c-keys
-                          ;; :keymaps '(normal visual insert emacs operator motion)
-                          :states '(normal visual insert emacs operator motion)
-                          :prefix "C-c"
-                          )
+    ;; :keymaps '(normal visual insert emacs operator motion)
+    :states '(normal visual insert emacs operator motion)
+    :prefix "C-c"
+    )
   )
 
 (general-auto-unbind-keys)
@@ -566,9 +565,10 @@ If the universal prefix argument is used then kill also the window."
 ** Outshine mode
 #+BEGIN_SRC elisp
 (use-package outshine
+  :hook
+  (prog-mode . outshine-mode)
   :init
   (defvar outline-minor-mode-prefix "\M-#")
-  (add-hook 'prog-mode-hook 'outshine-mode)
   )
 #+END_Src
 ** Fillings
@@ -579,16 +579,17 @@ If the universal prefix argument is used then kill also the window."
 ** Aggressive indent
 #+BEGIN_SRC elisp
 (use-package aggressive-indent
-  :init
+  :custom
   (global-aggressive-indent-mode 1)
   )
 #+END_Src
 ** Highlight-indent-guides
 #+BEGIN_SRC elisp
 (use-package highlight-indent-guides
+  :custom
+  (highlight-indent-guides-method 'character)
   :config
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-  (setq highlight-indent-guides-method 'character)
   )
 #+END_Src
 * Ivy and Counsel completion framework
@@ -658,21 +659,22 @@ Provides better documentation.
   )
 
 (use-package dashboard
-  :init
+  :custom
   ;; Set the title
-  (setq dashboard-banner-logo-title "Welcome to Emacs Dashboard")
+  (dashboard-banner-logo-title "Welcome to Emacs Dashboard")
 
   ;; Content is not centered by default. To center, set
-  (setq dashboard-center-content t)
+  (dashboard-center-content t)
 
   ;; To disable shortcut "jump" indicators for each section, set
-  (setq dashboard-show-shortcuts nil)
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-set-init-info t)
-  (setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+  (dashboard-show-shortcuts nil)
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-set-init-info t)
+  (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+  (dashboard-week-agenda nil)
 
-  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
   :config
   (general-evil-define-key '(normal motion) 'dashboard-mode-map
@@ -695,11 +697,11 @@ Provides better documentation.
 ** Outshine
 #+begin_src elisp
 (use-package outshine
-  :init
-  (defvar outline-minor-mode-prefix "\M-#")
   :hook
   (emacs-lisp-mode . outshine-mode)
   (latex-mode . outshine-mode)
+  :init
+  (defvar outline-minor-mode-prefix "\M-#")
   )
 #+end_src
 * Pin entry
@@ -785,7 +787,6 @@ Provides better documentation.
   (jl/pass-otp-keys)
   )
 #+end_src
-
 ** Auth source pass
 #+begin_src elisp
 (use-package auth-source-pass
@@ -1153,13 +1154,14 @@ Provides better documentation.
 *** Initialisation
 #+begin_src elisp
 (use-package org-roam
+  :custom
+  (org-roam-v2-ack t)
+  (org-roam-graph-viewer #'browse-url-firefox)
+  (org-roam-directory "/home/james/Documents/Org/Roam")
+  (org-roam-dailies-directory "/home/james/Documents/Org/Roam/Dailies/")
   :init
   (jl/org-roam-global-keys)
   (jl/org-roam-templates)
-  (setq org-roam-v2-ack t)
-  (setq org-roam-graph-viewer #'browse-url-firefox)
-  (setq org-roam-directory "/home/james/Documents/Org/Roam")
-  (setq org-roam-dailies-directory "/home/james/Documents/Org/Roam/Dailies/")
   :config
   (org-roam-db-autosync-mode)
   (require 'org-roam-protocol)
@@ -1170,7 +1172,6 @@ Provides better documentation.
 (use-package org-roam-bibtex
   :after (org-roam org-ref)
   :hook (org-roam-mode . org-roam-bibtex-mode)
-  :config
   )
 #+end_src
 ** Org mode minor modes
@@ -1211,110 +1212,102 @@ Provides better documentation.
   :config
   (jl/org-roam-key-bindings)
   (jl/org-mode-key-bindings)
-  (setq org-ellipsis " ▼"
-        org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED"))
-        org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red"))
-        org-startup-indented t
-        org-hide-emphasis-markers t
-        org-src-tab-acts-natively t
-        org-pretty-entities t
-        org-startup-folded t
-        org-hide-block-startup t
-        org-edit-src-content-indentation 0
-        org-startup-with-latex-preview t
-        org-enable-reveal-js-support t
-        org-re-reveal-root "file:///home/james/emacs-packages/reveal.js"
-        org-agenda-files '("~/Documents/Calendar/Agenda.org"
-                           ;; "~/Documents/Org/GTD/inbox.org"
-                           ;; "~/Documents/Org/GTD/gtd.org"
-                           ;; "~/Documents/Org/GTD/tickler.org"
-                           ;; "~/Documents/Org/GTD/Mobile Inbox.org"
-                           )
-        org-export-backends '(ascii beamer html icalendar latex md odt)
-        )
-  ;; Latex in Org
-  (setq org-preview-latex-default-process 'dvisvgm
-        org-highlight-latex-and-related '(latex script entities)
-        org-format-latex-options
-        '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-                      ("begin" "$1" "$" "$$" "\\(" "\\[")
-                      )
-        reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib")
-        org-ref-default-bibliography "/home/james/Documents/TeX/common/bibliography.bib"
-        )
-
-  ;; Org capture
-  (setq org-capture-templates
-        '(("t" "Todo [inbox]" entry
-           (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
-           "* TODO %i%?")
-          ("T" "Tickler" entry
-           (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
-           "* %i%? \n %U")
-          ("n" "Notes" entry
-           (file "~/Documents/Org/Notes/notes.org")
-           "* %?")
-          ("r" "Research Notes" entry
-           (file "~/Documents/Org/Research/notes.org")
-           "* %u \n %?")
-          ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
-           "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
-          )
-        )
-
-  ;; GTD in org
-  (setq org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
-                             ("~/Documents/Org/GTD/someday.org" :level . 1)
-                             ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
-
-  ;; Org publish
-  (setq org-publish-project-alist
-        '(("jeslie0.github.io Posts" ; Blog name
-           :base-directory "~/Documents/jeslie0.github.io/org/"
-           :base-extension "org"
-                                        ;Path to Jekyll posts
-           :publishing-directory "~/Documents/jeslie0.github.io/_posts/"
-           ;; :recursive t
-           :publishing-function org-html-publish-to-html
-           :headline-levels 4
-           :html-extension "html"
-           :body-only t
-           ;; :auto-sitemap t
-           ;; :sitemap-title "Blog Index"
-           ;; :sitemap-filename "blog-index.org"
-           ;; :sitemap-style list
-           )
-          ("jeslie0.github.io main"
-           :base-directory "~/Documents/jeslie0.github.io/org/"
-           :base-extension "org"
-           :publishing-directory "~/Documents/jeslie0.github.io"
-           :recursive t
-           :publishing-function org-html-publish-to-html
-           :headline-levels 4
-           ;; :html-extension "html"
-           :auto-preamble nil
-           ;; :body-only t
-           )
-          ("UniAgda HTML"
-           :base-directory "~/agdalibs/Univalent-Agda/org/"
-           :base-extension "org"
-           :publishing-directory "~/jeslie0.github.io/UniAgda/"
-           :publishing-function org-html-publish-to-html
-           :auto-preamble nil
-           ;; :body-only t
-           )
-          )
-        )
-
-  ;; Org babel
-  (setq org-babel-load-languages '((shell . t)
-                                   (python . t)
-                                   (js . t)
-                                   (emacs-lisp . t)
-                                   (latex . t)
-                                   (haskell . t)
-                                   (C . t)))
   (jl/org-font-setup)
+  :custom
+  (org-ellipsis " ▼")
+  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
+  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
+  (org-startup-indented t)
+  (org-hide-emphasis-markers t)
+  (org-src-tab-acts-natively t)
+  (org-pretty-entities t)
+  (org-startup-folded t)
+  (org-hide-block-startup t)
+  (org-edit-src-content-indentation 0)
+  (org-startup-with-latex-preview t)
+  (org-enable-reveal-js-support t)
+  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
+  (org-agenda-files '("~/Documents/Calendar/Agenda.org"
+                      ;; "~/Documents/Org/GTD/inbox.org"
+                      ;; "~/Documents/Org/GTD/gtd.org"
+                      ;; "~/Documents/Org/GTD/tickler.org"
+                      ;; "~/Documents/Org/GTD/Mobile Inbox.org"
+                      ))
+  (org-export-backends '(ascii beamer html icalendar latex md odt))
+  ;; Latex in Org
+  (org-preview-latex-default-process 'dvisvgm)
+  (org-highlight-latex-and-related '(latex script entities))
+  (org-format-latex-options '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+					  ("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
+  (org-ref-default-bibliography "/home/james/Documents/TeX/common/bibliography.bib")
+  ;; Org capture
+  (org-capture-templates
+   '(("t" "Todo [inbox]" entry
+      (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
+      "* TODO %i%?")
+     ("T" "Tickler" entry
+      (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
+      "* %i%? \n %U")
+     ("n" "Notes" entry
+      (file "~/Documents/Org/Notes/notes.org")
+      "* %?")
+     ("r" "Research Notes" entry
+      (file "~/Documents/Org/Research/notes.org")
+      "* %u \n %?")
+     ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
+      "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
+     ))
+  ;; GTD in org
+  (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
+                        ("~/Documents/Org/GTD/someday.org" :level . 1)
+                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
+  ;; Org publish
+  (org-publish-project-alist
+   '(("jeslie0.github.io Posts" ; Blog name
+      :base-directory "~/Documents/jeslie0.github.io/org/"
+      :base-extension "org"
+                                        ;Path to Jekyll posts
+      :publishing-directory "~/Documents/jeslie0.github.io/_posts/"
+      ;; :recursive t
+      :publishing-function org-html-publish-to-html
+      :headline-levels 4
+      :html-extension "html"
+      :body-only t
+      ;; :auto-sitemap t
+      ;; :sitemap-title "Blog Index"
+      ;; :sitemap-filename "blog-index.org"
+      ;; :sitemap-style list
+      )
+     ("jeslie0.github.io main"
+      :base-directory "~/Documents/jeslie0.github.io/org/"
+      :base-extension "org"
+      :publishing-directory "~/Documents/jeslie0.github.io"
+      :recursive t
+      :publishing-function org-html-publish-to-html
+      :headline-levels 4
+      ;; :html-extension "html"
+      :auto-preamble nil
+      ;; :body-only t
+      )
+     ("UniAgda HTML"
+      :base-directory "~/agdalibs/Univalent-Agda/org/"
+      :base-extension "org"
+      :publishing-directory "~/jeslie0.github.io/UniAgda/"
+      :publishing-function org-html-publish-to-html
+      :auto-preamble nil
+      ;; :body-only t
+      )
+     )
+   )
+  ;; Org babel
+  (org-babel-load-languages '((shell . t)
+                              (python . t)
+                              (js . t)
+                              (emacs-lisp . t)
+                              (latex . t)
+                              (haskell . t)
+                              (C . t)))
   )
 
 (require 'org-protocol)
@@ -1341,20 +1334,20 @@ Provides better documentation.
 *** Initialisation
 #+begin_src elisp
 (use-package org-caldav
+  :custom
+  (org-caldav-url "https://posteo.de:8443/calendars/jamesleslie")
+  (org-caldav-calendar-id "default")
+  (org-caldav-inbox "~/Documents/Calendar/Agenda.org")
+  (org-caldav-files '("~/Documents/Calendar/Appointments.org"))
+  (org-icalendar-timezone "America/Toronto")
+  (org-caldav-delete-org-entries 'always)
+  (org-caldav-delete-calendar-entries 'never)
   :init
-  (setq org-caldav-url "https://posteo.de:8443/calendars/jamesleslie"
-        org-caldav-calendar-id "default"
-        org-caldav-inbox "~/Documents/Calendar/Agenda.org"
-        org-caldav-files '("~/Documents/Calendar/Appointments.org")
-        org-icalendar-timezone "America/Toronto"
-        org-caldav-delete-org-entries 'always
-        org-caldav-delete-calendar-entries 'never)
-
   (jl/org-caldav-keybindings)
   )
 
 #+end_src
-** Org-present-mode
+** org-present-mode
 #+BEGIN_SRC elisp
 (use-package org-present
   :straight (:host github
@@ -1366,7 +1359,7 @@ Provides better documentation.
 ** org-capture-mode
 #+begin_src elisp
 (with-eval-after-load 'org-capture
-  (defun spacemacs//org-capture-start ()
+  (defun org-capture-start ()
     "Make sure that the keybindings are available for org capture."
     (jl/C-c-keys
       :keymaps 'org-capture-mode-map
@@ -1379,7 +1372,7 @@ Provides better documentation.
     (evil-normal-state))
   ;; Must be done everytime we run org-capture otherwise it will
   ;; be ignored until insert mode is entered.
-  (add-hook 'org-capture-mode-hook 'spacemacs//org-capture-start))
+  (add-hook 'org-capture-mode-hook 'org-capture-start))
 #+end_src
 ** org-src blocks
 #+begin_src elisp
@@ -1539,17 +1532,17 @@ Provides better documentation.
   :init
   (jl/lsp-keys)
   (jl/lsp-keys-descr)
-  :config
-  (setq lsp-idle-delay 0.500)
-  (setq lsp-lens-place-position 'above-line)
-  (setq lsp-log-io nil)
+  :custom
+  (lsp-idle-delay 0.500)
+  (lsp-lens-place-position 'above-line)
+  (lsp-log-io nil)
   )
 
 (use-package lsp-ui
   :commands lsp-ui-mode
-  :config
-  (setq lsp-ui-doc-enable nil)
-  (setq lsp-lens-enable 1)
+  :custom
+  ;; (lsp-ui-doc-enable nil)
+  (lsp-lens-enable 1)
   )
 #+end_src
 *** lsp-treemacs
@@ -1572,13 +1565,30 @@ Provides better documentation.
 (use-package lsp-treemacs
   :init
   (jl/lsp-treemacs-keys)
-  :config
+  :custom
   (lsp-treemacs-sync-mode 1)
   )
 #+end_src
-*** TODO lsp-ivy
+*** lsp-ivy
+**** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/lsp-ivy-keys ()
+  (jl/major-modes
+    :keymaps 'haskell-mode-map
+    :states '(normal motion visual)
+    :major-modes t
+    "i"  '(:toggle nil :which-key "lsp-ivy")
+    "is" 'lsp-ivy-workspace-symbol
+    "iS" 'lsp-ivy-global-workspace-symbol
+    )
+  )
+#+END_Src
+**** Initialisation
 #+begin_src elisp
- (use-package lsp-ivy)
+(use-package lsp-ivy
+  :config
+  (jl/lsp-ivy-keys)
+)
 #+end_src
 ** Haskell
 *** lsp-haskell
@@ -1735,9 +1745,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 **** Initialisation
 #+begin_src elisp
 (use-package hindent
-  ;; :if haskell-enable-hindent
-  :init
-  (add-hook 'haskell-mode-hook #'hindent-mode)
+  :hook (haskell-mode . hindent-mode)
   :config
   (jl/hindent)
   )
@@ -1778,38 +1786,43 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+end_src
 * Readers
 ** Elfeed
-#+begin_src elisp
-(use-package elfeed
-  :config
-  (setq rmh-elfeed-org-files (list "~/Documents/Org/Elfeed/feeds.org"))
-#+end_src
 *** Keybindings
 #+begin_src elisp
-(jl/major-modes
- :keymaps 'elfeed-search-mode-map
- "c"  'elfeed-db-compact
- "gr" 'elfeed-update
- "gR" 'elfeed-search-update--force
- "gu" 'elfeed-unjam
- "o"  'elfeed-load-opml
- "q"  'quit-window
- "w"  'elfeed-web-start
- "W"  'elfeed-web-stop
- "+"  'elfeed-search-tag-all
- "-"  'elfeed-search-untag-all
- "b"  'elfeed-search-browse-url
- "y"  'elfeed-search-yank)
+(defun jl/elfeed-keys ()
+  (jl/major-modes
+    :keymaps 'elfeed-search-mode-map
+    "c"  'elfeed-db-compact
+    "gr" 'elfeed-update
+    "gR" 'elfeed-search-update--force
+    "gu" 'elfeed-unjam
+    "o"  'elfeed-load-opml
+    "q"  'quit-window
+    "w"  'elfeed-web-start
+    "W"  'elfeed-web-stop
+    "+"  'elfeed-search-tag-all
+    "-"  'elfeed-search-untag-all
+    "b"  'elfeed-search-browse-url
+    "y"  'elfeed-search-yank)
 
-(jl/major-modes
- :states 'normal
- :keymaps 'elfeed-show-mode-map
- "n" 'elfeed-show-next
- "p" 'elfeed-show-prev)
+  (jl/major-modes
+    :states 'normal
+    :keymaps 'elfeed-show-mode-map
+    "n" 'elfeed-show-next
+    "p" 'elfeed-show-prev)
 
-(jl/SPC-keys
- "are" 'elfeed)
+  (jl/SPC-keys
+    "are" 'elfeed)
 
-)
+  )
+#+end_src
+*** Initialisation
+#+begin_src elisp
+(use-package elfeed
+  :custom
+  (rmh-elfeed-org-files (list "~/Documents/Org/Elfeed/feeds.org"))
+  :init
+  (jl/elfeed-keys)
+  )
 #+end_src
 ** Elpher
 *** Keybindings
@@ -1855,17 +1868,17 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** Elpher initialisation
 #+begin_src elisp
 (use-package elpher
+  :hook (elpher-mode . variable-pitch-mode)
+  :custom
+  (elpher-bookmarks-file "~/.spacemacs.d/elpher-bookmarks")
+  (elpher-start-page-url "gemini://gemini.circumlunar.space")
   :init
   (jl/elpher-global-keys)
-  (setq elpher-bookmarks-file "~/.spacemacs.d/elpher-bookmarks"
-	elpher-start-page-url "gemini://gemini.circumlunar.space")
   :config
   (jl/elpher-key-bindings)
   (set-face-attribute 'elpher-gemini-heading1 nil :inherit 'org-level-1)
   (set-face-attribute 'elpher-gemini-heading2 nil :inherit 'org-level-2)
   (set-face-attribute 'elpher-gemini-heading3 nil :inherit 'org-level-2)
-
-  (add-hook 'elpher-mode-hook 'variable-pitch-mode)
   )
 #+end_src
 ** ERC
@@ -1901,23 +1914,23 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+begin_src elisp
 (use-package erc
   :straight nil
+  :hook (erc-mode . erc-image-mode)
+  :custom
+  (erc-server "irc.libera.chat")
+  (erc-nick "jeslie0")
+  (erc-port "6697")
+  (erc-password (shell-command-to-string "gpg2 -q --for-your-eyes-only --no-tty -d ~/.password-store/irc.libra.chat/jeslie0.gpg"))
+  (erc-prompt-for-password nil)
+  (erc-user-full-name "James Leslie")
+  (erc-track-shorten-start 8)
+  (erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs" "##math" "#categorytheory" "#haskell")))
+  (erc-kill-buffer-on-part t)
+  (erc-auto-query 'bury)
+  (erc-image-inline-rescale 400)
   :init
   (jl/erc-keys-global)
   :config
-  (add-hook 'erc-mode-hook 'erc-image-mode)
   (jl/erc-keys)
-  (setq erc-server "irc.libera.chat"
-	erc-nick "jeslie0"
-	erc-port "6697"
-	erc-password (shell-command-to-string "gpg2 -q --for-your-eyes-only --no-tty -d ~/.password-store/irc.libra.chat/jeslie0.gpg")
-	erc-prompt-for-password nil
-	erc-user-full-name "James Leslie"
-	erc-track-shorten-start 8
-	erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs" "##math" "#categorytheory" "#haskell"))
-	erc-kill-buffer-on-part t
-	erc-auto-query 'bury
-	erc-image-inline-rescale 400
-	)
   )
 #+end_src
 ** EWW
@@ -1961,15 +1974,13 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** Initialisation
 #+begin_src elisp
 (use-package eww
+  :hook (eww-mode . variable-pitch-mode)
   :init
   (jl/eww-global-keys)
   :config
   (jl/eww-keys)
   (evil-collection-define-key 'normal 'eww-mode-map
     (kbd "SPC") nil)
-  (jl/SPC-keys)
-  (add-hook 'eww-mode-hook 'variable-pitch-mode)
-
   )
 #+end_src
 ** Mu4e
@@ -2227,23 +2238,21 @@ there are no attachments."
 					    :repo "rougier/mu4e-thread-folding"
 					    :branch "master"))
 
-
-
 (use-package mu4e-thread-folding
-
   :hook (mu4e-headers-mode . mu4e-thread-folding-mode)
+  :custom
+  (mu4e-headers-found-hook '(mu4e-headers-mark-threads mu4e-headers-fold-all))
+  (mu4e-headers-fields '((:empty         .    2)
+                         (:human-date    .   12)
+                         (:flags         .    6)
+                         (:mailing-list  .   10)
+                         (:from          .   22)
+                         (:subject       .   nil)))
   :config
-  (setq mu4e-headers-found-hook '(mu4e-headers-mark-threads mu4e-headers-fold-all))
   (add-to-list 'mu4e-header-info-custom
                '(:empty . (:name "Empty"
 				 :shortname ""
 				 :function (lambda (msg) "  "))))
-  (setq mu4e-headers-fields '((:empty         .    2)
-                              (:human-date    .   12)
-                              (:flags         .    6)
-                              (:mailing-list  .   10)
-                              (:from          .   22)
-                              (:subject       .   nil)))
   (define-key mu4e-headers-mode-map (kbd "<tab>")     'mu4e-headers-toggle-at-point)
   (define-key mu4e-headers-mode-map (kbd "<left>")    'mu4e-headers-fold-at-point)
   (define-key mu4e-headers-mode-map (kbd "<S-left>")  'mu4e-headers-fold-all)
@@ -2266,12 +2275,12 @@ there are no attachments."
 
 (use-package mu4e
   :straight nil
+  :hook ((mu4e-compose-mode . visual-fill-column-mode)
+	 (mu4e-compose-mode . variable-pitch-mode)
+	 (mu4e-view-mode . visual-fill-column-mode)
+	 )
   :init
   (jl/mu4e-global-keys)
-  (add-hook 'mu4e-compose-mode-hook 'visual-fill-column-mode)
-  (add-hook 'mu4e-compose-mode-hook 'variable-pitch-mode)
-  (add-hook 'mu4e-view-mode-hook 'visual-fill-column-mode)
-
   :config
   (jl/mu4e-keys)
   (jl/mu4e-shortcuts)
@@ -2280,24 +2289,25 @@ there are no attachments."
   (jl/mu4e-attachement-warning)
   (jl/mu4e-reply-quote)
   (jl/mu4e-pgp)
-  (setq mu4e-maildir "~/.email"
-	mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a"
-	mu4e-compose-signature-auto-include t
-	mu4e-view-show-addresses t
-	mu4e-headers-include-related nil
-	mu4e-headers-skip-duplicates t
-	mu4e-headers-auto-update t
-	mu4e-update-interval 300
-	message-send-mail-function 'smtpmail-send-it
-	mu4e-attachment-dir  "~/Downloads/"
-	mu4e-change-filenames-when-moving t
-	mu4e-compose-format-flowed t
-	mu4e-compose-dont-reply-to-self t
-	mu4e-sent-messages-behavior 'sent
-	mu4e-use-fancy-chars t
-	mu4e-display-update-status-in-modeline nil
-	)
+  :custom
+  (mu4e-maildir "~/.email")
+  (mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a")
+  (mu4e-compose-signature-auto-include t)
+  (mu4e-view-show-addresses t)
+  (mu4e-headers-include-related nil)
+  (mu4e-headers-skip-duplicates t)
+  (mu4e-headers-auto-update t)
+  (mu4e-update-interval 300)
+  (message-send-mail-function 'smtpmail-send-it)
+  (mu4e-attachment-dir  "~/Downloads/")
+  (mu4e-change-filenames-when-moving t)
+  (mu4e-compose-format-flowed t)
+  (mu4e-compose-dont-reply-to-self t)
+  (mu4e-sent-messages-behavior 'sent)
+  (mu4e-use-fancy-chars t)
+  (mu4e-display-update-status-in-modeline nil)
   )
+
 #+end_src
 *** mu4e-alert
 #+begin_src elisp
@@ -2406,7 +2416,7 @@ there are no attachments."
     )
   )
 #+end_src
-** Funcs
+** Functions
 #+begin_src elisp
  (defun latex/build ()
   (interactive)
@@ -2437,71 +2447,59 @@ there are no attachments."
 (defun latex/font-oblique () (interactive) (TeX-font nil ?\C-s))
 (defun latex/font-upright () (interactive) (TeX-font nil ?\C-u))
 #+end_src
-
-** Config
+** Initialisation
 #+begin_src elisp
-  (use-package tex
-    :hook
-    (LaTeX-mode . outline-minor-mode)
-    (LaTeX-mode . visual-line-mode)
-    :straight auctex
-    :config
-    (jl/auctex-keys)
+(use-package tex
+  :hook ((LaTeX-mode . outline-minor-mode)
+	 (LaTeX-mode . visual-line-mode)
+	 (LaTeX-mode . TeX-fold-mode)
+	 (LaTeX-mode . LaTeX-math-mode)
+	 (LaTeX-mode . TeX-source-correlate-mode)
+	 (LaTeX-mode . TeX-PDF-mode))
+  :custom
+  (font-latex-math-environments (quote ("display" "displaymath" "equation" "eqnarray" "gather" "math" "multline" "align" "alignat" "xalignat" "xxalignat" "flalign" "tikzcd")))
+  (reftex-plug-into-auctex t)
+  (reftex-label-alist
+   '(("theorem" ?h "thm:" "~\\ref{%s}" t   ("theorem" "th.") -3)
+     ("proof"   ?g "pf:"  "~\\ref{%s}" t   ("proof" "pf.") -3)
+     ("lemma"   ?l "lem:" "~\\ref{%s}" nil ("lemma"   "le.") -2)
+     ("proposition" ?p "prp:" "~\\ref{%s}" t   ("proposition" "pr.") -3)
+     ("corollary" ?c "cor:" "~\\ref{%s}" t   ("corollary" "co.") -3)
+     ("example" ?a "ex:" "~\\ref{%s}" t   ("example" "ex.") -3)
+     ("tcolorbox" ?b  "tcb:" "~\\ref{%s}" t   ("tcolorbox" "cb.") -3)
+     ("tikzcd" ?j "cd:" "~\\ref{%s}" t  ("tikzcd" "cd.") -3)
+     ("definition" ?d "def:" "~\\ref{%s}" t   ("definition" "de.") -3))
+   )
+  (TeX-view-program-selection '((output-pdf "Zathura")))
+  (TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
+  :straight auctex
+  :config
+  (jl/auctex-keys)
 
+  ;; Folding environments
+  (defun latex-fold-env-all ()
+    (interactive)
+    (let ((env (read-from-minibuffer "Fold Environment: ")))
+      (save-excursion
+	(goto-char (point-min))
+	(while (search-forward (format "begin{%s}" env) nil t)
+	  (TeX-fold-env)))))
 
-    (add-hook 'LaTeX-mode-hook 'TeX-fold-mode)
-    (add-hook 'LaTeX-mode-hook 'outline-minor-mode)
-    (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-    (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
-    (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode)
-
-
-
-    ;; Folding environments
-    (defun latex-fold-env-all ()
-      (interactive)
-      (let ((env (read-from-minibuffer "Fold Environment: ")))
-	(save-excursion
-	  (goto-char (point-min))
-	  (while (search-forward (format "begin{%s}" env) nil t)
-	    (TeX-fold-env)))))
-
-    ;;(add-hook 'LaTeX-mode-hook
-    (lambda ()
-      (LaTeX-add-environments
-       '("theorem")
-       '("proof")
-       '("lemma")
-       '("proposition")
-       '("corollary")
-       '("example")
-       '("tcolorbox")
-       '("tikzcd")
-       '("definition")
-       '("align*"))
-      )
-
-
-    (setq font-latex-math-environments
-	  (quote
-	   ("display" "displaymath" "equation" "eqnarray" "gather" "math" "multline" "align" "alignat" "xalignat" "xxalignat" "flalign" "tikzcd")))
-
-    (setq reftex-plug-into-auctex t
-	  reftex-label-alist
-	  '(("theorem" ?h "thm:" "~\\ref{%s}" t   ("theorem" "th.") -3)
-	    ("proof"   ?g "pf:"  "~\\ref{%s}" t   ("proof" "pf.") -3)
-	    ("lemma"   ?l "lem:" "~\\ref{%s}" nil ("lemma"   "le.") -2)
-	    ("proposition" ?p "prp:" "~\\ref{%s}" t   ("proposition" "pr.") -3)
-	    ("corollary" ?c "cor:" "~\\ref{%s}" t   ("corollary" "co.") -3)
-	    ("example" ?a "ex:" "~\\ref{%s}" t   ("example" "ex.") -3)
-	    ("tcolorbox" ?b  "tcb:" "~\\ref{%s}" t   ("tcolorbox" "cb.") -3)
-	    ("tikzcd" ?j "cd:" "~\\ref{%s}" t  ("tikzcd" "cd.") -3)
-	    ("definition" ?d "def:" "~\\ref{%s}" t   ("definition" "de.") -3))
-	  )
-    (setq TeX-view-program-selection '((output-pdf "Zathura"))
-	  TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
-
+  ;;(add-hook 'LaTeX-mode-hook
+  (lambda ()
+    (LaTeX-add-environments
+     '("theorem")
+     '("proof")
+     '("lemma")
+     '("proposition")
+     '("corollary")
+     '("example")
+     '("tcolorbox")
+     '("tikzcd")
+     '("definition")
+     '("align*"))
     )
+  )
 
 #+end_src
 #+begin_src elisp
@@ -2509,16 +2507,25 @@ there are no attachments."
 (auctex-latexmk-setup)
 #+end_src
 * Bibtex
-#+begin_src elisp
-(use-package ivy-bibtex
-  :init
+** Ivy-bibtex
+*** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/ivy-bibtex-keys ()
   (jl/major-modes
     :keymaps 'bibtex-mode-map
     :states 'normal
     "m" 'ivy-bibtex
     )
   )
+#+END_Src
+*** Initialisation
+#+begin_src elisp
+(use-package ivy-bibtex
+  :init
+  (jl/ivy-bibtex-keys)
+  )
 #+end_src
+** Org-ref
 #+begin_src elisp
 (use-package org-ref
    :commands (org-ref-bibtex-next-entry
@@ -2886,45 +2893,29 @@ SCOPE can be:
         (setq poss (ispell-parse-output (car ispell-filter))))
     (or (eq poss t) (stringp poss))))
 #+end_src
-
 ** Initialisation
 #+begin_src elisp
 (use-package flyspell
   :hook
   (prog-mode . flyspell-prog-mode)
   (text-mode . flyspell-mode)
+  :custom
+  (ispell-dictionary "en_GB")
   :config
   (jl/flyspell)
-  (setq ispell-dictionary "en_GB")
   )
 
 (use-package flyspell-correct-ivy
   :after (flyspell ivy)
   :commands (flyspell-correct-ivy)
-  :init
-  (setq flyspell-correct-interface #'flyspell-correct-ivy)
+  :custom
+  (flyspell-correct-interface #'flyspell-correct-ivy)
   )
 #+end_src
 * Undo Tree
-#+begin_src elisp
-(use-package undo-tree
-  :init
-   (progn
-      (setq undo-tree-visualizer-timestamps t
-            undo-tree-visualizer-diff t
-            ;; 10X bump of the undo limits to avoid issues with premature
-            ;; Emacs GC which truncages the undo history very aggresively
-            undo-limit 800000
-            undo-strong-limit 12000000
-            undo-outer-limit 120000000)
-      (global-undo-tree-mode))
-   :bind (:map undo-tree-visualizer-mode-map
-	       )
-   :config
-   (jl/SPC-keys
-     "au" 'undo-tree-visualize
-   )
-
+** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/undo-tree-keys ()
   (general-evil-define-key '(normal motion) 'undo-tree-visualizer-mode-map
     "j"  'undo-tree-visualize-redo
     "k"  'undo-tree-visualize-undo
@@ -2932,24 +2923,50 @@ SCOPE can be:
     "l"  'undo-tree-visualize-switch-branch-right
     )
   )
+
+(defun jl/undo-tree-global-keys ()
+  (jl/SPC-keys
+    "au" 'undo-tree-visualize
+    )
+  )
+#+END_Src
+** Initialisation
+#+begin_src elisp
+(use-package undo-tree
+  :custom
+  (undo-tree-visualizer-timestamps t)
+  (undo-tree-visualizer-diff t)
+  ;; 10X bump of the undo limits to avoid issues with premature
+  ;; Emacs GC which truncages the undo history very aggresively
+  (undo-limit 800000)
+  (undo-strong-limit 12000000)
+  (undo-outer-limit 120000000)
+  :init
+  (global-undo-tree-mode)
+  (jl/undo-tree-global-keys)
+
+  :bind (:map undo-tree-visualizer-mode-map
+	      )
+  :config
+  (jl/undo-tree-keys)
+  )
 #+end_src
 * Pandoc
-#+begin_src elisp
-(use-package pandoc-mode
-  :init
+** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/pandoc-global-keys ()
   (jl/SPC-keys
     "P" '(pandoc-main-hydra/body :which-key "Pandoc")
     )
   )
+#+END_Src
+** Initialisation
+#+begin_src elisp
+(use-package pandoc-mode
+  :init
+  (jl/pandoc-global-keys)
+  )
 #+end_src
-
-
-
-
-
-
-
-helllop
 * Iedit
 ** Keybindings
 #+begin_src elisp
@@ -2973,17 +2990,16 @@ helllop
     )
   )
 #+end_src
-
 ** Initialisation
 #+begin_src elisp
 (use-package ranger
   :init
   (ranger-override-dired-mode t)
   (jl/ranger-keys)
-  :config
-  (setq ranger-preview-file t
-	ranger-dont-show-binary t
-	ranger-show-hidden t)
+  :custom
+  (ranger-preview-file t)
+  (ranger-dont-show-binary t)
+  (ranger-show-hidden t)
   )
 #+end_src
 * SQL
@@ -3006,7 +3022,8 @@ helllop
   (jl/SPC-keys
     "h>" 'ivy-nixos-options
     )
-  (setq ivy-nixos-options-default 1)
+  :custom
+  (ivy-nixos-options-default 1)
   )
 
 
@@ -3018,8 +3035,8 @@ helllop
 		   :branch "master"
 		   :files ("company-nixos-options.el")
 		   )
-  :config
-  ;; (add-to-list 'company-backends 'company-nixos-options)
+  :init
+  (add-to-list 'company-backends 'company-nixos-options)
   )
 
 (use-package nix-sandbox
@@ -3028,9 +3045,9 @@ helllop
 		   :branch "master"
 		   :files ("nix-sandbox.el")
 		   )
-  :init
-  (setq haskell-process-wrapper-function
-        (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
+  :custom
+  (haskell-process-wrapper-function
+   (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
   )
 #+end_src
 * Multiple cursors
@@ -3061,9 +3078,8 @@ helllop
 ** Initialisation
 #+BEGIN_SRC elisp
 (use-package evil-mc
+  :hook (((prog-mode text-mode) . turn-on-evil-mc-mode))
   :init
-  (add-hook 'prog-mode-hook 'turn-on-evil-mc-mode)
-  (add-hook 'text-mode-hook 'turn-on-evil-mc-mode)
   (jl/evil-mc-keybindings)
   )
 #+END_Src
