@@ -262,7 +262,7 @@ exec gammastep
 
 # Screenshot
 bindsym Print exec "grim ~/Images/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png"
-bindsym Shift+Print exec "grim -g \"$(slurp)\" ~/Images/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png"
+bindsym Shift+Print exec 'grim -g "$(slurp)" ~/Images/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png'
 
 
 # options
