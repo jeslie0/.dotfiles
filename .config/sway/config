@@ -318,7 +318,9 @@ for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
 
 bindsym Ctrl+Mod4+e exec 'emacsclient --create-frame --alternate-editor=""'
 bindsym Ctrl+Mod4+f exec 'firefox'
-
+bindsym Ctrl+Mod4+s exec 'signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland'
+bindsym Ctrl+Mod4+z exec 'zathura'
+bindsym Ctrl+Mod4+p exec 'passmenu'
 
 # Screensharing
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
