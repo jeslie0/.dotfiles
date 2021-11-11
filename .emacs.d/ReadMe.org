@@ -1,15 +1,15 @@
 #+title: James' New Emacs Configuration
 #+PROPERTY:  header-args:elisp :tangle ./init.el
 #+options: toc:t
-* Server/daemon
+* Lexical-binding
 #+begin_src elisp
-;; (server-start)
+;; -*- lexical-binding: t; -*-
 #+end_src
 * Misc
 #+begin_src elisp
 (setq default-directory "/home/james/Documents/")
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
-(setq gc-cons-threshold 100000000)
+;; (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024))
 #+end_src
 * Cleaning folders and files
@@ -69,6 +69,12 @@ auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-
 
 (setq straight-use-package-by-default t)
 #+end_src
+* Garbage collection
+#+BEGIN_SRC elisp
+(use-package gcmh
+  :config
+  (gcmh-mode 1))
+#+END_SRC
 * Keybindings
 ** Functions
 *** sudo-edit
@@ -331,6 +337,14 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
     ;; :hook ((text-mode prog-mode) . turn-on-surround-mode)
     )
 #+END_SRC
+*** Evil escape
+#+BEGIN_SRC elisp
+(use-package evil-escape
+  :config
+  (setq-default evil-escape-key-sequence "jk")
+  (setq-default evil-escape-delay 0.2)
+  )
+#+END_SRC
 ** Which-key
 Adds the popup for key commands with mulitple key presses
 #+begin_src elisp
@@ -372,47 +386,64 @@ Adds the popup for key commands with mulitple key presses
 ** Solaire mode
 #+BEGIN_SRC elisp
 (use-package solaire-mode
+  :defer t
   :custom
  (solaire-global-mode +1)
   )
 #+END_SRC
 ** Themes
+*** Doom themes
 #+begin_src elisp
 (use-package doom-themes
+  :defer t
   ;; :after solaire-mode
   :hook (server-after-make-frame . (lambda () (load-theme
 					       'doom-palenight t)))
   )
+#+end_src
 
-(use-package nord-theme)
-
+*** Nord
+#+begin_src elisp
+(use-package nord-theme
+  :defer t)
+#+end_src
+*** Dracula
+#+begin_src elisp
 (use-package dracula-theme
-  :straight t)
+  :straight t
+  :defer t)
 #+end_src
 ** All the icons
 #+BEGIN_SRC elisp
 (use-package all-the-icons
+  :defer t
   :config
   (progn
-    (add-to-list 'all-the-icons-extension-icon-alist '("v" all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
+    (setf (alist-get "v" all-the-icons-extension-icon-alist nil nil #'equal) '(all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
     (add-to-list 'all-the-icons-extension-icon-alist '("idr" all-the-icons-fileicon "idris" :height 1.0 :v-adjust -0.2 :face all-the-icons-dred))
-    (add-to-list 'all-the-icons-data/file-icon-alist '("agda" . "\x1315A"))
-    (add-to-list 'all-the-icons-extension-icon-alist '("agda" all-the-icons-fileicon "agda" :height 1.0 :v-adjust -0.2 :face all-the-icons-lblue))
     )
-   )
+  )
 #+END_SRC
 #+BEGIN_SRC elisp :tangle no
 (load-file "/home/james/emacs-packages/all-the-icons.el/all-the-icons-faces.el")
 (load-file "/home/james/emacs-packages/all-the-icons.el/all-the-icons.el")
 (add-to-list 'all-the-icons-extension-icon-alist '("v" all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
+;; (add-to-list 'all-the-icons-extension-icon-alist '("v" all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2))
+#+END_SRC
+*** All the icons dired
+#+BEGIN_SRC elisp
+;; (use-package all-the-icons-dired
+;;   :hook (dired-mode . all-the-icons-dired-mode)
+;;   )
 #+END_SRC
 ** Modeline
 We use doom modeline.
 #+begin_src elisp
-  (use-package doom-modeline
-    :straight t
-    :init (doom-modeline-mode 1)
-    )
+(use-package doom-modeline
+  :defer t
+  :straight t
+  :init (doom-modeline-mode 1)
+  )
 #+end_src
 ** Emacs-winum
 *** Keybindings
@@ -653,10 +684,6 @@ Provides better documentation.
 #+end_src
 ** Initialisation
 #+begin_src elisp
-(use-package page-break-lines
-  :after dashboard
-  )
-
 (use-package dashboard
   :custom
   ;; Set the title
@@ -693,12 +720,14 @@ Provides better documentation.
 ** Rainbow Delimiters
 #+begin_src elisp
 (use-package rainbow-delimiters
+  :defer t
   :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode)
   )
 #+end_src
 ** Outshine
 #+begin_src elisp
 (use-package outshine
+  :defer t
   :hook ((emacs-lisp-mode latex-mode prog-mode) . outshine-mode)
   :init
   (defvar outline-minor-mode-prefix "\M-#")
@@ -707,17 +736,29 @@ Provides better documentation.
 ** Aggressive indent
 #+BEGIN_SRC elisp
 (use-package aggressive-indent
+  :defer t
   :custom
   (global-aggressive-indent-mode 1)
   )
 #+END_SRC
 ** Golden Ratio
+#+BEGIN_SRC elisp
+(use-package golden-ratio
+  :defer t )
+#+END_SRC
 ** Highlight-indent-guides
 #+BEGIN_SRC elisp
 (use-package highlight-indent-guides
   :hook ((prog-mode LaTeX-mode). highlight-indent-guides-mode)
   :custom
   (highlight-indent-guides-method 'character)
+  )
+#+END_SRC
+** Page break lines
+#+BEGIN_SRC elisp
+(use-package page-break-lines
+  :defer t
+  :after dashboard
   )
 #+END_SRC
 * Multiple cursors
@@ -747,11 +788,12 @@ Provides better documentation.
 #+END_SRC
 ** Initialisation
 #+BEGIN_SRC elisp
-  (use-package evil-mc
-    :hook ((prog-mode text-mode) . turn-on-evil-mc-mode)
-    :init
-    (jl/evil-mc-keybindings)
-    )
+(use-package evil-mc
+  :defer t
+  :hook ((prog-mode text-mode) . turn-on-evil-mc-mode)
+  :init
+  (jl/evil-mc-keybindings)
+  )
 #+END_SRC
 * Pin entry
 #+begin_src elisp
@@ -781,7 +823,9 @@ Provides better documentation.
 #+end_src
 ** Ivy-pass
 #+begin_src elisp
- (use-package ivy-pass)
+(use-package ivy-pass
+  :defer t
+  :after ivy)
 #+end_src
 ** Password-store
 *** Keybindings
@@ -808,6 +852,7 @@ Provides better documentation.
 *** Initialsation
 #+begin_src elisp
 (use-package password-store
+  :defer t
   :init
   (jl/pass-keys)
   )
@@ -832,6 +877,7 @@ Provides better documentation.
 *** Initialisation
 #+begin_src elisp
 (use-package password-store-otp
+  :defer t
   :init
   (jl/pass-otp-keys)
   )
@@ -1238,11 +1284,12 @@ Provides better documentation.
 #+begin_src elisp
 (use-package org-superstar
   :after org
-  :hook (org-mode . org-superstar-mode))
+  :hook (org-mode . org-superstar-mode)
+  )
 
 (defun jl/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
+	visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
@@ -1257,6 +1304,7 @@ Provides better documentation.
 (require 'ox-publish)
 
 (use-package org
+  :defer t
   :hook (org-mode . jl/org-mode-setup)
   :init
   (jl/org-mode-Cc-keys)
@@ -1365,7 +1413,7 @@ Provides better documentation.
 (setq org-protocol-default-template-key "w")
 #+end_src
 ** evil-org
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package evil-org
   :hook (org-mode . evil-org-mode)
   :config
@@ -1401,6 +1449,8 @@ Provides better documentation.
 ** org-present-mode
 #+BEGIN_SRC elisp
 (use-package org-present
+  :defer t
+  :after org
   :straight (:host github
 		   :repo "rlister/org-present"
 		   :branch "master"
@@ -1520,30 +1570,35 @@ Provides better documentation.
         ("C-x t M-t" . treemacs-find-tag)))
 
 (use-package treemacs-evil
+  :defer t
   :after (treemacs evil)
   :straight t)
 
 (use-package treemacs-projectile
+  :defer t
   :after (treemacs projectile)
   :straight t)
 
 (use-package treemacs-icons-dired
+  :defer t
   :after (treemacs dired)
   :straight t
   :config (treemacs-icons-dired-mode))
 
 (use-package treemacs-magit
+  :defer t
   :after (treemacs magit)
   :straight t)
 
 (use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
+  :defer t
   :after (treemacs persp-mode) ;;or perspective vs. persp-mode
   :straight t
   :config (treemacs-set-scope-type 'Perspectives))
 
 #+end_src
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (load-file "/home/james/test.el")
 (defun treemacsthemetest ()
   (treemacs-load-theme 'testb)
@@ -1569,6 +1624,14 @@ Provides better documentation.
     )
   )
 #+end_src
+#+BEGIN_SRC elisp
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs.el")
+(load-file "~/emacs-packages/treemacs/src/extra/treemacs-all-the-icons.el")
+(defun treemacsthemetest ()
+  (treemacs-load-theme 'all-the-icons)
+  )
+(add-hook 'treemacs-mode-hook 'treemacsthemetest)
+#+END_SRC
 
 * Languages
 ** Tools
@@ -1644,6 +1707,7 @@ Provides better documentation.
 **** Initialisation
 #+begin_src elisp
 (use-package lsp-mode
+  :defer t
   :commands (lsp lsp-deferred)
   ;; :hook (haskell-mode . lsp)
   :init
@@ -1653,9 +1717,38 @@ Provides better documentation.
   (lsp-idle-delay 0.500)
   (lsp-lens-place-position 'above-line)
   (lsp-log-io nil)
+  (lsp-file-watch-ignored '(
+			    "[/\\\\]\\.direnv$"
+					; SCM tools
+			    "[/\\\\]\\.git$"
+			    "[/\\\\]\\.hg$"
+			    "[/\\\\]\\.bzr$"
+			    "[/\\\\]_darcs$"
+			    "[/\\\\]\\.svn$"
+			    "[/\\\\]_FOSSIL_$"
+					; IDE tools
+			    "[/\\\\]\\.idea$"
+			    "[/\\\\]\\.ensime_cache$"
+			    "[/\\\\]\\.eunit$"
+			    "[/\\\\]node_modules$"
+			    "[/\\\\]\\.fslckout$"
+			    "[/\\\\]\\.tox$"
+			    "[/\\\\]\\.stack-work$"
+			    "[/\\\\]\\.bloop$"
+			    "[/\\\\]\\.metals$"
+			    "[/\\\\]target$"
+					; Autotools output
+			    "[/\\\\]\\.deps$"
+			    "[/\\\\]build-aux$"
+			    "[/\\\\]autom4te.cache$"
+			    "[/\\\\]\\.reference$")
+			  )
   )
-
+#+end_src
+**** lsp-ui
+#+begin_src elisp
 (use-package lsp-ui
+  :defer t
   :commands lsp-ui-mode
   :custom
   ;; (lsp-ui-doc-enable nil)
@@ -1680,6 +1773,7 @@ Provides better documentation.
 ***** Initialisation
 #+begin_src elisp
 (use-package lsp-treemacs
+  :defer t
   :init
   (jl/lsp-treemacs-keys)
   :custom
@@ -1711,6 +1805,7 @@ Provides better documentation.
 ***** Initialisation
 #+begin_src elisp
 (use-package lsp-ivy
+  :defer t
   :config
   (jl/lsp-ivy-keys)
 )
@@ -1783,6 +1878,7 @@ Provides better documentation.
 #+begin_src elisp
 (use-package agda2-mode
   ;; :load-path "/home/james/.cabal/share/x86_64-linux-ghc-8.10.5/Agda-2.6.3/emacs-mode/agda2.el"
+  :defer t
   :init
   (load-file (let ((coding-system-for-read 'utf-8))
                (shell-command-to-string "agda-mode locate")))
@@ -1866,6 +1962,7 @@ Provides better documentation.
 **** Initialisation
 #+BEGIN_SRC elisp
 (use-package proof-general
+  :defer t
   :custom
   (proof-splash-enable nil)
   (proof-three-window-mode-policy 'hybrid)
@@ -1878,6 +1975,7 @@ Provides better documentation.
 **** lsp-haskell
 #+begin_src elisp
 (use-package lsp-haskell
+  :defer t
   :after haskell-mode
   :custom
   (lsp-haskell-server-path "haskell-language-server-wrapper")
@@ -2001,6 +2099,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 **** Initialisation
 #+begin_src elisp
 (use-package haskell-mode
+  :defer t
   :hook
   (haskell-mode . lsp)
   (haskell-mode . (lambda ()
@@ -2029,6 +2128,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 ***** Initialisation
 #+begin_src elisp
 (use-package hindent
+  :defer t
   :hook (haskell-mode . hindent-mode)
   :config
   (jl/hindent)
@@ -2050,6 +2150,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 ***** Initialisation
 #+begin_src elisp
 (use-package hlint-refactor
+  :defer t
   :hook (haskell-mode . hlint-refactor-mode)
   :config
   (jl/hlint-keys)
@@ -2058,6 +2159,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 * Avy
 #+begin_src elisp
 (use-package avy
+  :defer t
   :init
   (jl/SPC-keys
     "jb" 'avy-pop-mark
@@ -2102,6 +2204,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** Initialisation
 #+begin_src elisp
 (use-package elfeed
+  :defer t
   :custom
   (rmh-elfeed-org-files (list "~/Documents/Org/Elfeed/feeds.org"))
   :init
@@ -2152,6 +2255,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** Elpher initialisation
 #+begin_src elisp
 (use-package elpher
+  :defer t
   :hook (elpher-mode . variable-pitch-mode)
   :custom
   (elpher-bookmarks-file "~/.spacemacs.d/elpher-bookmarks")
@@ -2187,16 +2291,19 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** erc-hl-nicks
 #+begin_src elisp
 (use-package erc-hl-nicks
+  :defer t
   :after erc)
 #+end_src
 *** erc-image
 #+begin_src elisp
 (use-package erc-image
+  :defer t
   :after erc)
 #+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package erc
+  :defer t
   :straight nil
   :hook (erc-mode . erc-image-mode)
   :custom
@@ -2729,6 +2836,7 @@ there are no attachments."
 ** Initialisation
 #+begin_src elisp
 (use-package tex
+  :defer t
   :hook ((LaTeX-mode . outline-minor-mode)
 	 (LaTeX-mode . visual-line-mode)
 	 (LaTeX-mode . TeX-fold-mode)
@@ -2782,8 +2890,11 @@ there are no attachments."
 
 #+end_src
 #+begin_src elisp
-(use-package auctex-latexmk)
-(auctex-latexmk-setup)
+(use-package auctex-latexmk
+  :defer t
+  :config
+  (auctex-latexmk-setup)
+  )
 #+end_src
 * Bibtex
 ** Ivy-bibtex
@@ -2800,6 +2911,7 @@ there are no attachments."
 *** Initialisation
 #+begin_src elisp
 (use-package ivy-bibtex
+  :defer t
   :init
   (jl/ivy-bibtex-keys)
   )
@@ -2873,22 +2985,27 @@ there are no attachments."
 * Yasnippet
 #+begin_src elisp
 (use-package yasnippet
+  :defer t
   :config
   (jl/SPC-keys
     "is" 'ivy-yasnippet)
   )
 (yas-global-mode 1)
 
-(use-package yasnippet-snippets)
+(use-package yasnippet-snippets
+  :after yasnippet)
+
 (use-package ivy-yasnippet
   :after yasnippet
   )
-(use-package haskell-snippets)
+(use-package haskell-snippets
+  :after haskell-mode)
 #+end_src
 * Company mode
 ** Initialisation
 #+begin_src elisp
 (use-package company
+  :defer t
   :custom
   (company-selection-wrap-around t)
   (global-company-mode t)
@@ -2958,6 +3075,7 @@ there are no attachments."
 ** Initialisation
 #+begin_src elisp
 (use-package magit
+  :defer t
   :init
   (jl/magit-keys)
   :config
@@ -2967,6 +3085,7 @@ there are no attachments."
 * Flycheck
 #+begin_src elisp
 (use-package flycheck
+  :defer t
   :init
   (global-flycheck-mode t)
   )
@@ -3062,6 +3181,7 @@ SCOPE can be:
 ** Initialisation
 #+begin_src elisp
 (use-package flyspell
+  :defer t
   :hook
   (prog-mode . flyspell-prog-mode)
   (text-mode . flyspell-mode)
@@ -3141,20 +3261,21 @@ SCOPE can be:
 ** Initialisation
 #+begin_src elisp
 (use-package pandoc-mode
+  :defer t
   :init
   (jl/pandoc-global-keys)
   )
 #+end_src
 * Iedit
 ** Keybindings
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (defun jl/iedit-keys ()
   (jl/SPC-keys
     "se" 'evil-iedit-state/iedit-mode)
   )
 #+end_src
 ** Initialisation
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package evil-iedit-state
   :config
   (jl/iedit-keys))
@@ -3171,6 +3292,7 @@ SCOPE can be:
 ** Initialisation
 #+begin_src elisp
 (use-package ranger
+  :defer t
   :init
   (ranger-override-dired-mode t)
   (jl/ranger-keys)
@@ -3198,12 +3320,15 @@ SCOPE can be:
   (interactive)
   (find-file-existing "~/.config/nixpkgs/home.nix"))
 #+END_SRC
-** Initialisation
+** Nix-mode
 #+begin_src elisp
 (use-package nix-mode
   :mode "\\.nix\\'")
-
+#+END_SRC
+** Ivy nixos options
+#+BEGIN_SRC elisp
 (use-package ivy-nixos-options
+  :defer t
   :straight (:host github
 		   :repo "travisbhartwell/nix-emacs"
 		   :branch "master"
@@ -3219,32 +3344,40 @@ SCOPE can be:
   :custom
   (ivy-nixos-options-default 1)
   )
-
-
-(use-package nixos-options)
-
+#+END_SRC
+** NixOS options
+#+BEGIN_SRC elisp
+(use-package nixos-options
+  :defer t)
+#+END_SRC
+** Company-nixos-options
+#+BEGIN_SRC elisp
 (use-package company-nixos-options
-  :straight (:host github
-		   :repo "travisbhartwell/nix-emacs"
-		   :branch "master"
-		   :files ("company-nixos-options.el")
-		   )
+  :defer t
   ;; :init
   ;; (push 'company-nixos-options company-backends)
   )
-
+#+END_SRC
+** Nix-sandbox
+#+BEGIN_SRC elisp
 (use-package nix-sandbox
-  :straight (:host github
-		   :repo "travisbhartwell/nix-emacs"
-		   :branch "master"
-		   :files ("nix-sandbox.el")
-		   )
+  :defer t
   :custom
   (haskell-process-wrapper-function
    (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
   (flycheck-command-wrapper-function
-   (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command))
-   flycheck-executable-find
+   (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command)))
+  (flycheck-executable-find
    (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
   )
 #+end_src
+* Direnv
+#+BEGIN_SRC elisp
+(use-package direnv
+  :defer t
+  :config
+  (direnv-mode)
+  :custom
+  (direnv-always-show-summary nil)
+  )
+#+END_SRC
