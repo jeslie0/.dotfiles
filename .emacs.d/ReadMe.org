@@ -301,6 +301,7 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 
 #+end_src
 ** Evil mode
+*** Evil
 #+begin_src elisp
 (use-package evil
   :custom
@@ -317,29 +318,38 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 #+end_src
 *** Evil collection
 #+begin_src elisp
-  (use-package evil-collection
-    :after evil
-    :config
-    (evil-collection-init))
+(use-package evil-collection
+  :defer t
+  :diminish t
+  :after evil
+  :config
+  (evil-collection-init))
 #+end_src
 *** Evil commentary
 #+begin_src elisp
-  (use-package evil-commentary
-    :diminish t
-    :after evil
-    :config
-    (evil-commentary-mode 1)
-    )
+(use-package evil-commentary
+  :defer t
+  :diminish t
+  :after evil
+  :config
+  (evil-commentary-mode 1)
+  )
 #+end_src
 *** Evil surround
 #+BEGIN_SRC elisp
-  (use-package evil-surround
-    ;; :hook ((text-mode prog-mode) . turn-on-surround-mode)
-    )
+(use-package evil-surround
+  :defer t
+  :diminish t
+  :after evil
+  :hook ((text-mode prog-mode) . turn-on-surround-mode)
+  )
 #+END_SRC
 *** Evil escape
 #+BEGIN_SRC elisp
 (use-package evil-escape
+  :defer t
+  :diminish t
+  :after evil
   :config
   (setq-default evil-escape-key-sequence "jk")
   (setq-default evil-escape-delay 0.2)
