@@ -31,6 +31,7 @@
                     (import /home/james/Documents/Nix/passbemenu/passbemenu.nix)
                     obs-studio
                     pcmanfm
+                    birdfont
   ];
 
 }

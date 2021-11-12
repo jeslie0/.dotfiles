@@ -11,24 +11,7 @@
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
 ;; (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024))
-#+end_src
-* Cleaning folders and files
-** Folders
-*** Backup folder
-#+begin_src elisp
-(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
-#+end_src
-*** Auto-saves
-#+begin_src elisp
-(make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
-
-(setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
-auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-emacs-directory) t)))
-#+end_src
-** Files
-*** Whitespace
-#+begin_src elisp
-(add-hook 'write-file-hooks 'delete-trailing-whitespace)
+(save-place-mode 1)
 #+end_src
 * Package managers
 ** package.el and use-package
@@ -69,6 +52,27 @@ auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-
 
 (setq straight-use-package-by-default t)
 #+end_src
+* Cleaning folders and files
+** Folders
+*** Backup folder
+#+begin_src elisp
+(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+#+end_src
+*** Auto-saves
+#+begin_src elisp
+(make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+
+(setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-emacs-directory) t)))
+#+end_src
+** Files
+*** Whitespace (ws-butler)
+#+BEGIN_SRC elisp
+(use-package ws-butler
+  :defer t
+  :hook ((prog-mode text-mode) . ws-butler-mode)
+  )
+#+END_SRC
 * Garbage collection
 #+BEGIN_SRC elisp
 (use-package gcmh
@@ -421,23 +425,22 @@ Adds the popup for key commands with mulitple key presses
 #+end_src
 ** All the icons
 #+BEGIN_SRC elisp
-(use-package all-the-icons
-  :config
-  (progn
-    (setf (alist-get "v" all-the-icons-extension-icon-alist nil nil #'equal) '(all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
-    (add-to-list 'all-the-icons-extension-icon-alist '("idr" all-the-icons-fileicon "idris" :height 1.0 :v-adjust -0.2 :face all-the-icons-dred))
+  (use-package all-the-icons
+    :defer t
+    :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el"
+			     :fork (:host github
+					  :repo "jeslie0/all-the-icons.el")
+			     :files (:defaults "data" "all-the-icons.el"))
+    :config
+    (progn
+      (setf (alist-get "v" all-the-icons-extension-icon-alist nil nil #'equal) '(all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
+      )
     )
-  )
-#+END_SRC
-#+BEGIN_SRC elisp :tangle no
-(load-file "/home/james/emacs-packages/all-the-icons.el/all-the-icons-faces.el")
-(load-file "/home/james/emacs-packages/all-the-icons.el/all-the-icons.el")
-(add-to-list 'all-the-icons-extension-icon-alist '("v" all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
-;; (add-to-list 'all-the-icons-extension-icon-alist '("v" all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2))
 #+END_SRC
 *** All the icons dired
 #+BEGIN_SRC elisp
 (use-package all-the-icons-dired
+  :defer t
   :hook (dired-mode . all-the-icons-dired-mode)
   :custom
   (all-the-icons-dired-monochrome nil)
@@ -1420,12 +1423,19 @@ Provides better documentation.
 (setq org-protocol-default-template-key "w")
 #+end_src
 ** evil-org
-#+begin_src elisp :tangle no
+#+begin_src elisp
+(fset 'evil-redirect-digit-argument 'ignore)
 (use-package evil-org
+  :defer t
   :hook (org-mode . evil-org-mode)
   :config
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys)
+
+  ;; Evil-org fix
+  (add-to-list 'evil-digit-bound-motions 'evil-org-beginning-of-line)
+  (evil-define-key 'motion 'evil-org-mode
+    (kbd "0") 'evil-org-beginning-of-line)
   )
 #+end_src
 ** Org CalDav
@@ -1498,11 +1508,12 @@ Provides better documentation.
     )
   )
 #+end_src
-
 ** Initialisation
 #+begin_src elisp
 (use-package treemacs
-  :straight t
+  :straight (treemacs :type git :host github :repo "Alexander-Miller/treemacs"
+		      :fork (:host github
+				   :repo "jeslie0/treemacs"))
   :defer t
   :init
   (jl/treemacs-keys)
@@ -1575,45 +1586,50 @@ Provides better documentation.
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
-
+#+END_SRC
+** Treemacs evil
+#+BEGIN_SRC elisp
 (use-package treemacs-evil
   :defer t
   :after (treemacs evil)
   :straight t)
-
+#+END_SRC
+** Treemacs projectile
+#+BEGIN_SRC elisp
 (use-package treemacs-projectile
   :defer t
   :after (treemacs projectile)
   :straight t)
-
+#+END_SRC
+** Treemacs icons dired
+#+BEGIN_SRC elisp
 (use-package treemacs-icons-dired
   :defer t
   :after (treemacs dired)
   :straight t
   :config (treemacs-icons-dired-mode))
-
+#+END_SRC
+** Treemacs magit
+#+BEGIN_SRC elisp
 (use-package treemacs-magit
   :defer t
   :after (treemacs magit)
   :straight t)
-
-(use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
+#+END_SRC
+** Treemacs Persp
+#+BEGIN_SRC elisp
+(use-package treemacs-perspective ;;treemacs-perspective if you use perspective.el vs. persp-mode
   :defer t
-  :after (treemacs persp-mode) ;;or perspective vs. persp-mode
+  :after (treemacs perspective) ;;or perspective vs. persp-mode
   :straight t
   :config (treemacs-set-scope-type 'Perspectives))
-
 #+end_src
-
-#+BEGIN_SRC elisp :tangle no
-(load-file "/home/james/test.el")
-(defun treemacsthemetest ()
-  (treemacs-load-theme 'testb)
-  )
-(add-hook 'treemacs-mode-hook 'treemacsthemetest)
-#+END_SRC
-#+begin_src elisp :tangle no
+** Treemacs all-the-icons
+#+begin_src elisp
 (use-package treemacs-all-the-icons
+  :straight (treemacs-all-the-icons :type git :host github :repo "Alexander-Miller/treemacs"
+				    :fork (:host github
+						 :repo "jeslie0/treemacs"))
   :hook ((treemacs-mode dired-mode) . (lambda ()
 					(treemacs-load-theme 'all-the-icons)))
   :config
@@ -1624,22 +1640,13 @@ Provides better documentation.
       (treemacs-create-icon :icon (format "  %s%s" (all-the-icons-fileicon "org" :face 'all-the-icons-lgreen) treemacs-all-the-icons-tab) :extensions ("org") :fallback 'same-as-icon)
       (treemacs-create-icon :icon (format "  %s%s" (all-the-icons-fileicon "coq" :face 'all-the-icons-lred) treemacs-all-the-icons-tab) :extensions ("v") :fallback 'same-as-icon)
       ;; (treemacs-create-icon :file "agdaIcon.svg"
-			    ;; :extensions ("agda") :fallback "FFF")
+      ;; :extensions ("agda") :fallback "FFF")
       ;; (treemacs-create-icon :icon (format "  %s%s" (all-the-icons-fileicon "agda" :face 'all-the-icons-lblue) treemacs-all-the-icons-tab) :extensions ("agda") :fallback 'same-as-icon)
 
       )
     )
   )
 #+end_src
-#+BEGIN_SRC elisp
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs.el")
-(load-file "~/emacs-packages/treemacs/src/extra/treemacs-all-the-icons.el")
-(defun treemacsthemetest ()
-  (treemacs-load-theme 'all-the-icons)
-  )
-(add-hook 'treemacs-mode-hook 'treemacsthemetest)
-#+END_SRC
-
 * Languages
 ** Tools
 *** LSP
@@ -2163,6 +2170,37 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   (jl/hlint-keys)
   )
 #+end_src
+*** Emacs-lisp
+**** Ielm
+#+BEGIN_SRC elisp :tangle no
+(use-package ielm
+  :defer t
+  :init
+  (jl/major-modes
+    :states '(normal operator motion)
+    :keymaps 'inferior-emacs-lisp-mode-map
+    :major-modes t
+    "hh" 'helpful-at-point
+    )
+  (jl/major-modes
+    :states '(normal operator motion)
+    :keymaps 'emacs-lisp-mode-hook
+    :major-modes t
+    "s" '(:ignore t :which-key "ielm")
+    "'" 'ielm
+    "si" 'ielm
+    )
+  :config
+  (defun ielm-indent-line ()
+    (interactive)
+    (let ((current-point (point)))
+      (save-restriction
+        (narrow-to-region (search-backward-regexp "^ELISP>") (goto-char current-point))
+        (lisp-indent-line))))
+  )
+#+END_SRC
+**** Debug
+
 * Avy
 #+begin_src elisp
 (use-package avy
@@ -2407,7 +2445,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "m" '(:ignore t :which-key "marking")
     "C" 'mu4e-context-switch
     "s" 'mu4e-headers-search
-    "O" 'mu4e-headers-change-sorting
+    "O" 'mu4e-headers-change-sortting
     "U" 'mu4e-update-mail-and-index
     "x" 'mu4e-mark-execute-all
     "cr" 'mu4e-compose-reply
@@ -2423,7 +2461,8 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "mf" 'mu4e-headers-mark-for-flag
     "mF" 'mu4e-headers-mark-for-unflag
     "mU" 'mu4e-headers-mark-for-unmark
-    "m*" 'mu4e-headers-mark-for-something)
+    "m*" 'mu4e-headers-mark-for-something
+)
 
   (jl/major-modes
     :states '(normal visual emacs operator motion)
@@ -2706,7 +2745,6 @@ there are no attachments."
   (mu4e-use-fancy-chars t)
   (mu4e-display-update-status-in-modeline nil)
   )
-
 #+end_src
 *** mu4e-alert
 #+begin_src elisp
@@ -3001,13 +3039,18 @@ there are no attachments."
 (yas-global-mode 1)
 
 (use-package yasnippet-snippets
+  :defer t
   :after yasnippet)
 
 (use-package ivy-yasnippet
+  :defer t
   :after yasnippet
   )
 (use-package haskell-snippets
+  :defer t
   :after haskell-mode)
+
+(use-package yatemplate)
 #+end_src
 * Company mode
 ** Initialisation
