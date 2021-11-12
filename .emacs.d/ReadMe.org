@@ -319,7 +319,6 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 *** Evil collection
 #+begin_src elisp
 (use-package evil-collection
-  :defer t
   :diminish t
   :after evil
   :config
@@ -328,7 +327,6 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 *** Evil commentary
 #+begin_src elisp
 (use-package evil-commentary
-  :defer t
   :diminish t
   :after evil
   :config
@@ -338,16 +336,14 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 *** Evil surround
 #+BEGIN_SRC elisp
 (use-package evil-surround
-  :defer t
-  :diminish t
   :after evil
-  :hook ((text-mode prog-mode) . turn-on-surround-mode)
+  :config
+  (global-evil-surround-mode 1)
   )
 #+END_SRC
 *** Evil escape
 #+BEGIN_SRC elisp
 (use-package evil-escape
-  :defer t
   :diminish t
   :after evil
   :config
@@ -426,7 +422,6 @@ Adds the popup for key commands with mulitple key presses
 ** All the icons
 #+BEGIN_SRC elisp
 (use-package all-the-icons
-  :defer t
   :config
   (progn
     (setf (alist-get "v" all-the-icons-extension-icon-alist nil nil #'equal) '(all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
@@ -442,9 +437,11 @@ Adds the popup for key commands with mulitple key presses
 #+END_SRC
 *** All the icons dired
 #+BEGIN_SRC elisp
-;; (use-package all-the-icons-dired
-;;   :hook (dired-mode . all-the-icons-dired-mode)
-;;   )
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode)
+  :custom
+  (all-the-icons-dired-monochrome nil)
+  )
 #+END_SRC
 ** Modeline
 We use doom modeline.
@@ -2375,6 +2372,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** Initialisation
 #+begin_src elisp
 (use-package eww
+  :defer t
   :hook (eww-mode . variable-pitch-mode)
   :init
   (jl/eww-global-keys)
@@ -3057,7 +3055,6 @@ there are no attachments."
     "pT" 'projectile-test-project
     "pv" 'projectile-vc))
 #+end_src
-
 ** Initialisation
 #+begin_src elisp
 (use-package projectile
@@ -3285,8 +3282,9 @@ SCOPE can be:
   )
 #+end_src
 ** Initialisation
-#+begin_src elisp :tangle no
+#+begin_src elisp
 (use-package evil-iedit-state
+  :defer t
   :config
   (jl/iedit-keys))
 #+end_src
