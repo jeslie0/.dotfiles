@@ -1,6 +1,141 @@
 #+title: James' New Emacs Configuration
 #+PROPERTY:  header-args:elisp :tangle ./init.el
 #+options: toc:t
+
+* Table of Contents                                                     :toc:
+- [[#lexical-binding][Lexical-binding]]
+- [[#misc][Misc]]
+- [[#package-managers][Package managers]]
+  - [[#packageel-and-use-package][package.el and use-package]]
+  - [[#straightel][Straight.el]]
+- [[#cleaning-folders-and-files][Cleaning folders and files]]
+  - [[#folders][Folders]]
+  - [[#files][Files]]
+- [[#garbage-collection][Garbage collection]]
+- [[#keybindings][Keybindings]]
+  - [[#functions][Functions]]
+  - [[#general][General]]
+  - [[#misc-1][Misc]]
+  - [[#hydra][Hydra]]
+  - [[#evil-mode][Evil mode]]
+  - [[#which-key][Which-key]]
+- [[#ui-configuration][UI configuration]]
+  - [[#warnings][Warnings]]
+  - [[#font-configuration][Font configuration]]
+  - [[#solaire-mode][Solaire mode]]
+  - [[#themes][Themes]]
+  - [[#all-the-icons][All the icons]]
+  - [[#modeline][Modeline]]
+  - [[#emacs-winum][Emacs-winum]]
+  - [[#perspective][Perspective]]
+  - [[#pretty-symbols][Pretty symbols]]
+  - [[#fillings][Fillings]]
+- [[#ivy-and-counsel-completion-framework][Ivy and Counsel completion framework]]
+- [[#helpful][Helpful]]
+- [[#dashboard][Dashboard]]
+  - [[#functions-1][Functions]]
+  - [[#initialisation][Initialisation]]
+- [[#minor-modes][Minor modes]]
+  - [[#rainbow-delimiters][Rainbow Delimiters]]
+  - [[#outshine][Outshine]]
+  - [[#aggressive-indent][Aggressive indent]]
+  - [[#golden-ratio][Golden Ratio]]
+  - [[#highlight-indent-guides][Highlight-indent-guides]]
+  - [[#page-break-lines][Page break lines]]
+- [[#multiple-cursors][Multiple cursors]]
+  - [[#keybindings-1][Keybindings]]
+  - [[#initialisation-1][Initialisation]]
+- [[#pin-entry][Pin entry]]
+- [[#pass][Pass]]
+  - [[#functions-2][Functions]]
+  - [[#ivy-pass][Ivy-pass]]
+  - [[#password-store][Password-store]]
+  - [[#password-store-otp][Password-store otp]]
+  - [[#auth-source-pass][Auth source pass]]
+- [[#org-mode][Org mode]]
+  - [[#functions-3][Functions]]
+  - [[#key-bindings][Key bindings]]
+  - [[#font-configuration-1][Font configuration]]
+  - [[#org-roam][org-roam]]
+  - [[#org-mode-minor-modes][Org mode minor modes]]
+  - [[#org-settings][Org settings]]
+  - [[#evil-org][evil-org]]
+  - [[#org-caldav][Org CalDav]]
+  - [[#org-present-mode][org-present-mode]]
+  - [[#org-capture-mode][org-capture-mode]]
+  - [[#org-src-blocks][org-src blocks]]
+  - [[#toc-org][toc-org]]
+- [[#treemacs][Treemacs]]
+  - [[#keybindings-2][Keybindings]]
+  - [[#initialisation-2][Initialisation]]
+  - [[#treemacs-evil][Treemacs evil]]
+  - [[#treemacs-projectile][Treemacs projectile]]
+  - [[#treemacs-icons-dired][Treemacs icons dired]]
+  - [[#treemacs-magit][Treemacs magit]]
+  - [[#treemacs-persp][Treemacs Persp]]
+  - [[#treemacs-all-the-icons][Treemacs all-the-icons]]
+- [[#languages][Languages]]
+  - [[#tools][Tools]]
+  - [[#proof-assistants][Proof Assistants]]
+  - [[#programming][Programming]]
+- [[#avy][Avy]]
+- [[#readers][Readers]]
+  - [[#elfeed][Elfeed]]
+  - [[#elpher][Elpher]]
+  - [[#erc][ERC]]
+  - [[#eww][EWW]]
+  - [[#mu4e][Mu4e]]
+- [[#latex][LaTeX]]
+  - [[#functions-4][Functions]]
+  - [[#keybindings-3][Keybindings]]
+  - [[#initialisation-3][Initialisation]]
+- [[#bibtex][Bibtex]]
+  - [[#ivy-bibtex][Ivy-bibtex]]
+  - [[#org-ref][Org-ref]]
+- [[#yasnippet][Yasnippet]]
+- [[#company-mode][Company mode]]
+  - [[#initialisation-4][Initialisation]]
+  - [[#company-box][company-box]]
+  - [[#prescient-company][Prescient company]]
+- [[#projectile][Projectile]]
+  - [[#keybindings-4][Keybindings]]
+  - [[#initialisation-5][Initialisation]]
+- [[#magit][Magit]]
+  - [[#keybindings-5][Keybindings]]
+  - [[#initialisation-6][Initialisation]]
+- [[#flycheck][Flycheck]]
+- [[#flyspell][Flyspell]]
+  - [[#keybindings-6][Keybindings]]
+  - [[#functions-5][Functions]]
+  - [[#initialisation-7][Initialisation]]
+  - [[#flyspell-correct][Flyspell correct]]
+  - [[#flyspell-popup][flyspell popup]]
+- [[#undo-tree][Undo Tree]]
+  - [[#keybindings-7][Keybindings]]
+  - [[#initialisation-8][Initialisation]]
+- [[#pandoc][Pandoc]]
+  - [[#keybindings-8][Keybindings]]
+  - [[#initialisation-9][Initialisation]]
+- [[#iedit][Iedit]]
+  - [[#keybindings-9][Keybindings]]
+  - [[#initialisation-10][Initialisation]]
+- [[#ranger][Ranger]]
+  - [[#keybindings-10][Keybindings]]
+  - [[#initialisation-11][Initialisation]]
+- [[#sql][SQL]]
+- [[#nix][Nix]]
+  - [[#functions-6][Functions]]
+  - [[#nix-mode][Nix-mode]]
+  - [[#ivy-nixos-options][Ivy nixos options]]
+  - [[#nixos-options][NixOS options]]
+  - [[#company-nixos-options][Company-nixos-options]]
+  - [[#nix-sandbox][Nix-sandbox]]
+- [[#direnv][Direnv]]
+- [[#terminals][Terminals]]
+  - [[#term][Term]]
+  - [[#vterm][Vterm]]
+  - [[#eshell][Eshell]]
+
 * Lexical-binding
 #+begin_src elisp
 ;; -*- lexical-binding: t; -*-
@@ -209,8 +344,8 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
     "a" '(:ignore t :which-key "applications")
     "ae" '(:ignore t :which-key "email")
     "ar" '(:ignore t :which-key "readers")
+    "as" '(:ignore t :which-key "shells")
 
-    "frg" 'elpher
     "at" '(:ignore t :which-key "tools")
 
     "b" '(:ignore t :which-key "buffers")
@@ -249,7 +384,7 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 (jl/SPC-keys
   "SPC" '(counsel-M-x :which-key "M-x")
 
-  "!" 'shell
+  "!" 'eshell
   "fc" 'copy-file
   "fd" 'delete-file-and-buffer
   "ff" '(counsel-find-file :which-key "find file")
@@ -425,17 +560,20 @@ Adds the popup for key commands with mulitple key presses
 #+end_src
 ** All the icons
 #+BEGIN_SRC elisp
-  (use-package all-the-icons
-    :defer t
-    :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el"
-			     :fork (:host github
-					  :repo "jeslie0/all-the-icons.el")
-			     :files (:defaults "data" "all-the-icons.el"))
-    :config
-    (progn
-      (setf (alist-get "v" all-the-icons-extension-icon-alist nil nil #'equal) '(all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
-      )
+(use-package all-the-icons
+  :defer t
+  :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el"
+			   :fork (:host github
+					:repo "jeslie0/all-the-icons.el")
+			   :files (:defaults "data" "all-the-icons.el"))
+  :config
+  (progn
+    (setf (alist-get "v" all-the-icons-extension-icon-alist nil nil #'equal) '(all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
+    (add-to-list 'all-the-icons-data/file-icon-alist '("agda" . "\x1315a"))
+    (add-to-list 'all-the-icons-extension-icon-alist '("agda" all-the-icons-fileicon "agda" :height 1.0 :v-adjust -0.2 :face all-the-icons-lblue))
+    (add-to-list 'all-the-icons-extension-icon-alist '("lagda" all-the-icons-fileicon "agda" :height 1.0 :v-adjust -0.2 :face all-the-icons-lblue))
     )
+  )
 #+END_SRC
 *** All the icons dired
 #+BEGIN_SRC elisp
@@ -634,41 +772,53 @@ If the universal prefix argument is used then kill also the window."
 #+END_SRC
 * Ivy and Counsel completion framework
 #+begin_src elisp
-  (use-package ivy
-    :diminish ;; Hides minor mode from mode-line minor mode list
-    :bind (("C-s" . swiper)
-	   :map ivy-minibuffer-map
-	   ("TAB" . ivy-alt-done)
-	   ("C-l" . ivy-alt-done)
-	   ("C-j" . ivy-next-line)
-	   ("C-k" . ivy-previous-line)
-	   :map ivy-switch-buffer-map
-	   ("C-k" . ivy-previous-line)
-	   ("C-l" . ivy-done)
-	   ("C-d" . ivy-switch-buffer-kill)
-	   :map ivy-reverse-i-search-map
-	   ("C-k" . ivy-previous-line)
-	   ("C-d" . ivy-reverse-i-search-kill))
-    :config
-    (ivy-mode 1))
+(use-package ivy
+  :diminish ;; Hides minor mode from mode-line minor mode list
+  :bind (("C-s" . swiper)
+	 :map ivy-minibuffer-map
+	 ("TAB" . ivy-alt-done)
+	 ("C-l" . ivy-alt-done)
+	 ("C-j" . ivy-next-line)
+	 ("C-k" . ivy-previous-line)
+	 :map ivy-switch-buffer-map
+	 ("C-k" . ivy-previous-line)
+	 ("C-l" . ivy-done)
+	 ("C-d" . ivy-switch-buffer-kill)
+	 :map ivy-reverse-i-search-map
+	 ("C-k" . ivy-previous-line)
+	 ("C-d" . ivy-reverse-i-search-kill))
+  :config
+  (ivy-mode 1))
 
 
-  (use-package counsel
-    :bind (("M-x" . counsel-M-x)
-	   ("C-x b" . counsel-ibuffer)
-	   ("C-x C-f" . counsel-find-file)
-	   :map minibuffer-local-map
-	   ("C-f" . 'counsel-minibuffer-history)))
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x b" . counsel-ibuffer)
+	 ("C-x C-f" . counsel-find-file)
+	 :map minibuffer-local-map
+	 ("C-f" . 'counsel-minibuffer-history))
+  :config
+  (counsel-mode 1)
+  )
 
 (use-package all-the-icons-ivy-rich
   :init
   (all-the-icons-ivy-rich-mode 1))
 
 (use-package ivy-rich
+  :after counsel
   :init
   (ivy-rich-mode 1))
 
-
+(use-package ivy-prescient
+  :after counsel
+  :custom
+  (ivy-prescient-retain-classic-highlighting t)
+  (prescient-save-file "~/.emacs.d/prescient-data")
+  :config
+  (ivy-prescient-mode 1)
+  (prescient-persist-mode 1)
+  )
 #+end_src
 * Helpful
 Provides better documentation.
@@ -1498,6 +1648,13 @@ Provides better documentation.
 (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
 (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
 #+end_src
+** toc-org
+#+BEGIN_SRC elisp
+(use-package toc-org
+  :defer t
+  :hook (toc-org . org-mode)
+   )
+#+END_SRC
 * Treemacs
 ** Keybindings
 #+begin_src elisp
@@ -3057,9 +3214,9 @@ there are no attachments."
 #+begin_src elisp
 (use-package company
   :defer t
+  :hook ((prog-mode text-mode) . company-mode)
   :custom
   (company-selection-wrap-around t)
-  (global-company-mode t)
   )
 #+end_src
 ** company-box
@@ -3069,6 +3226,14 @@ there are no attachments."
   :custom
   (company-box-doc-delay 2)
   (company-box-icons-alist 'company-box-icons-all-the-icons)
+  )
+#+END_SRC
+** Prescient company
+#+BEGIN_SRC elisp
+(use-package company-prescient
+  :after company
+  :config
+  (company-prescient-mode 1)
   )
 #+END_SRC
 * Projectile
@@ -3345,12 +3510,14 @@ SCOPE can be:
 (use-package ranger
   :defer t
   :init
-  (ranger-override-dired-mode t)
   (jl/ranger-keys)
   :custom
-  (ranger-preview-file t)
+  (ranger-preview-file nil)
   (ranger-dont-show-binary t)
   (ranger-show-hidden t)
+  (return-to-ranger t)
+  (ranger-override-dired t)
+  (ranger-override-dired-mode t)
   )
 #+end_src
 * SQL
@@ -3430,5 +3597,75 @@ SCOPE can be:
   (direnv-mode)
   :custom
   (direnv-always-show-summary nil)
+  )
+#+END_SRC
+* Terminals
+** Term
+#+BEGIN_SRC elisp :tangle no
+(use-package term
+  :config
+  (setq explicit-shell-file-name "bash") ;; Change this to zsh, etc
+  ;;(setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific args
+
+  ;; Match the default Bash shell prompt.  Update this if you have a custom prompt
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+#+END_SRC
+*** eterm 256colours
+#+BEGIN_SRC elisp :tangle no
+(use-package eterm-256color
+  :hook (term-mode . eterm-256color-mode)
+  )
+#+END_SRC
+** Vterm
+#+BEGIN_SRC elisp :tangle no
+(use-package vterm
+  :commands vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
+  ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
+  (setq vterm-max-scrollback 10000))
+#+END_SRC
+** Eshell
+*** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/eshell-global-keys ()
+  (jl/SPC-keys
+  "ase" 'eshell
+  )
+)
+#+END_SRC
+*** Initialisation
+#+BEGIN_SRC elisp
+(defun efs/configure-eshell ()
+  ;; Save command history when commands are entered
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+  ;; Truncate buffer for performance
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+  ;; Bind some useful keys for evil-mode
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+  (evil-normalize-keymaps)
+
+  (setq eshell-history-size         10000
+        eshell-buffer-maximum-lines 10000
+        eshell-hist-ignoredups t
+        eshell-scroll-to-bottom-on-input t))
+
+(use-package eshell-git-prompt)
+
+(use-package eshell
+  :defer t
+  :hook (eshell-first-time-mode . efs/configure-eshell)
+  :init
+  (jl/eshell-global-keys)
+  :config
+
+  (with-eval-after-load 'esh-opt
+    (setq eshell-destroy-buffer-when-process-dies t)
+    (setq eshell-visual-commands '("htop" "zsh" "vim")))
+
+  (eshell-git-prompt-use-theme 'powerline)
   )
 #+END_SRC

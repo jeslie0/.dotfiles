@@ -23,6 +23,8 @@ straight/modified/
 straight/repos/
 straight/build-cache.el
 
+prescient-data
+
 tmp
 tramp
 transient/
