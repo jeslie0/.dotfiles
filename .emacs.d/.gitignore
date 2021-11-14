@@ -12,6 +12,7 @@ recentf
 init.el
 
 .lsp*
+ltximg/
 
 network-security.data
 
@@ -29,5 +30,6 @@ tmp
 tramp
 transient/
 url/
+
 
 places

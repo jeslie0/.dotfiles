@@ -1,7 +1,6 @@
 #+title: James' New Emacs Configuration
-#+PROPERTY:  header-args:elisp :tangle ./init.el
+#+PROPERTY: header-args:elisp :tangle ./init.el
 #+options: toc:t
-
 * Table of Contents                                                     :toc:
 - [[#lexical-binding][Lexical-binding]]
 - [[#misc][Misc]]
@@ -525,11 +524,18 @@ Adds the popup for key commands with mulitple key presses
 #+end_src
 ** Font configuration
 #+begin_src elisp
-(set-face-attribute 'default nil :font "Source Code Pro" :height 110)
+(defvar jl/prog-font
+  "Source Code Pro")
+
+(defvar jl/text-font
+  "Cantarell")
+
+
+(set-face-attribute 'default nil :font jl/prog-font :height 110)
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Source Code Pro" :height 110)
+(set-face-attribute 'fixed-pitch nil :font jl/prog-font :height 110)
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 120 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font jl/text-font :height 120 :weight 'regular)
 
 (set-face-attribute 'cursor nil :background "DarkGoldenrod2")
 #+end_src
@@ -538,7 +544,7 @@ Adds the popup for key commands with mulitple key presses
 (use-package solaire-mode
   :defer t
   :custom
- (solaire-global-mode +1)
+  (solaire-global-mode +1)
   )
 #+END_SRC
 ** Themes
@@ -546,7 +552,6 @@ Adds the popup for key commands with mulitple key presses
 #+begin_src elisp
 (use-package doom-themes
   :defer t
-  ;; :after solaire-mode
   :hook (server-after-make-frame . (lambda () (load-theme
 					       'doom-palenight t)))
   )
@@ -885,7 +890,7 @@ Provides better documentation.
 #+begin_src elisp
 (use-package rainbow-delimiters
   :defer t
-  :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode)
+  :hook ((prog-mode agda2-mode org-mode) . rainbow-delimiters-mode)
   )
 #+end_src
 ** Outshine
@@ -901,18 +906,19 @@ Provides better documentation.
 #+BEGIN_SRC elisp
 (use-package aggressive-indent
   :defer t
-  :custom
-  (global-aggressive-indent-mode 1)
+  :hook ((prog-mode text-mode) . aggressive-indent-mode)
   )
 #+END_SRC
 ** Golden Ratio
 #+BEGIN_SRC elisp
 (use-package golden-ratio
-  :defer t )
+  :defer t
+  )
 #+END_SRC
 ** Highlight-indent-guides
 #+BEGIN_SRC elisp
 (use-package highlight-indent-guides
+  :defer t
   :hook ((prog-mode LaTeX-mode). highlight-indent-guides-mode)
   :custom
   (highlight-indent-guides-method 'character)
@@ -927,7 +933,10 @@ Provides better documentation.
 #+END_SRC
 ** Smartparens
 #+BEGIN_SRC elisp
-(use-package smartparens)
+(use-package smartparens
+  :hook (org-mode . smartparens-mode)
+  :defer t
+  )
 #+END_SRC
 ** Save place mode
 #+begin_src elisp
@@ -936,6 +945,18 @@ Provides better documentation.
   :hook ((prog-mode text-mode) . save-place-mode)
   )
 #+end_src
+** Variable pitch
+#+BEGIN_SRC elisp
+  (use-package variable-pitch
+    :defer t
+    :straight face-remap
+    :hook (text-mode . variable-pitch-mode)
+    )
+    #+END_SRC
+** Visual line mode
+#+BEGIN_SRC elisp
+  (add-hook 'text-mode-hook 'visual-line-mode)
+  #+END_SRC
 * Multiple cursors
 ** Keybindings
 #+BEGIN_SRC elisp
@@ -1331,73 +1352,76 @@ Provides better documentation.
 (defun jl/org-font-setup ()
   (dolist (face '((org-document-title . 1.5)
 		  (org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
+		  (org-level-2 . 1.1)
+		  (org-level-3 . 1.05)
+		  (org-level-4 . 1.0)
+		  (org-level-5 . 1.1)
+		  (org-level-6 . 1.1)
+		  (org-level-7 . 1.1)
+		  (org-level-8 . 1.1))
+		)
+    (set-face-attribute (car face) nil :font jl/text-font :weight 'regular :height (cdr face))
+    (set-face-attribute 'org-link nil :weight 'regular)
+    )
 
   ;; (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   ;; (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
 
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch :font jl/prog-font)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :font jl/prog-font)
   )
-#+end_src
+  #+end_src
 ** Org Roam
 *** Keybindings
 #+begin_src elisp
-(defun jl/org-roam-global-keys ()
-  (jl/SPC-keys
-   "aor" '(:ignore t :which-key "org-roam")
-   "aord" '(:ignore t :which-key "dailies")
-   "aort" '(:ignore t :which-key "tags")
+  (defun jl/org-roam-global-keys ()
+    (jl/SPC-keys
+      "aor" '(:ignore t :which-key "org-roam")
+      "aord" '(:ignore t :which-key "dailies")
+      "aort" '(:ignore t :which-key "tags")
 
-   "aordy" 'org-roam-dailies-goto-yesterday
-   "aordt" 'org-roam-dailies-goto-today
-   "aordT" 'org-roam-dailies-goto-tomorrow
-   "aordd" 'org-roam-dailies-goto-date
-   "aorf" 'org-roam-node-find
-   "aorn" 'org-roam-node-find
-   "aorg" 'org-roam-graph
-   "aori" 'org-roam-node-insert
-   "aorl" 'org-roam-buffer-toggle
-   "aorta" 'org-roam-tag-add
-   "aortr" 'org-roam-tag-remove
-   "aora" 'org-roam-alias-add
-   "aorI" 'org-id-get-create
-   )
-  )
+      "aordy" 'org-roam-dailies-goto-yesterday
+      "aordt" 'org-roam-dailies-goto-today
+      "aordT" 'org-roam-dailies-goto-tomorrow
+      "aordd" 'org-roam-dailies-goto-date
+      "aorf" 'org-roam-node-find
+      "aorn" 'org-roam-node-find
+      "aorg" 'org-roam-graph
+      "aori" 'org-roam-node-insert
+      "aorl" 'org-roam-buffer-toggle
+      "aorta" 'org-roam-tag-add
+      "aortr" 'org-roam-tag-remove
+      "aora" 'org-roam-alias-add
+      "aorI" 'org-id-get-create
+      )
+    )
 
-(defun jl/org-roam-key-bindings ()
-  (jl/major-modes
-   :states 'normal
-   :keymaps 'org-mode-map
-   :major-mode '(org-mode)
+  (defun jl/org-roam-key-bindings ()
+    (jl/major-modes
+      :states 'normal
+      :keymaps 'org-mode-map
+      :major-mode '(org-mode)
 
-   "rdy" 'org-roam-dailies-goto-yesterday
-   "rdt" 'org-roam-dailies-goto-today
-   "rdT" 'org-roam-dailies-goto-tomorrow
-   "rdd" 'org-roam-dailies-goto-date
-   "rf" 'org-roam-node-find
-   "rn" 'org-roam-node-find
-   "rg" 'org-roam-graph
-   "ri" 'org-roam-node-insert
-   "rl" 'org-roam-buffer-toggle
-   "rta" 'org-roam-tag-add
-   "rtr" 'org-roam-tag-remove
-   "ra" 'org-roam-alias-add
-   "rI" 'org-id-get-create
-   )
-  )
+      "rdy" 'org-roam-dailies-goto-yesterday
+      "rdt" 'org-roam-dailies-goto-today
+      "rdT" 'org-roam-dailies-goto-tomorrow
+      "rdd" 'org-roam-dailies-goto-date
+      "rf" 'org-roam-node-find
+      "rn" 'org-roam-node-find
+      "rg" 'org-roam-graph
+      "ri" 'org-roam-node-insert
+      "rl" 'org-roam-buffer-toggle
+      "rta" 'org-roam-tag-add
+      "rtr" 'org-roam-tag-remove
+      "ra" 'org-roam-alias-add
+      "rI" 'org-id-get-create
+      )
+    )
 
 #+end_src
 *** Org Roam UI
@@ -1473,7 +1497,8 @@ Provides better documentation.
 *** Org Roam BibTeX
 #+begin_src elisp
 (use-package org-roam-bibtex
-  :after (org-roam org-ref)
+  :after (org-roam)
+  :defer t
   :hook (org-roam-mode . org-roam-bibtex-mode)
   )
 #+end_src
@@ -1484,7 +1509,7 @@ Provides better documentation.
   :straight org-roam)
 #+end_src
 ** Org mode minor modes
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (defun jl/org-mode-setup ()
   (visual-line-mode 1)
   (variable-pitch-mode 1)
@@ -1492,7 +1517,7 @@ Provides better documentation.
   (org-fragtog-mode 1)
   (rainbow-delimiters-mode 1)
   )
-#+end_src
+  #+end_src
 #+begin_src elisp
 (use-package org-superstar
   :after org
@@ -1507,14 +1532,15 @@ Provides better documentation.
 (use-package visual-fill-column
   :hook (org-mode . jl/org-mode-visual-fill))
 
-(use-package org-fragtog)
+(use-package org-fragtog
+  :hook (org-mode . org-fragtog-mode)
+  )
 #+end_src
 ** Org Initialisation
 #+begin_src elisp
 (use-package org
   :defer t
-  :hook ((org-mode . jl/org-mode-setup)
-         (org-mode . jl/org-font-setup))
+  :hook (org-mode . jl/org-font-setup)
   :init
   (jl/org-mode-Cc-keys)
   :config
@@ -1549,7 +1575,6 @@ Provides better documentation.
   (org-format-latex-options '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
 					  ("begin" "$1" "$" "$$" "\\(" "\\[")))
   (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
-  (org-ref-default-bibliography "/home/james/Documents/TeX/common/bibliography.bib")
   ;; Org capture
   (org-capture-templates
    '(("t" "Todo [inbox]" entry
@@ -1789,8 +1814,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package toc-org
   :defer t
   :hook (toc-org . org-mode)
-   )
-#+END_SRC
+  )
+  #+END_SRC
 ** Org Protocol
 #+begin_src elisp
 (use-package org-protocol
@@ -1803,7 +1828,6 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :defer t
   :straight org)
 #+end_src
-
 * Treemacs
 ** Keybindings
 #+begin_src elisp
@@ -1898,21 +1922,20 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package treemacs-evil
   :defer t
   :after (treemacs evil)
-  :straight t)
+  )
 #+END_SRC
 ** Treemacs projectile
 #+BEGIN_SRC elisp
 (use-package treemacs-projectile
   :defer t
   :after (treemacs projectile)
-  :straight t)
+  )
 #+END_SRC
 ** Treemacs icons dired
 #+BEGIN_SRC elisp
 (use-package treemacs-icons-dired
   :defer t
   :after (treemacs dired)
-  :straight t
   :config (treemacs-icons-dired-mode))
 #+END_SRC
 ** Treemacs magit
@@ -1920,16 +1943,15 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package treemacs-magit
   :defer t
   :after (treemacs magit)
-  :straight t)
+  )
 #+END_SRC
-** Treemacs Persp
+** Treemacs persp
 #+BEGIN_SRC elisp
 (use-package treemacs-perspective ;;treemacs-perspective if you use perspective.el vs. persp-mode
   :defer t
   :after (treemacs perspective) ;;or perspective vs. persp-mode
-  :straight t
   :config (treemacs-set-scope-type 'Perspectives))
-#+end_src
+  #+end_src
 ** Treemacs all-the-icons
 #+begin_src elisp
 (use-package treemacs-all-the-icons
@@ -3269,13 +3291,11 @@ there are no attachments."
   :init
   (jl/ivy-bibtex-keys)
   )
-#+end_src
+  #+end_src
 ** Org Ref
-#+begin_src elisp
-(use-package org-ref
-  :defer t
-  :after org
-  :config
+*** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/org-ref-keys ()
   (evil-define-key 'normal bibtex-mode-map
     (kbd "C-j") 'org-ref-bibtex-next-entry
     (kbd "C-k") 'org-ref-bibtex-previous-entry
@@ -3318,13 +3338,32 @@ there are no attachments."
     :keymaps 'latex-mode-map
     :states 'normal
     "ic" 'org-ref-insert-link)
+
+  (jl/major-modes
+    :keymaps 'org-mode-map
+    :states '(normal visual motion)
+    :major-modes t
+    "ir" 'org-ref-insert-ref-link
+    "ic" 'org-ref-insert-cite-link
+    )
   )
-#+end_src
+  #+END_SRC
+*** Initialisation
+#+begin_src elisp
+(use-package org-ref
+  :defer t
+  :custom
+  (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
+  (bibtex-completion-library-path "~/Documents/PDF/")
+  :init
+  (jl/org-ref-keys)
+  )
+  #+end_src
 ** Org Ref Ivy
 #+begin_src elisp
 (use-package org-ref-ivy
-  :after ivy-bibtex
-  :defer t
+  :commands (org-ref-insert-cite-link
+	     org-ref-insert-ref-link)
   :straight org-ref
   :custom
   (org-ref-insert-link-function 'org-ref-insert-link-hydra/body)
@@ -3333,9 +3372,7 @@ there are no attachments."
   (org-ref-insert-ref-function 'org-ref-insert-ref-link)
   (org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
   )
-
-#+end_src
-
+  #+end_src
 * Yasnippet
 #+begin_src elisp
 (use-package yasnippet
@@ -3367,9 +3404,8 @@ there are no attachments."
 #+begin_src elisp
 (use-package company
   :defer t
-  :hook ((prog-mode text-mode) . company-mode)
-  :custom
-  (company-selection-wrap-around t)
+  :config
+  (global-company-mode 1)
   )
 #+end_src
 ** Prescient company
@@ -3772,10 +3808,10 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (defun jl/eshell-global-keys ()
   (jl/SPC-keys
-  "ase" 'eshell
+    "ase" 'eshell
+    )
   )
-)
-#+END_SRC
+  #+END_SRC
 *** Initialisation
 #+BEGIN_SRC elisp
 (defun efs/configure-eshell ()
