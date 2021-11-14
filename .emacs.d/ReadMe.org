@@ -146,7 +146,6 @@
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
 ;; (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024))
-(save-place-mode 1)
 #+end_src
 * Package managers
 ** package.el and use-package
@@ -221,7 +220,8 @@ shamelessly stolen from Spacemacs.
 #+begin_src elisp
 (defun sudo-edit (&optional arg)
   (interactive "P")
-  (require 'tramp)
+  (use-package tramp
+    :defer t)
   (let ((fname (if (or arg (not buffer-file-name))
                    (read-file-name "File: ")
                  buffer-file-name)))
@@ -526,6 +526,11 @@ Adds the popup for key commands with mulitple key presses
 ** Font configuration
 #+begin_src elisp
 (set-face-attribute 'default nil :font "Source Code Pro" :height 110)
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil :font "Source Code Pro" :height 110)
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 120 :weight 'regular)
+
 (set-face-attribute 'cursor nil :background "DarkGoldenrod2")
 #+end_src
 ** Solaire mode
@@ -775,28 +780,28 @@ If the universal prefix argument is used then kill also the window."
 (use-package ivy
   :diminish ;; Hides minor mode from mode-line minor mode list
   :bind (("C-s" . swiper)
-	 :map ivy-minibuffer-map
-	 ("TAB" . ivy-alt-done)
-	 ("C-l" . ivy-alt-done)
-	 ("C-j" . ivy-next-line)
-	 ("C-k" . ivy-previous-line)
-	 :map ivy-switch-buffer-map
-	 ("C-k" . ivy-previous-line)
-	 ("C-l" . ivy-done)
-	 ("C-d" . ivy-switch-buffer-kill)
-	 :map ivy-reverse-i-search-map
-	 ("C-k" . ivy-previous-line)
-	 ("C-d" . ivy-reverse-i-search-kill))
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
   :config
   (ivy-mode 1))
 
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
-	 ("C-x b" . counsel-ibuffer)
-	 ("C-x C-f" . counsel-find-file)
-	 :map minibuffer-local-map
-	 ("C-f" . 'counsel-minibuffer-history))
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         :map minibuffer-local-map
+         ("C-f" . 'counsel-minibuffer-history))
   :config
   (counsel-mode 1)
   )
@@ -847,8 +852,7 @@ Provides better documentation.
 (use-package dashboard
   :custom
   ;; Set the title
-  (dashboard-banner-logo-title "Welcome to Emacs Dashboard")
-
+  (dashboard-banner-logo-title "Welcome to Emacs")
   ;; Set the logo
   (dashboard-startup-banner "~/.emacs.d/Icons/EmacsLogo.svg")
   (dashboard-image-banner-max-width 300)
@@ -921,6 +925,17 @@ Provides better documentation.
   :after dashboard
   )
 #+END_SRC
+** Smartparens
+#+BEGIN_SRC elisp
+(use-package smartparens)
+#+END_SRC
+** Save place mode
+#+begin_src elisp
+(use-package saveplace
+  :defer t
+  :hook ((prog-mode text-mode) . save-place-mode)
+  )
+#+end_src
 * Multiple cursors
 ** Keybindings
 #+BEGIN_SRC elisp
@@ -960,7 +975,6 @@ Provides better documentation.
 (setq epa-pinentry-mode 'loopback)
 (setq auth-sources '(password-store))
 (auth-source-pass-enable)
-(require 'smtpmail)
 #+end_src
 * Pass
 ** Functions
@@ -1315,7 +1329,8 @@ Provides better documentation.
 ** Font configuration
 #+begin_src elisp
 (defun jl/org-font-setup ()
-  (dolist (face '((org-level-1 . 1.2)
+  (dolist (face '((org-document-title . 1.5)
+		  (org-level-1 . 1.2)
                   (org-level-2 . 1.1)
                   (org-level-3 . 1.05)
                   (org-level-4 . 1.0)
@@ -1325,11 +1340,19 @@ Provides better documentation.
                   (org-level-8 . 1.1)))
     (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
 
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+  ;; (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  ;; (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
   )
 #+end_src
-** org-roam
+** Org Roam
 *** Keybindings
 #+begin_src elisp
 (defun jl/org-roam-global-keys ()
@@ -1377,23 +1400,49 @@ Provides better documentation.
   )
 
 #+end_src
-*** org-roam-ui
-#+begin_src elisp
-(use-package websocket
-  :after org-roam
+*** Org Roam UI
+**** Functions
+#+BEGIN_SRC elisp :tangle no
+(defun org-roam-ui-open-graph
+    "Ensure `org-roam-ui' is running, then open the `org-roam-ui' webpage."
+  (interactive)
+  (if org-roam-ui-mode
+      (funcall org-roam-ui-browser-function
+               (format "http://localhost:%d" org-roam-ui-port))
+    (org-roam-ui-mode)
+    )
   )
+#+END_SRC
+**** Initialisation
+#+begin_src elisp :tangle no
+  (use-package websocket
+    :defer t
+    :after org-roam
+    )
 
-(use-package simple-httpd
-  :after org-roam
-  )
+  (use-package simple-httpd
+    :after org-roam
+    :defer t
+    )
 
-(use-package org-roam-ui
-  :straight (:host github
-		   :repo "org-roam/org-roam-ui"
-		   :branch "main"
-		   :files ("*.el" "out")
-		   )
-  )
+  (use-package org-roam-ui
+    :straight (:host github
+		     :repo "org-roam/org-roam-ui"
+		     :branch "main"
+		     :files ("*.el" "out")
+		     )
+    ;; :init
+    ;; (jl/SPC-keys
+    ;;   "aorg" 'org-roam-ui-open-graph
+    ;;   )
+    ;; :config
+    ;; (jl/major-modes
+    ;;   :keymaps 'org-mode-map
+    ;;   :major-modes t
+    ;;   :states '(normal visual motion)
+    ;;   "rg" 'org-roam-ui-open-graph
+    ;;   )
+    )
 #+end_src
 *** Templates
 #+BEGIN_SRC elisp
@@ -1408,8 +1457,6 @@ Provides better documentation.
 #+END_SRC
 *** Initialisation
 #+begin_src elisp
-(setq org-roam-v2-ack t)
-
 (use-package org-roam
   :custom
   (org-roam-v2-ack t)
@@ -1421,15 +1468,20 @@ Provides better documentation.
   (jl/org-roam-templates)
   :config
   (org-roam-db-autosync-mode)
-  (require 'org-roam-protocol)
   )
 #+end_src
-*** org-roam-bibtex
+*** Org Roam BibTeX
 #+begin_src elisp
 (use-package org-roam-bibtex
   :after (org-roam org-ref)
   :hook (org-roam-mode . org-roam-bibtex-mode)
   )
+#+end_src
+*** Org Roam Protocol
+#+begin_src elisp
+(use-package org-roam-protocol
+  :defer t
+  :straight org-roam)
 #+end_src
 ** Org mode minor modes
 #+begin_src elisp
@@ -1455,23 +1507,20 @@ Provides better documentation.
 (use-package visual-fill-column
   :hook (org-mode . jl/org-mode-visual-fill))
 
-(use-package smartparens)
 (use-package org-fragtog)
 #+end_src
-** Org settings
+** Org Initialisation
 #+begin_src elisp
-;; (require 'ox-bibtex)
-(require 'ox-publish)
-
 (use-package org
   :defer t
-  :hook (org-mode . jl/org-mode-setup)
+  :hook ((org-mode . jl/org-mode-setup)
+         (org-mode . jl/org-font-setup))
   :init
   (jl/org-mode-Cc-keys)
   :config
   (jl/org-roam-key-bindings)
   (jl/org-mode-key-bindings)
-  (jl/org-font-setup)
+  ;; (jl/org-font-setup)
   :custom
   (org-ellipsis " ▼")
   (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
@@ -1485,6 +1534,7 @@ Provides better documentation.
   (org-edit-src-content-indentation 0)
   (org-startup-with-latex-preview t)
   (org-enable-reveal-js-support t)
+  (org-protocol-default-template-key "w")
   (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
   ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
   ;;                     ;; "~/Documents/Org/GTD/inbox.org"
@@ -1559,33 +1609,119 @@ Provides better documentation.
       )
      )
    )
-  ;; Org babel
-  (org-babel-load-languages '((shell . t)
-                              (python . t)
-                              (js . t)
-                              (emacs-lisp . t)
-                              (latex . t)
-                              (haskell . t)
-                              (C . t)))
   )
-
-(require 'org-protocol)
-(setq org-protocol-default-template-key "w")
 #+end_src
-** evil-org
+** Org Babel
+Calling org-babel languages in the following form saves a lot on startup time.
+*** Shell
+#+BEGIN_SRC elisp
+(use-package ob-shell
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:sh
+   org-babel-expand-body:sh
+
+   org-babel-execute:bash
+   org-babel-expand-body:bash)
+  )
+#+END_SRC
+*** Python
+#+BEGIN_SRC elisp
+(use-package ob-python
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:python
+   org-babel-expand-body:python
+   )
+  )
+#+END_SRC
+*** Emacs Lisp
+#+BEGIN_SRC elisp
+(use-package ob-emacs-lisp
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:emacs-lisp
+   org-babel-expand-body:emacs-lisp
+
+
+  org-babel-execute:elisp
+   org-babel-expand-body:elisp
+   )
+  )
+#+END_SRC
+*** JS
+#+BEGIN_SRC elisp
+(use-package ob-js
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:js
+   org-babel-expand-body:js
+   )
+  )
+#+END_SRC
+*** LaTeX
+#+BEGIN_SRC elisp
+(use-package ob-latex
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:latex
+   org-babel-expand-body:latex
+   )
+  )
+#+END_SRC
+*** Haskell
+#+BEGIN_SRC elisp
+(use-package ob-haskell
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:haskell
+   org-babel-expand-body:haskell
+   )
+  )
+#+END_SRC
+*** C
+#+BEGIN_SRC elisp
+(use-package ob-C
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:C
+   org-babel-expand-body:C
+   )
+  )
+#+END_SRC
+** Evil Org
 #+begin_src elisp
 (fset 'evil-redirect-digit-argument 'ignore)
 (use-package evil-org
   :defer t
+  :after org
   :hook (org-mode . evil-org-mode)
   :config
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys)
-
   ;; Evil-org fix
   (add-to-list 'evil-digit-bound-motions 'evil-org-beginning-of-line)
   (evil-define-key 'motion 'evil-org-mode
     (kbd "0") 'evil-org-beginning-of-line)
+  )
+(use-package evil-org-agenda
+  :defer t
+  :after evil-org
+  :straight evil-org
+  :config
+  (evil-org-agenda-set-keys)
   )
 #+end_src
 ** Org CalDav
@@ -1613,7 +1749,7 @@ Provides better documentation.
   )
 
 #+end_src
-** org-present-mode
+** Org Present
 #+BEGIN_SRC elisp
 (use-package org-present
   :defer t
@@ -1624,7 +1760,7 @@ Provides better documentation.
 		   )
   )
 #+END_SRC
-** org-capture-mode
+** Org Capture
 #+begin_src elisp
 (with-eval-after-load 'org-capture
   (defun org-capture-start ()
@@ -1642,19 +1778,32 @@ Provides better documentation.
   ;; be ignored until insert mode is entered.
   (add-hook 'org-capture-mode-hook 'org-capture-start))
 #+end_src
-** org-src blocks
+** Org Source blocks
 #+begin_src elisp
-(evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
 (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
+(evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
 (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
 #+end_src
-** toc-org
+** Table of Contents
 #+BEGIN_SRC elisp
 (use-package toc-org
   :defer t
   :hook (toc-org . org-mode)
    )
 #+END_SRC
+** Org Protocol
+#+begin_src elisp
+(use-package org-protocol
+  :defer 2
+  :straight org)
+#+end_src
+** Publish
+#+begin_src elisp
+(use-package ox-publish
+  :defer t
+  :straight org)
+#+end_src
+
 * Treemacs
 ** Keybindings
 #+begin_src elisp
@@ -1945,6 +2094,7 @@ Provides better documentation.
 #+begin_src elisp
 (use-package lsp-treemacs
   :defer t
+  :after lsp
   :init
   (jl/lsp-treemacs-keys)
   :custom
@@ -2866,7 +3016,8 @@ there are no attachments."
 *** Initialisation
 #+begin_src elisp
 (use-package smtpmail
-  :after mu4e)
+  :after mu4e
+  :defer t)
 
 (use-package mu4e
   :straight nil
@@ -3119,28 +3270,12 @@ there are no attachments."
   (jl/ivy-bibtex-keys)
   )
 #+end_src
-** Org-ref
+** Org Ref
 #+begin_src elisp
 (use-package org-ref
-  :commands (org-ref-bibtex-next-entry
-             org-ref-bibtex-previous-entry
-             org-ref-insert-link
-             org-ref-open-in-browser
-             org-ref-open-bibtex-notes
-             org-ref-open-bibtex-pdf
-             org-ref-bibtex-hydra/body
-             org-ref-bibtex-hydra/org-ref-bibtex-new-entry/body-and-exit
-             org-ref-sort-bibtex-entry
-             arxiv-add-bibtex-entry
-             arxiv-get-pdf-add-bibtex-entry
-             doi-utils-add-bibtex-entry-from-doi
-             isbn-to-bibtex
-             pubmed-insert-bibtex-from-pmid)
-  :init
-  (add-hook 'org-mode-hook (lambda () (require 'org-ref)))
-
-  (setq org-ref-completion-library 'org-ref-ivy-cite)
-
+  :defer t
+  :after org
+  :config
   (evil-define-key 'normal bibtex-mode-map
     (kbd "C-j") 'org-ref-bibtex-next-entry
     (kbd "C-k") 'org-ref-bibtex-previous-entry
@@ -3185,15 +3320,32 @@ there are no attachments."
     "ic" 'org-ref-insert-link)
   )
 #+end_src
+** Org Ref Ivy
+#+begin_src elisp
+(use-package org-ref-ivy
+  :after ivy-bibtex
+  :defer t
+  :straight org-ref
+  :custom
+  (org-ref-insert-link-function 'org-ref-insert-link-hydra/body)
+  (org-ref-insert-cite-function 'org-ref-cite-insert-ivy)
+  (org-ref-insert-label-function 'org-ref-insert-label-link)
+  (org-ref-insert-ref-function 'org-ref-insert-ref-link)
+  (org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
+  )
+
+#+end_src
+
 * Yasnippet
 #+begin_src elisp
 (use-package yasnippet
   :defer t
+  :init
+  (yas-global-mode 1)
   :config
   (jl/SPC-keys
     "is" 'ivy-yasnippet)
   )
-(yas-global-mode 1)
 
 (use-package yasnippet-snippets
   :defer t
@@ -3207,7 +3359,8 @@ there are no attachments."
   :defer t
   :after haskell-mode)
 
-(use-package yatemplate)
+(use-package yatemplate
+  :defer t)
 #+end_src
 * Company mode
 ** Initialisation
@@ -3219,15 +3372,6 @@ there are no attachments."
   (company-selection-wrap-around t)
   )
 #+end_src
-** company-box
-#+BEGIN_SRC elisp :tangle no
-(use-package company-box
-  :hook (company-mode . company-box-mode)
-  :custom
-  (company-box-doc-delay 2)
-  (company-box-icons-alist 'company-box-icons-all-the-icons)
-  )
-#+END_SRC
 ** Prescient company
 #+BEGIN_SRC elisp
 (use-package company-prescient
@@ -3568,12 +3712,10 @@ SCOPE can be:
 (use-package nixos-options
   :defer t)
 #+END_SRC
-** Company-nixos-options
+** Company NixOS Options
 #+BEGIN_SRC elisp
 (use-package company-nixos-options
   :defer t
-  ;; :init
-  ;; (push 'company-nixos-options company-backends)
   )
 #+END_SRC
 ** Nix-sandbox
