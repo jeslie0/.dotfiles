@@ -508,15 +508,16 @@ Adds the popup for key commands with mulitple key presses
 #+end_src
 * UI configuration
 #+begin_src elisp
-  (setq inhibit-startup-message t) ;; Disables the startup message
+(setq inhibit-startup-message t) ;; Disables the startup message
 
-  (scroll-bar-mode -1)   ; Disables visible scroll bar
-  (tool-bar-mode -1)     ; Disable the toolbar
-  (tooltip-mode -1)      ; Disable tooltips
-  (set-fringe-mode 10)   ; Give some breathing room
-  (menu-bar-mode -1)     ; Disable the menu bar
-  (blink-cursor-mode -1) ; Makes cursor not blink
-  (column-number-mode 1) ;; Adds column numbering to the modeline
+(scroll-bar-mode -1)   ; Disables visible scroll bar
+(tool-bar-mode -1)     ; Disable the toolbar
+(tooltip-mode -1)      ; Disable tooltips
+(set-fringe-mode 10)   ; Give some breathing room
+(menu-bar-mode -1)     ; Disable the menu bar
+(blink-cursor-mode -1) ; Makes cursor not blink
+(column-number-mode 1) ;; Adds column numbering to the modeline
+(electric-indent-mode -1)
 #+end_src
 ** Warnings
 #+begin_src elisp
@@ -823,13 +824,14 @@ If the universal prefix argument is used then kill also the window."
 (use-package ivy-prescient
   :after counsel
   :custom
+  (prescient-sort-length-enable t)
   (ivy-prescient-retain-classic-highlighting t)
   (prescient-save-file "~/.emacs.d/prescient-data")
   :config
   (ivy-prescient-mode 1)
   (prescient-persist-mode 1)
   )
-#+end_src
+  #+end_src
 * Helpful
 Provides better documentation.
 #+begin_src elisp
@@ -905,10 +907,11 @@ Provides better documentation.
 ** Aggressive indent
 #+BEGIN_SRC elisp
 (use-package aggressive-indent
-  :defer t
-  :hook ((prog-mode text-mode) . aggressive-indent-mode)
+  :defer 2
+  :init
+  (global-aggressive-indent-mode 1)
   )
-#+END_SRC
+  #+END_SRC
 ** Golden Ratio
 #+BEGIN_SRC elisp
 (use-package golden-ratio
@@ -1425,49 +1428,26 @@ Provides better documentation.
 
 #+end_src
 *** Org Roam UI
-**** Functions
-#+BEGIN_SRC elisp :tangle no
-(defun org-roam-ui-open-graph
-    "Ensure `org-roam-ui' is running, then open the `org-roam-ui' webpage."
-  (interactive)
-  (if org-roam-ui-mode
-      (funcall org-roam-ui-browser-function
-               (format "http://localhost:%d" org-roam-ui-port))
-    (org-roam-ui-mode)
+**** Initialisation
+#+begin_src elisp
+(use-package org-roam-ui
+  :defer t
+  :commands (org-roam-ui-mode
+	     org-roam-ui-open)
+  :after org-roam
+  :init
+  (jl/SPC-keys
+    "aorg" 'org-roam-ui-open
+    )
+  :config
+  (jl/major-modes
+    :keymaps 'org-mode-map
+    :major-modes t
+    :states '(normal visual motion)
+    "rg" 'org-roam-ui-open
     )
   )
-#+END_SRC
-**** Initialisation
-#+begin_src elisp :tangle no
-  (use-package websocket
-    :defer t
-    :after org-roam
-    )
-
-  (use-package simple-httpd
-    :after org-roam
-    :defer t
-    )
-
-  (use-package org-roam-ui
-    :straight (:host github
-		     :repo "org-roam/org-roam-ui"
-		     :branch "main"
-		     :files ("*.el" "out")
-		     )
-    ;; :init
-    ;; (jl/SPC-keys
-    ;;   "aorg" 'org-roam-ui-open-graph
-    ;;   )
-    ;; :config
-    ;; (jl/major-modes
-    ;;   :keymaps 'org-mode-map
-    ;;   :major-modes t
-    ;;   :states '(normal visual motion)
-    ;;   "rg" 'org-roam-ui-open-graph
-    ;;   )
-    )
-#+end_src
+  #+end_src
 *** Templates
 #+BEGIN_SRC elisp
 (defun jl/org-roam-templates ()
@@ -1492,6 +1472,7 @@ Provides better documentation.
   (jl/org-roam-templates)
   :config
   (org-roam-db-autosync-mode)
+  (jl/org-roam-key-bindings)
   )
 #+end_src
 *** Org Roam BibTeX
@@ -1544,7 +1525,6 @@ Provides better documentation.
   :init
   (jl/org-mode-Cc-keys)
   :config
-  (jl/org-roam-key-bindings)
   (jl/org-mode-key-bindings)
   ;; (jl/org-font-setup)
   :custom
@@ -1845,6 +1825,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 		      :fork (:host github
 				   :repo "jeslie0/treemacs"))
   :defer t
+  :commands (treemacs)
   :init
   (jl/treemacs-keys)
   (with-eval-after-load 'winum
@@ -1916,7 +1897,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
-#+END_SRC
+        #+END_SRC
 ** Treemacs evil
 #+BEGIN_SRC elisp
 (use-package treemacs-evil
@@ -1981,10 +1962,11 @@ Calling org-babel languages in the following form saves a lot on startup time.
 **** Keybindings
 #+begin_src elisp
 (defun jl/lsp-keys-descr ()
-(interactive)
+  (interactive)
   (jl/major-modes
-    :keymaps 'haskell-mode-map
-    :major-modes t
+    :keymaps 'lsp-mode-map
+    ;; :major-modes t
+    :minor-modes t
     :states '(normal visual motion)
     "a" '(:ignore t :which-key "code action")
     "f" '(:ignore t :which-key "format")
@@ -1997,12 +1979,13 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "F" '(:ignore t :which-key "folder")
     "x" '(:ignore t :which-key "text/code")
     )
-)
+  )
 
 (defun jl/lsp-keys ()
   (jl/major-modes
-    :keymaps 'haskell-mode-map
-    :major-modes t
+    :keymaps 'lsp-mode-map
+    ;; :major-modes t
+    :minor-modes t
     :states '(normal visual motion)
     ;; code actions
     "aa" 'lsp-execute-code-action
@@ -2051,8 +2034,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package lsp-mode
   :defer t
   :commands (lsp lsp-deferred)
-  ;; :hook (haskell-mode . lsp)
-  :init
+  :config
   (jl/lsp-keys)
   (jl/lsp-keys-descr)
   :custom
@@ -2116,13 +2098,15 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+begin_src elisp
 (use-package lsp-treemacs
   :defer t
-  :after lsp
+  :commands (lsp-treemacs-syombols
+	     lsp-treemacs-references
+	     lsp-treemacs-errors-list)
   :init
   (jl/lsp-treemacs-keys)
   :custom
   (lsp-treemacs-sync-mode 1)
   )
-#+end_src
+  #+end_src
 #+BEGIN_SRC elisp :tangle no
 (load-file "~/emacs-packages/lsp-treemacs/lsp-treemacs-themes.el")
 (load-file "~/emacs-packages/lsp-treemacs/lsp-treemacs.el")
@@ -2149,9 +2133,11 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+begin_src elisp
 (use-package lsp-ivy
   :defer t
-  :config
+  :commands (lsp-ivy-workspace-symbol
+             lsp-ivy-global-workspace-symbol)
+  :init
   (jl/lsp-ivy-keys)
-)
+  )
 #+end_src
 ** Proof Assistants
 *** Agda
@@ -2534,16 +2520,18 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+begin_src elisp
 (use-package avy
   :defer t
+  :commands (avy-pop-mark
+	     evil-avy-goto-char-timer
+	     evil-avy-goto-line
+	     evil-avy-goto-word-or-subword-1)
   :init
   (jl/SPC-keys
     "jb" 'avy-pop-mark
     "jj" 'evil-avy-goto-char-timer
     "jl" 'evil-avy-goto-line
-    ;; "ju" 'spacemacs/avy-goto-url
-    ;; "jU" 'spacemacs/avy-open-url
     "jw" 'evil-avy-goto-word-or-subword-1)
   )
-#+end_src
+  #+end_src
 * Readers
 ** Elfeed
 *** Keybindings
@@ -2578,6 +2566,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** Initialisation
 #+begin_src elisp
 (use-package elfeed
+  :commands (elfeed)
   :defer t
   :custom
   (rmh-elfeed-org-files (list "~/Documents/Org/Elfeed/feeds.org"))
@@ -2629,6 +2618,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 *** Elpher initialisation
 #+begin_src elisp
 (use-package elpher
+  :commands (elpher)
   :defer t
   :hook (elpher-mode . variable-pitch-mode)
   :custom
@@ -2662,21 +2652,11 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
    )
   )
 #+end_src
-*** erc-hl-nicks
-#+begin_src elisp
-(use-package erc-hl-nicks
-  :defer t
-  :after erc)
-#+end_src
-*** erc-image
-#+begin_src elisp
-(use-package erc-image
-  :defer t
-  :after erc)
-#+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package erc
+  :commands (erc
+ 	     erc-tls)
   :defer t
   :straight nil
   :hook (erc-mode . erc-image-mode)
@@ -2698,6 +2678,20 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   (jl/erc-keys)
   )
 #+end_src
+*** erc-hl-nicks
+#+begin_src elisp
+(use-package erc-hl-nicks
+  :defer t
+  :hook (erc-mode . erc-hl-nicks-mode)
+  :after erc)
+#+end_src
+*** erc-image
+#+begin_src elisp
+(use-package erc-image
+  :hook (erc-mode . erc-image-mode)
+  :defer t
+  :after erc)
+  #+end_src
 ** EWW
 *** Keybindings
 #+begin_src elisp
@@ -2740,6 +2734,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+begin_src elisp
 (use-package eww
   :defer t
+  :commands (eww)
   :hook (eww-mode . variable-pitch-mode)
   :init
   (jl/eww-global-keys)
@@ -3037,10 +3032,6 @@ there are no attachments."
 #+end_src
 *** Initialisation
 #+begin_src elisp
-(use-package smtpmail
-  :after mu4e
-  :defer t)
-
 (use-package mu4e
   :straight nil
   :hook ((mu4e-compose-mode . visual-fill-column-mode)
@@ -3075,7 +3066,7 @@ there are no attachments."
   (mu4e-use-fancy-chars t)
   (mu4e-display-update-status-in-modeline nil)
   )
-#+end_src
+  #+end_src
 *** mu4e-alert
 #+begin_src elisp
 (use-package mu4e-alert
@@ -3404,7 +3395,7 @@ there are no attachments."
 #+begin_src elisp
 (use-package company
   :defer t
-  :config
+  :init
   (global-company-mode 1)
   )
 #+end_src
@@ -3414,6 +3405,24 @@ there are no attachments."
   :after company
   :config
   (company-prescient-mode 1)
+  )
+#+END_SRC
+** Backends
+*** Company LSP
+#+BEGIN_SRC elisp :tangle no
+(use-package company-lsp
+  :defer t
+  :hook (lsp-mode . (lambda () (setq company-backends '(company-lsp))))
+  :init
+  (push 'company-lsp company-backends)
+  )
+  #+END_SRC
+*** Company TabNine
+#+BEGIN_SRC elisp :tangle no
+(use-package company-tabnine
+  :defer t
+  :init
+  (add-to-list 'company-backends #'company-tabnine)
   )
 #+END_SRC
 * Projectile
@@ -3847,3 +3856,4 @@ SCOPE can be:
   (eshell-git-prompt-use-theme 'powerline)
   )
 #+END_SRC
+
