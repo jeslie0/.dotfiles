@@ -7,8 +7,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Org/Roam/20211008111512-categories_and_higher_categories.org")
+ (filename . "~/Documents/Org/Roam/20211115194841-working_in_several_cores.org")
  (front-context-string)
- (rear-context-string . "gher categories\n")
- (position . 110))
+ (rear-context-string . "n Several Cores\n")
+ (position . 102))
 )

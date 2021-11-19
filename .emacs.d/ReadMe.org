@@ -41,6 +41,10 @@
   - [[#golden-ratio][Golden Ratio]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
   - [[#page-break-lines][Page break lines]]
+  - [[#smartparens][Smartparens]]
+  - [[#save-place-mode][Save place mode]]
+  - [[#variable-pitch][Variable pitch]]
+  - [[#visual-line-mode][Visual line mode]]
 - [[#multiple-cursors][Multiple cursors]]
   - [[#keybindings-1][Keybindings]]
   - [[#initialisation-1][Initialisation]]
@@ -55,15 +59,18 @@
   - [[#functions-3][Functions]]
   - [[#key-bindings][Key bindings]]
   - [[#font-configuration-1][Font configuration]]
-  - [[#org-roam][org-roam]]
+  - [[#org-roam][Org Roam]]
   - [[#org-mode-minor-modes][Org mode minor modes]]
-  - [[#org-settings][Org settings]]
-  - [[#evil-org][evil-org]]
+  - [[#org-initialisation][Org Initialisation]]
+  - [[#org-babel][Org Babel]]
+  - [[#evil-org][Evil Org]]
   - [[#org-caldav][Org CalDav]]
-  - [[#org-present-mode][org-present-mode]]
-  - [[#org-capture-mode][org-capture-mode]]
-  - [[#org-src-blocks][org-src blocks]]
-  - [[#toc-org][toc-org]]
+  - [[#org-present][Org Present]]
+  - [[#org-capture][Org Capture]]
+  - [[#org-source-blocks][Org Source blocks]]
+  - [[#table-of-contents][Table of Contents]]
+  - [[#org-protocol][Org Protocol]]
+  - [[#publish][Publish]]
 - [[#treemacs][Treemacs]]
   - [[#keybindings-2][Keybindings]]
   - [[#initialisation-2][Initialisation]]
@@ -71,7 +78,7 @@
   - [[#treemacs-projectile][Treemacs projectile]]
   - [[#treemacs-icons-dired][Treemacs icons dired]]
   - [[#treemacs-magit][Treemacs magit]]
-  - [[#treemacs-persp][Treemacs Persp]]
+  - [[#treemacs-persp][Treemacs persp]]
   - [[#treemacs-all-the-icons][Treemacs all-the-icons]]
 - [[#languages][Languages]]
   - [[#tools][Tools]]
@@ -90,11 +97,11 @@
   - [[#initialisation-3][Initialisation]]
 - [[#bibtex][Bibtex]]
   - [[#ivy-bibtex][Ivy-bibtex]]
-  - [[#org-ref][Org-ref]]
+  - [[#org-ref][Org Ref]]
+  - [[#org-ref-ivy][Org Ref Ivy]]
 - [[#yasnippet][Yasnippet]]
 - [[#company-mode][Company mode]]
   - [[#initialisation-4][Initialisation]]
-  - [[#company-box][company-box]]
   - [[#prescient-company][Prescient company]]
 - [[#projectile][Projectile]]
   - [[#keybindings-4][Keybindings]]
@@ -124,16 +131,18 @@
 - [[#sql][SQL]]
 - [[#nix][Nix]]
   - [[#functions-6][Functions]]
+  - [[#direnv][Direnv]]
   - [[#nix-mode][Nix-mode]]
   - [[#ivy-nixos-options][Ivy nixos options]]
   - [[#nixos-options][NixOS options]]
-  - [[#company-nixos-options][Company-nixos-options]]
+  - [[#company-nixos-options][Company NixOS Options]]
   - [[#nix-sandbox][Nix-sandbox]]
-- [[#direnv][Direnv]]
+  - [[#cabal-nix-sync][Cabal nix sync]]
 - [[#terminals][Terminals]]
   - [[#term][Term]]
   - [[#vterm][Vterm]]
   - [[#eshell][Eshell]]
+- [[#open-with][Open with]]
 
 * Lexical-binding
 #+begin_src elisp
@@ -861,7 +870,7 @@ Provides better documentation.
   ;; Set the title
   (dashboard-banner-logo-title "Welcome to Emacs")
   ;; Set the logo
-  (dashboard-startup-banner "~/.emacs.d/Icons/EmacsLogo.svg")
+  (dashboard-startup-banner "/home/james/.emacs.d/Icons/EmacsLogo.svg")
   (dashboard-image-banner-max-width 300)
 
   ;; Content is not centered by default. To center, set
@@ -892,7 +901,7 @@ Provides better documentation.
 #+begin_src elisp
 (use-package rainbow-delimiters
   :defer t
-  :hook ((prog-mode agda2-mode org-mode) . rainbow-delimiters-mode)
+  :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode)
   )
 #+end_src
 ** Outshine
@@ -910,6 +919,7 @@ Provides better documentation.
   :defer 2
   :init
   (global-aggressive-indent-mode 1)
+  (add-to-list 'aggressive-indent-excluded-modes 'haskell-cabal-mode)
   )
   #+END_SRC
 ** Golden Ratio
@@ -1382,49 +1392,49 @@ Provides better documentation.
 ** Org Roam
 *** Keybindings
 #+begin_src elisp
-  (defun jl/org-roam-global-keys ()
-    (jl/SPC-keys
-      "aor" '(:ignore t :which-key "org-roam")
-      "aord" '(:ignore t :which-key "dailies")
-      "aort" '(:ignore t :which-key "tags")
+(defun jl/org-roam-global-keys ()
+  (jl/SPC-keys
+    "aor" '(:ignore t :which-key "org-roam")
+    "aord" '(:ignore t :which-key "dailies")
+    "aort" '(:ignore t :which-key "tags")
 
-      "aordy" 'org-roam-dailies-goto-yesterday
-      "aordt" 'org-roam-dailies-goto-today
-      "aordT" 'org-roam-dailies-goto-tomorrow
-      "aordd" 'org-roam-dailies-goto-date
-      "aorf" 'org-roam-node-find
-      "aorn" 'org-roam-node-find
-      "aorg" 'org-roam-graph
-      "aori" 'org-roam-node-insert
-      "aorl" 'org-roam-buffer-toggle
-      "aorta" 'org-roam-tag-add
-      "aortr" 'org-roam-tag-remove
-      "aora" 'org-roam-alias-add
-      "aorI" 'org-id-get-create
-      )
+    "aordy" 'org-roam-dailies-goto-yesterday
+    "aordt" 'org-roam-dailies-goto-today
+    "aordT" 'org-roam-dailies-goto-tomorrow
+    "aordd" 'org-roam-dailies-goto-date
+    "aorf" 'org-roam-node-find
+    "aorn" 'org-roam-node-find
+    "aorg" 'org-roam-ui-open
+    "aori" 'org-roam-node-insert
+    "aorl" 'org-roam-buffer-toggle
+    "aorta" 'org-roam-tag-add
+    "aortr" 'org-roam-tag-remove
+    "aora" 'org-roam-alias-add
+    "aorI" 'org-id-get-create
     )
+  )
 
-  (defun jl/org-roam-key-bindings ()
-    (jl/major-modes
-      :states 'normal
-      :keymaps 'org-mode-map
-      :major-mode '(org-mode)
+(defun jl/org-roam-key-bindings ()
+  (jl/major-modes
+    :states 'normal
+    :keymaps 'org-mode-map
+    :major-mode '(org-mode)
 
-      "rdy" 'org-roam-dailies-goto-yesterday
-      "rdt" 'org-roam-dailies-goto-today
-      "rdT" 'org-roam-dailies-goto-tomorrow
-      "rdd" 'org-roam-dailies-goto-date
-      "rf" 'org-roam-node-find
-      "rn" 'org-roam-node-find
-      "rg" 'org-roam-graph
-      "ri" 'org-roam-node-insert
-      "rl" 'org-roam-buffer-toggle
-      "rta" 'org-roam-tag-add
-      "rtr" 'org-roam-tag-remove
-      "ra" 'org-roam-alias-add
-      "rI" 'org-id-get-create
-      )
+    "rdy" 'org-roam-dailies-goto-yesterday
+    "rdt" 'org-roam-dailies-goto-today
+    "rdT" 'org-roam-dailies-goto-tomorrow
+    "rdd" 'org-roam-dailies-goto-date
+    "rf" 'org-roam-node-find
+    "rn" 'org-roam-node-find
+    "rg" 'org-roam-ui-open
+    "ri" 'org-roam-node-insert
+    "rl" 'org-roam-buffer-toggle
+    "rta" 'org-roam-tag-add
+    "rtr" 'org-roam-tag-remove
+    "ra" 'org-roam-alias-add
+    "rI" 'org-id-get-create
     )
+  )
 
 #+end_src
 *** Org Roam UI
@@ -1435,17 +1445,6 @@ Provides better documentation.
   :commands (org-roam-ui-mode
 	     org-roam-ui-open)
   :after org-roam
-  :init
-  (jl/SPC-keys
-    "aorg" 'org-roam-ui-open
-    )
-  :config
-  (jl/major-modes
-    :keymaps 'org-mode-map
-    :major-modes t
-    :states '(normal visual motion)
-    "rg" 'org-roam-ui-open
-    )
   )
   #+end_src
 *** Templates
@@ -1468,9 +1467,11 @@ Provides better documentation.
   (org-roam-directory "/home/james/Documents/Org/Roam")
   (org-roam-dailies-directory "/home/james/Documents/Org/Roam/Dailies/")
   :init
+  (setq org-roam-v2-ack t)
   (jl/org-roam-global-keys)
   (jl/org-roam-templates)
   :config
+  (setq org-roam-v2-ack t)
   (org-roam-db-autosync-mode)
   (jl/org-roam-key-bindings)
   )
@@ -1710,16 +1711,11 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+END_SRC
 ** Evil Org
 #+begin_src elisp
-(fset 'evil-redirect-digit-argument 'ignore)
 (use-package evil-org
   :defer t
   :after org
   :hook (org-mode . evil-org-mode)
   :config
-  ;; Evil-org fix
-  (add-to-list 'evil-digit-bound-motions 'evil-org-beginning-of-line)
-  (evil-define-key 'motion 'evil-org-mode
-    (kbd "0") 'evil-org-beginning-of-line)
   )
 (use-package evil-org-agenda
   :defer t
@@ -1793,7 +1789,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+BEGIN_SRC elisp
 (use-package toc-org
   :defer t
-  :hook (toc-org . org-mode)
+  :hook (org-mode . toc-org-mode)
   )
   #+END_SRC
 ** Org Protocol
@@ -1964,9 +1960,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (defun jl/lsp-keys-descr ()
   (interactive)
   (jl/major-modes
-    :keymaps 'lsp-mode-map
-    ;; :major-modes t
-    :minor-modes t
+    :keymaps 'haskell-mode-map
+    :major-modes t
     :states '(normal visual motion)
     "a" '(:ignore t :which-key "code action")
     "f" '(:ignore t :which-key "format")
@@ -1983,9 +1978,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 
 (defun jl/lsp-keys ()
   (jl/major-modes
-    :keymaps 'lsp-mode-map
-    ;; :major-modes t
-    :minor-modes t
+    :keymaps 'haskell-mode-map
+    :major-modes t
     :states '(normal visual motion)
     ;; code actions
     "aa" 'lsp-execute-code-action
@@ -2431,8 +2425,6 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   :defer t
   :hook
   (haskell-mode . lsp)
-  (haskell-mode . (lambda ()
-		    (setq prettify-symbols-alist haskell-pretty-symbols)))
   :init
   (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
@@ -2564,7 +2556,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   )
 #+end_src
 *** Initialisation
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package elfeed
   :commands (elfeed)
   :defer t
@@ -3407,24 +3399,6 @@ there are no attachments."
   (company-prescient-mode 1)
   )
 #+END_SRC
-** Backends
-*** Company LSP
-#+BEGIN_SRC elisp :tangle no
-(use-package company-lsp
-  :defer t
-  :hook (lsp-mode . (lambda () (setq company-backends '(company-lsp))))
-  :init
-  (push 'company-lsp company-backends)
-  )
-  #+END_SRC
-*** Company TabNine
-#+BEGIN_SRC elisp :tangle no
-(use-package company-tabnine
-  :defer t
-  :init
-  (add-to-list 'company-backends #'company-tabnine)
-  )
-#+END_SRC
 * Projectile
 ** Keybindings
 #+begin_src elisp
@@ -3492,6 +3466,9 @@ there are no attachments."
   :defer t
   :init
   (global-flycheck-mode t)
+  :custom
+  (flycheck-executable-find
+   (lambda (cmd) (direnv-update-environment default-directory) (executable-find cmd)))
   )
 #+end_src
 * Flyspell
@@ -3727,6 +3704,17 @@ SCOPE can be:
   (interactive)
   (find-file-existing "~/.config/nixpkgs/home.nix"))
 #+END_SRC
+** Direnv
+#+BEGIN_SRC elisp
+(use-package direnv
+  :hook ((haskell-mode haskell-cabal-mode) . direnv-mode)
+  :defer t
+  :config
+  (direnv-mode)
+  :custom
+  (direnv-always-show-summary nil)
+  )
+#+END_SRC
 ** Nix-mode
 #+begin_src elisp
 (use-package nix-mode
@@ -3776,14 +3764,17 @@ SCOPE can be:
    (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
   )
 #+end_src
-* Direnv
+** Cabal nix sync
 #+BEGIN_SRC elisp
-(use-package direnv
-  :defer t
-  :config
-  (direnv-mode)
-  :custom
-  (direnv-always-show-summary nil)
+(use-package cabal-nix-sync
+  :straight (:host github
+		   :repo "jeslie0/cabal-nix-sync"
+		   :branch "main")
+  :hook (haskell-cabal-mode . cabal-nix-sync-mode)
+  :commands (cabal-to-nix
+	     cabal-nix-update
+	     cabal-nix-init
+	     cabal-nix-sync-mode)
   )
 #+END_SRC
 * Terminals
@@ -3856,4 +3847,17 @@ SCOPE can be:
   (eshell-git-prompt-use-theme 'powerline)
   )
 #+END_SRC
-
+* Open with
+#+BEGIN_SRC elisp :tangle no
+(use-package openwith
+  :commands (find-file
+	     counsel-find-file
+	     dired
+	     ranger
+	     deer)
+  :custom
+  (openwith-associations '(("\\.pdf\\'" "zathura" (file))))
+  :config
+  (openwith-mode 1)
+  )
+#+END_SRC
