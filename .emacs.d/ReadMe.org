@@ -336,6 +336,13 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
     :prefix "SPC m"
     :global-prefix ","
     )
+(general-create-definer jl/minor-modes
+    ;; :keymaps '(normal visual motion)
+    :states '(normal visual motion)
+    :definer 'minor-mode
+    :prefix "SPC m"
+    :global-prefix ","
+    )
 
   (general-create-definer jl/C-c-keys
     ;; :keymaps '(normal visual insert emacs operator motion)
@@ -1956,71 +1963,128 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ** Tools
 *** LSP
 **** Keybindings
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (defun jl/lsp-keys-descr ()
-  (interactive)
   (jl/major-modes
-    :keymaps 'haskell-mode-map
-    :major-modes t
-    :states '(normal visual motion)
-    "a" '(:ignore t :which-key "code action")
-    "f" '(:ignore t :which-key "format")
-    "g" '(:ignore t :which-key "goto")
-    "h" '(:ignore t :which-key "help")
-    "b" '(:ignore t :which-key "backend")
-    "r" '(:ignore t :which-key "refactor")
-    "l" '(:ignore t :which-key "lsp")
-    "T" '(:ignore t :which-key "toggle")
-    "F" '(:ignore t :which-key "folder")
-    "x" '(:ignore t :which-key "text/code")
-    )
+   :keymaps 'lsp-mode-map
+   :states '(normal visual motion)
+   :major-modes t
+   "a" '(:ignore t :which-key "code action")
+   "f" '(:ignore t :which-key "format")
+   "g" '(:ignore t :which-key "goto")
+   "h" '(:ignore t :which-key "help")
+   "b" '(:ignore t :which-key "backend")
+   "r" '(:ignore t :which-key "refactor")
+   "l" '(:ignore t :which-key "lsp")
+   "T" '(:ignore t :which-key "toggle")
+   "F" '(:ignore t :which-key "folder")
+   "x" '(:ignore t :which-key "text/code")
+   )
   )
 
 (defun jl/lsp-keys ()
   (jl/major-modes
-    :keymaps 'haskell-mode-map
-    :major-modes t
-    :states '(normal visual motion)
-    ;; code actions
-    "aa" 'lsp-execute-code-action
-    "al" 'lsp-avy-lens
-    "as" 'lsp-ui-sideline-apply-code-actions
-    ;; format
-    "fb" 'lsp-format-buffer
-    "fr" 'lsp-format-region
-    "fo" 'lsp-organize-imports
-    ;; goto
-    ;; N.B. implementation and references covered by xref bindings / lsp provider...
-    "gt" #'lsp-find-type-definition
-    ;; "gk" #'spacemacs/lsp-avy-goto-word
-    ;; "gK" #'spacemacs/lsp-avy-goto-symbol
-    "gM" #'lsp-ui-imenu
-    ;; help
-    "hh" #'lsp-describe-thing-at-point
-    ;; jump
-    ;; backend
-    "bd" #'lsp-describe-session
-    "br" #'lsp-workspace-restart
-    "bs" #'lsp-workspace-shutdown
-    "bv" #'lsp-version
-    ;; refactor
-    "rR" #'lsp-rename
-    ;; toggles
-    "Td" #'lsp-ui-doc-mode
-    "Ts" #'lsp-ui-sideline-mode
-    ;; "TF" #'spacemacs/lsp-ui-doc-func
-    ;; "TS" #'spacemacs/lsp-ui-sideline-symb
-    ;; "TI" #'spacemacs/lsp-ui-sideline-ignore-duplicate
-    "Tl" #'lsp-lens-mode
-    ;; folders
-    "Fs" #'lsp-workspace-folders-switch
-    "Fr" #'lsp-workspace-folders-remove
-    "Fa" #'lsp-workspace-folders-add
-    ;; text/code
-    "xh" #'lsp-document-highlight
-    "xl" #'lsp-lens-show
-    "xL" #'lsp-lens-hide
-    )
+   :keymaps 'lsp-mode-map
+   :major-modes t
+   :states '(normal visual motion)
+   ;; code actions
+   "aa" 'lsp-execute-code-action
+   "al" 'lsp-avy-lens
+   "as" 'lsp-ui-sideline-apply-code-actions
+   ;; format
+   "fb" 'lsp-format-buffer
+   "fr" 'lsp-format-region
+   "fo" 'lsp-organize-imports
+   ;; goto
+   ;; N.B. implementation and references covered by xref bindings / lsp provider...
+   "gt" #'lsp-find-type-definition
+   ;; "gk" #'spacemacs/lsp-avy-goto-word
+   ;; "gK" #'spacemacs/lsp-avy-goto-symbol
+   "gM" #'lsp-ui-imenu
+   ;; help
+   "hh" #'lsp-describe-thing-at-point
+   ;; jump
+   ;; backend
+   "bd" #'lsp-describe-session
+   "br" #'lsp-workspace-restart
+   "bs" #'lsp-workspace-shutdown
+   "bv" #'lsp-version
+   ;; refactor
+   "rR" #'lsp-rename
+   ;; toggles
+   "Td" #'lsp-ui-doc-mode
+   "Ts" #'lsp-ui-sideline-mode
+   ;; "TF" #'spacemacs/lsp-ui-doc-func
+   ;; "TS" #'spacemacs/lsp-ui-sideline-symb
+   ;; "TI" #'spacemacs/lsp-ui-sideline-ignore-duplicate
+   "Tl" #'lsp-lens-mode
+   ;; folders
+   "Fs" #'lsp-workspace-folders-switch
+   "Fr" #'lsp-workspace-folders-remove
+   "Fa" #'lsp-workspace-folders-add
+   ;; text/code
+   "xh" #'lsp-document-highlight
+   "xl" #'lsp-lens-show
+   "xL" #'lsp-lens-hide
+   )
+  )
+#+end_src
+#+begin_src elisp
+(defun jl/lsp-keys ()
+  (general-define-key
+   :keymaps 'lsp-mode-map
+   :states '(normal visual motion)
+   :prefix ","
+   "ws" #'lsp
+   "wr" #'lsp-workspace-restart
+   "wq" #'lsp-workspace-shutdown
+   "wd" #'lsp-describe-session
+   "wD" #'lsp-disconnect
+   "wv" #'lsp-version
+
+   "==" #'lsp-format-buffer
+   "=r" #'lsp-format-region
+
+   "Fa" #'lsp-workspace-folders-add
+   "Fr" #'lsp-workspace-folders-remove
+   "Fs" #'lsp-workspace-folders-switch
+   "Fb" #'lsp-workspace-blacklist-remove
+
+   "Tl" #'lsp-lens-mode
+   "TL" #'lsp-toggle-trace-io
+   "Th" #'lsp-toggle-symbol-highlight
+   "TS" #'lsp-ui-sideline-mode
+   "Td" #'lsp-ui-doc-mode
+   "Ts" #'lsp-toggle-signature-auto-activate
+   "Tf" #'lsp-toggle-on-type-formatting
+   "TT" #'lsp-treemacs-sync-mode
+   "Tld" #'lsp-ui-doc-mode
+   "Tls" #'lsp-ui-sideline-mode
+
+   "gg" #'lsp-find-definition
+   "gr" #'lsp-find-references
+   "gi" #'lsp-find-implementation
+   "gt" #'lsp-find-type-definition
+   "gd" #'lsp-find-declaration
+   "gh" #'lsp-treemacs-call-hierarchy
+   ;; "ga" #'lsp-find-m
+
+   "hh" #'lsp-describe-thing-at-point
+   "hs" #'lsp-signature-activate
+   "hg" #'lsp-ui-doc-show
+
+   "rr" #'lsp-rename
+   "ro" #'lsp-organize-imports
+
+   "aa" #'lsp-execute-code-action
+   "al" #'lsp-avy-lens
+   "ah" #'lsp-document-highlight
+   "as" #'lsp-ui-sideline-apply-code-actions
+
+   "Gg" #'lsp-ui-peek-find-definitions
+   "Gr" #'lsp-ui-peek-find-references
+   "Gi" #'lsp-ui-peek-find-implementation
+   "Gs" #'lsp-ui-peek-find-workspace-symbol)
   )
 #+end_src
 **** Initialisation
@@ -2028,10 +2092,12 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package lsp-mode
   :defer t
   :commands (lsp lsp-deferred)
+  :hook (lsp-mode . lsp-enable-which-key-integration)
   :config
   (jl/lsp-keys)
-  (jl/lsp-keys-descr)
+  ;; (jl/lsp-keys-descr)
   :custom
+  (lsp-keymap-prefix ",")
   (lsp-idle-delay 0.500)
   (lsp-lens-place-position 'above-line)
   (lsp-log-io nil)
@@ -2077,15 +2143,15 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ***** Keybindings
 #+begin_src elisp
 (defun jl/lsp-treemacs-keys ()
-  (jl/major-modes
-    :keymaps 'haskell-mode-map
-    :states '(normal motion visual)
-    :major-modes t
-    "t"  '(:toggle nil :which-key "lsp-treemacs")
-    "te" 'lsp-treemacs-errors-list
-    "tr" 'lsp-treemacs-references
-    "ts" 'lsp-treemacs-symbols
-    )
+  (general-define-key
+   :keymaps 'lsp-mode-map
+   :states '(normal visual motion)
+   :prefix ","
+   "t"  '(:toggle nil :which-key "lsp-treemacs")
+   "te" 'lsp-treemacs-errors-list
+   "tr" 'lsp-treemacs-references
+   "ts" 'lsp-treemacs-symbols
+   )
   )
 #+end_src
 ***** Initialisation
@@ -2113,10 +2179,10 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ***** Keybindings
 #+BEGIN_SRC elisp
 (defun jl/lsp-ivy-keys ()
-  (jl/major-modes
-    :keymaps 'haskell-mode-map
-    :states '(normal motion visual)
-    :major-modes t
+  (general-define-key
+    :keymaps 'lsp-mode-map
+    :states '(normal visual motion)
+    :prefix ","
     "i"  '(:toggle nil :which-key "lsp-ivy")
     "is" 'lsp-ivy-workspace-symbol
     "iS" 'lsp-ivy-global-workspace-symbol
@@ -2202,11 +2268,16 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package agda2-mode
   ;; :load-path "/home/james/.cabal/share/x86_64-linux-ghc-8.10.5/Agda-2.6.3/emacs-mode/agda2.el"
   :defer t
-  :init
-  (load-file (let ((coding-system-for-read 'utf-8))
-               (shell-command-to-string "agda-mode locate")))
   :config
   (jl/agda-keys)
+
+  (if (file-exists-p "~/agda/result/bin")
+      (progn (add-to-list 'exec-path "~/agda/result/bin/")
+	     (load-file (let ((coding-system-for-read 'utf-8))
+			  (shell-command-to-string "~/agda/result/bin/agda-mode locate"))))
+    (load-file (let ((coding-system-for-read 'utf-8))
+		 (shell-command-to-string "agda-mode locate")))
+    )
   )
 #+end_src
 **** org-agda-mode
@@ -2299,7 +2370,6 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+begin_src elisp
 (use-package lsp-haskell
   :defer t
-  :after haskell-mode
   :custom
   (lsp-haskell-server-path "haskell-language-server-wrapper")
   (lsp-haskell-server-args ())
@@ -2423,8 +2493,11 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+begin_src elisp
 (use-package haskell-mode
   :defer t
-  :hook
-  (haskell-mode . lsp)
+  :hook ((haskell-mode . lsp)
+	 (haskell-mode . lsp-mode)
+	 (haskell-literate-mode . lsp)
+	 (haskell-mode . lsp-mode)
+	 )
   :init
   (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
@@ -3101,7 +3174,7 @@ there are no attachments."
 #+begin_src elisp
 (defun jl/auctex-keys ()
   (jl/major-modes
-    :keymaps 'LaTeX-mode-map
+    :keymaps 'latex-mode-map
     :states '(normal visual motion)
     :major-modes t
     "xf" '(:ignore t :which-key "fonts")
@@ -3112,7 +3185,12 @@ there are no attachments."
     "i" '(:ignore t :which-key "insert")
     "p" '(:ignore t :which-key "preview")
     "r" '(:ignore t :which-key "reftex")
+    )
 
+  (jl/major-modes
+    :keymaps 'LaTeX-mode-map
+    :states '(normal visual motion)
+    :major-modes t
     "\\"  'TeX-insert-macro                            ;; C-c C-m
     "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
     "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
@@ -3466,9 +3544,6 @@ there are no attachments."
   :defer t
   :init
   (global-flycheck-mode t)
-  :custom
-  (flycheck-executable-find
-   (lambda (cmd) (direnv-update-environment default-directory) (executable-find cmd)))
   )
 #+end_src
 * Flyspell
