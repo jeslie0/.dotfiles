@@ -3782,7 +3782,7 @@ SCOPE can be:
 ** Direnv
 #+BEGIN_SRC elisp
 (use-package direnv
-  :hook ((haskell-mode haskell-cabal-mode) . direnv-mode)
+  ;; :hook ((haskell-mode haskell-cabal-mode) . direnv-mode)
   :defer t
   :config
   (direnv-mode)
@@ -3845,7 +3845,8 @@ SCOPE can be:
   :straight (:host github
 		   :repo "jeslie0/cabal-nix-sync"
 		   :branch "main")
-  :hook (haskell-cabal-mode . cabal-nix-sync-mode)
+  ;; :hook (haskell-cabal-mode . cabal-nix-sync-mode)
+  :defer t
   :commands (cabal-to-nix
 	     cabal-nix-update
 	     cabal-nix-init
