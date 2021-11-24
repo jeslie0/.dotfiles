@@ -324,3 +324,6 @@ bindsym Ctrl+Mod4+p exec 'passmenu'
 
 # Screensharing
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+# Cursor
+seat seat0 xcursor_theme Adwaita 48
