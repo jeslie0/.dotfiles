@@ -1,8 +1,10 @@
-personal_ws-1.1 en 82 
+personal_ws-1.1 en 85 
 Agda
 Coq
 Dinaturality
+Feeld
 Grothendieck
+Heliax
 HoTT
 Homological
 Isomorphisms
@@ -10,6 +12,7 @@ Mohabat
 Monoidal
 NixOS
 Precategory
+Topos
 Unitors
 Yoneda
 acyclic

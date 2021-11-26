@@ -1423,7 +1423,7 @@ Provides better documentation.
 
 (defun jl/org-roam-key-bindings ()
   (jl/major-modes
-    :states 'normal
+    :states '(normal visual motion)
     :keymaps 'org-mode-map
     :major-mode '(org-mode)
 
@@ -2371,8 +2371,16 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package lsp-haskell
   :defer t
   :custom
-  (lsp-haskell-server-path "haskell-language-server-wrapper")
+  ;; (lsp-haskell-server-path "~/haskell-language-server/result/bin/haskell-language-server-wrapper")
+  ;; (lsp-haskell-server-path "haskell-language-server-wrapper")
   (lsp-haskell-server-args ())
+  :config
+  (if (file-exists-p "~/haskell-language-server/result/bin")
+      (progn
+	(setq lsp-haskell-server-path "~/haskell-language-server/result/bin/haskell-language-server")
+	(add-to-list 'exec-path "~/haskell-language-server/result/bin"))
+    (setq lsp-haskell-server-path "haskell-language-server-wrapper")
+    )
   )
 #+end_src
 **** Functions
@@ -2497,6 +2505,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 	 (haskell-mode . lsp-mode)
 	 (haskell-literate-mode . lsp)
 	 (haskell-mode . lsp-mode)
+	 (haskell-mode . auto-fill-mode)
 	 )
   :init
   (jl/haskell-keys)
