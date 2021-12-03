@@ -29,6 +29,7 @@
   - [[#perspective][Perspective]]
   - [[#pretty-symbols][Pretty symbols]]
   - [[#fillings][Fillings]]
+  - [[#transparency][Transparency]]
 - [[#ivy-and-counsel-completion-framework][Ivy and Counsel completion framework]]
 - [[#helpful][Helpful]]
 - [[#dashboard][Dashboard]]
@@ -796,6 +797,14 @@ If the universal prefix argument is used then kill also the window."
 #+BEGIN_SRC elisp
 ;; (add-hook 'prog-mode-hook 'auto-fill-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
+#+END_SRC
+** Transparency
+#+BEGIN_SRC elisp :tangle no
+;; set transparency
+;; (set-frame-parameter (selected-frame) 'alpha '(85 85))
+;; (add-to-list 'default-frame-alist '(alpha 85 85))
+;; (setq default-frame-alist
+;;       '((alpha . 50)))
 #+END_SRC
 * Ivy and Counsel completion framework
 #+begin_src elisp
@@ -1584,44 +1593,6 @@ Provides better documentation.
   (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
                         ("~/Documents/Org/GTD/someday.org" :level . 1)
                         ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
-  ;; Org publish
-  (org-publish-project-alist
-   '(("jeslie0.github.io Posts" ; Blog name
-      :base-directory "~/Documents/jeslie0.github.io/org/"
-      :base-extension "org"
-                                        ;Path to Jekyll posts
-      :publishing-directory "~/Documents/jeslie0.github.io/_posts/"
-      ;; :recursive t
-      :publishing-function org-html-publish-to-html
-      :headline-levels 4
-      :html-extension "html"
-      :body-only t
-      ;; :auto-sitemap t
-      ;; :sitemap-title "Blog Index"
-      ;; :sitemap-filename "blog-index.org"
-      ;; :sitemap-style list
-      )
-     ("jeslie0.github.io main"
-      :base-directory "~/Documents/jeslie0.github.io/org/"
-      :base-extension "org"
-      :publishing-directory "~/Documents/jeslie0.github.io"
-      :recursive t
-      :publishing-function org-html-publish-to-html
-      :headline-levels 4
-      ;; :html-extension "html"
-      :auto-preamble nil
-      ;; :body-only t
-      )
-     ("UniAgda HTML"
-      :base-directory "~/agdalibs/Univalent-Agda/org/"
-      :base-extension "org"
-      :publishing-directory "~/jeslie0.github.io/UniAgda/"
-      :publishing-function org-html-publish-to-html
-      :auto-preamble nil
-      ;; :body-only t
-      )
-     )
-   )
   )
 #+end_src
 ** Org Babel
@@ -2357,11 +2328,10 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+BEGIN_SRC elisp
 (use-package proof-general
   :defer t
+  :hook (coq-mode . jl/coq-mode-keys)
   :custom
   (proof-splash-enable nil)
   (proof-three-window-mode-policy 'hybrid)
-  :config
-  (jl/coq-mode-keys)
   )
 #+END_SRC
 ** Programming

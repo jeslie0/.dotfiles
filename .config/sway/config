@@ -23,7 +23,9 @@ set $menu dmenu_path | bemenu -m "$(/home/james/bemenuFocus/bemenuFocus)" | xarg
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /home/james/Images/Wallpapers/7285.jpg fill
+# output * bg /home/james/Images/Wallpapers/wp6705749-moutains-ultra-hd-wallpapers.jpg fill
+# This gives backgrounds changing every 10 mins.
+exec "swaychanger ~/Images/Wallpapers/."
 #
 # Example configuration:
 #
@@ -215,8 +217,9 @@ bar {
         font pango:Source Code Pro, Font Awesome 10
         status_command i3status
 
-        # mode hide
-        # modifier Mod4
+        mode hide
+	hidden_state hide
+        modifier Mod4
         position bottom
 }
 
@@ -327,3 +330,8 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 
 # Cursor
 seat seat0 xcursor_theme Adwaita 24
+
+# Opacity settings. Not configured
+# set $opacity 0.9
+# for_window [class=".*"] opacity $opacity
+# for_window [app_id=".*"] opacity $opacity

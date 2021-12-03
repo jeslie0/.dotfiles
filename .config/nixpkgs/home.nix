@@ -28,8 +28,14 @@
                     pciutils
                     chromium
                     zoom-us
-                    (import /home/james/Documents/Nix/passbemenu/passbemenu.nix)
+                    (import (fetchFromGitHub {
+                      owner = "jeslie0";
+                      repo = "passbemenu";
+                      rev = "ec7adda34eeb23216211dc94c2c2c0d74c1fee8e";
+                      sha256 = "06ayhdkd2km66k06gn65sfnyajg8spvnspaqgba8djcqq0gvwvc2";
+                    }))
                     obs-studio
+                    pcmanfm
   ];
 
 }

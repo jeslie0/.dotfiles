@@ -1,5 +1,4 @@
 [Configuration]
-BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
 MiscAlwaysShowTabs=FALSE
 MiscBell=FALSE
 MiscBellUrgent=FALSE
@@ -35,4 +34,7 @@ ColorCursor=#D8DEE9
 ColorBold=#D8DEE9
 ColorBoldUseDefault=FALSE
 TabActivityColor=#88C0D0
+BackgroundDarkness=0.910000
+BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
 
