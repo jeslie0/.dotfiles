@@ -23,19 +23,29 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  home.packages =   with pkgs; [
-                    pinentry_emacs
-                    pciutils
-                    chromium
-                    zoom-us
-                    (import (fetchFromGitHub {
-                      owner = "jeslie0";
-                      repo = "passbemenu";
-                      rev = "ec7adda34eeb23216211dc94c2c2c0d74c1fee8e";
-                      sha256 = "06ayhdkd2km66k06gn65sfnyajg8spvnspaqgba8djcqq0gvwvc2";
-                    }))
-                    obs-studio
-                    pcmanfm
+  home.packages = with pkgs; [
+    pinentry_emacs
+    pciutils
+    chromium
+    zoom-us
+    # (import (fetchTarball https://github.com/haskell/haskell-language-server/archive/745ef26f406dbdd5e4a538585f8519af9f1ccb09.tar.gz)).defaultPackage.x86_64-linux
+    # (import (fetchFromGitHub {
+    #   owner = "haskell";
+    #   repo = "haskell-language-server";
+    #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
+    #   sha256 = "10vj4wb0gdvfnrg1d7r3dqjnkw34ryh7v4fvxsby6fvn1l2kvsj5";
+    # }))
+    (import (fetchFromGitHub {
+      owner = "jeslie0";
+      repo = "passbemenu";
+      rev = "ec7adda34eeb23216211dc94c2c2c0d74c1fee8e";
+      sha256 = "06ayhdkd2km66k06gn65sfnyajg8spvnspaqgba8djcqq0gvwvc2";
+    }))
+    obs-studio
+    pcmanfm
+    gnuplot
   ];
+
+  allowBroken = true;
 
 }

@@ -25,7 +25,7 @@ set $menu dmenu_path | bemenu -m "$(/home/james/bemenuFocus/bemenuFocus)" | xarg
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 # output * bg /home/james/Images/Wallpapers/wp6705749-moutains-ultra-hd-wallpapers.jpg fill
 # This gives backgrounds changing every 10 mins.
-exec "swaychanger ~/Images/Wallpapers/."
+exec "swayBGChanger ~/Images/Wallpapers/."
 #
 # Example configuration:
 #
@@ -245,9 +245,15 @@ bindsym --locked XF86MonBrightnessDown exec light -U 2 # decrease screen brightn
 
 # play/pause
 bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym --locked XF86AudioPlay&Mod4 exec playerctl play-pause
+
 bindsym --locked XF86AudioNext exec playerctl next
+bindsym --locked XF86AudioNext&Mod4 exec playerctl next
 bindsym --locked XF86AudioPrev exec playerctl next && playerctl previous && playerctl previous
+bindsym --locked XF86AudioPrev&Mod4 exec playerctl next && playerctl previous && playerctl previous
+
 bindsym --locked XF86AudioStop exec playerctl stop
+bindsym --locked XF86AudioStop&Mod4 exec playerctl stop
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
