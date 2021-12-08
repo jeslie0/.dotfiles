@@ -144,6 +144,8 @@
   - [[#vterm][Vterm]]
   - [[#eshell][Eshell]]
 - [[#open-with][Open with]]
+- [[#dired][Dired]]
+  - [[#peep][Peep]]
 
 * Lexical-binding
 #+begin_src elisp
@@ -621,6 +623,10 @@ We use doom modeline.
   :init (doom-modeline-mode 1)
   )
 #+end_src
+Emacs 29 makes the modeline default to the variable pitch font face. I don't like this really, so we change it back.
+#+BEGIN_SRC elisp
+(set-face-attribute 'mode-line-active nil :inherit nil)
+#+END_SRC
 ** Emacs-winum
 *** Keybindings
 #+begin_src elisp
@@ -1117,6 +1123,12 @@ Provides better documentation.
 * Org mode
 ** Functions
 #+begin_src elisp
+(defun org-link ()
+  (interactive)
+  (if (string= (car (org-thing-at-point)) "link")
+      (org-return)
+    (evil-ret))
+  )
 (defun org-bold ()
   (interactive)
   (org-emphasize ?\*)
@@ -1153,7 +1165,7 @@ Provides better documentation.
   (general-define-key
    :keymaps 'org-mode-map
    :states '(normal visual motion)
-   "RET" 'org-return
+   "RET" 'org-link
    )
 
   (jl/major-modes
@@ -3725,7 +3737,7 @@ SCOPE can be:
 #+end_src
 * Ranger
 ** Keybindings
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (defun jl/ranger-keys ()
   (jl/SPC-keys
     "atr" 'ranger
@@ -3733,7 +3745,7 @@ SCOPE can be:
   )
 #+end_src
 ** Initialisation
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package ranger
   :defer t
   :init
@@ -3922,4 +3934,18 @@ SCOPE can be:
   :config
   (openwith-mode 1)
   )
+#+END_SRC
+* Dired
+** Peep
+#+BEGIN_SRC elisp
+(use-package peep-dired
+  :defer t ; don't access `dired-mode-map' until `peep-dired' is loaded
+  :after dired
+  :config
+  (general-define-key
+   :keymaps dired-mode-map
+   "P" 'peep-dired
+   )
+  )
+
 #+END_SRC

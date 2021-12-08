@@ -35,17 +35,17 @@
     #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
     #   sha256 = "10vj4wb0gdvfnrg1d7r3dqjnkw34ryh7v4fvxsby6fvn1l2kvsj5";
     # }))
+    github:jeslie0/testflake
     (import (fetchFromGitHub {
       owner = "jeslie0";
       repo = "passbemenu";
       rev = "ec7adda34eeb23216211dc94c2c2c0d74c1fee8e";
       sha256 = "06ayhdkd2km66k06gn65sfnyajg8spvnspaqgba8djcqq0gvwvc2";
     }))
-    obs-studio
-    pcmanfm
-    gnuplot
+        obs-studio
+        pcmanfm
+        gnuplot
   ];
 
-  allowBroken = true;
 
 }

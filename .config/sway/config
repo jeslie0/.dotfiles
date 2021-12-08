@@ -219,7 +219,7 @@ bar {
 
         mode hide
 	hidden_state hide
-        modifier Mod4
+        modifier $mod
         position bottom
 }
 
@@ -245,22 +245,30 @@ bindsym --locked XF86MonBrightnessDown exec light -U 2 # decrease screen brightn
 
 # play/pause
 bindsym --locked XF86AudioPlay exec playerctl play-pause
-bindsym --locked XF86AudioPlay&Mod4 exec playerctl play-pause
+bindsym --locked XF86AudioPlay+$mod exec playerctl play-pause
 
 bindsym --locked XF86AudioNext exec playerctl next
-bindsym --locked XF86AudioNext&Mod4 exec playerctl next
+bindsym --locked XF86AudioNext+$mod exec playerctl next
+
 bindsym --locked XF86AudioPrev exec playerctl next && playerctl previous && playerctl previous
-bindsym --locked XF86AudioPrev&Mod4 exec playerctl next && playerctl previous && playerctl previous
+bindsym --locked XF86AudioPrev+$mod exec playerctl next && playerctl previous && playerctl previous
 
 bindsym --locked XF86AudioStop exec playerctl stop
-bindsym --locked XF86AudioStop&Mod4 exec playerctl stop
+bindsym --locked XF86AudioStop+$mod exec playerctl stop
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym --locked XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && $refresh_i3status
+bindsym --locked XF86AudioRaiseVolume+$mod exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && $refresh_i3status
+
 bindsym --locked XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && $refresh_i3status
+bindsym --locked XF86AudioLowerVolume+$mod exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && $refresh_i3status
+
 bindsym --locked XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym --locked XF86AudioMute+$mod exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+
 bindsym --locked XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym --locked XF86AudioMicMute+$mod exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -286,7 +294,7 @@ input "1739:31251:SYNA2393:00_06CB:7A13_Touchpad" {
 input * xkb_numlock enable
 
 # Swaylock
-bindsym Ctrl+Mod4+Delete exec "swaylock \
+bindsym Ctrl+$mod+Delete exec "swaylock \
 	--screenshots \
 	--clock \
 	--indicator \
@@ -325,11 +333,11 @@ for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
   kill
 }
 
-bindsym Ctrl+Mod4+e exec 'emacsclient --create-frame --alternate-editor=""'
-bindsym Ctrl+Mod4+f exec 'firefox'
-bindsym Ctrl+Mod4+s exec 'signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland'
-bindsym Ctrl+Mod4+z exec 'zathura'
-bindsym Ctrl+Mod4+p exec 'passmenu'
+bindsym Ctrl+$mod+e exec 'emacsclient --create-frame --alternate-editor=""'
+bindsym Ctrl+$mod+f exec 'firefox'
+bindsym Ctrl+$mod+s exec 'signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland'
+bindsym Ctrl+$mod+z exec 'zathura'
+bindsym Ctrl+$mod+p exec 'passmenu'
 
 # Screensharing
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
