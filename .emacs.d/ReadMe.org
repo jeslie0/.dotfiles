@@ -1,4 +1,4 @@
-#+title: James' New Emacs Configuration
+#+rgtitle: James' New Emacs Configuration
 #+PROPERTY: header-args:elisp :tangle ./init.el
 #+options: toc:t
 * Table of Contents                                                     :toc:
@@ -30,6 +30,7 @@
   - [[#pretty-symbols][Pretty symbols]]
   - [[#fillings][Fillings]]
   - [[#transparency][Transparency]]
+  - [[#scrolling][Scrolling]]
 - [[#ivy-and-counsel-completion-framework][Ivy and Counsel completion framework]]
 - [[#helpful][Helpful]]
 - [[#dashboard][Dashboard]]
@@ -126,6 +127,7 @@
 - [[#iedit][Iedit]]
   - [[#keybindings-9][Keybindings]]
   - [[#initialisation-10][Initialisation]]
+  - [[#wgrep][wgrep]]
 - [[#ranger][Ranger]]
   - [[#keybindings-10][Keybindings]]
   - [[#initialisation-11][Initialisation]]
@@ -812,6 +814,14 @@ If the universal prefix argument is used then kill also the window."
 ;; (setq default-frame-alist
 ;;       '((alpha . 50)))
 #+END_SRC
+** Scrolling
+We use Good Scroll for scrolling
+#+BEGIN_SRC elisp
+(use-package good-scroll
+  :config
+  (good-scroll-mode 1)
+  )
+#+END_SRC
 * Ivy and Counsel completion framework
 #+begin_src elisp
 (use-package ivy
@@ -830,8 +840,10 @@ If the universal prefix argument is used then kill also the window."
          ("C-k" . ivy-previous-line)
          ("C-d" . ivy-reverse-i-search-kill))
   :config
-  (ivy-mode 1))
-
+  (ivy-mode 1)
+  :custom
+  (ivy-use-selectable-prompt t)
+  )
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
@@ -1484,13 +1496,13 @@ Provides better documentation.
 *** Templates
 #+BEGIN_SRC elisp
 (defun jl/org-roam-templates ()
- (setq org-roam-capture-templates '(("t" "default" plain
-				     "%?"
-				     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-				     :unnarrowed t)
-				    )
-       )
- )
+  (setq org-roam-capture-templates
+	'(("q" "quick note" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	   :unnarrowed t)
+	  ))
+  )
 #+END_SRC
 *** Initialisation
 #+begin_src elisp
@@ -1499,7 +1511,7 @@ Provides better documentation.
   (org-roam-v2-ack t)
   (org-roam-graph-viewer #'browse-url-firefox)
   (org-roam-directory "/home/james/Documents/Org/Roam")
-  (org-roam-dailies-directory "/home/james/Documents/Org/Roam/Dailies/")
+  ;; (org-roam-dailies-directory "/home/james/Documents/Org/Roam/Dailies/")
   :init
   (setq org-roam-v2-ack t)
   (jl/org-roam-global-keys)
@@ -1577,6 +1589,7 @@ Provides better documentation.
   (org-startup-with-latex-preview t)
   (org-enable-reveal-js-support t)
   (org-protocol-default-template-key "w")
+  (org-image-actual-width nil)
   (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
   ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
   ;;                     ;; "~/Documents/Org/GTD/inbox.org"
@@ -1596,6 +1609,7 @@ Provides better documentation.
    '(("t" "Todo [inbox]" entry
       (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
       "* TODO %i%?")
+
      ("T" "Tickler" entry
       (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
       "* %i%? \n %U")
@@ -3722,10 +3736,10 @@ SCOPE can be:
 #+end_src
 * Iedit
 ** Keybindings
-#+begin_src elisp :tangle no
+#+begin_src elisp
 (defun jl/iedit-keys ()
   (jl/SPC-keys
-    "se" 'evil-iedit-state/iedit-mode)
+    "se" 'iedit-mode)
   )
 #+end_src
 ** Initialisation
@@ -3735,6 +3749,11 @@ SCOPE can be:
   :config
   (jl/iedit-keys))
 #+end_src
+** wgrep
+#+BEGIN_SRC elisp
+(use-package wgrep
+  :defer t)
+#+END_SRC
 * Ranger
 ** Keybindings
 #+begin_src elisp :tangle no
@@ -3781,7 +3800,7 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package direnv
   ;; :hook ((haskell-mode haskell-cabal-mode) . direnv-mode)
-  :defer t
+  ;; :defer t
   :config
   (direnv-mode)
   :custom
