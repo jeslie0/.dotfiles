@@ -11,7 +11,7 @@
 
   outputs = { self, nixpkgs, homeManager }: {
     homeConfigurations = {
-      "someuser@somecomputer" = homeManager.lib.homeManagerConfiguration {
+      "james@James-Nix" = homeManager.lib.homeManagerConfiguration {
         configuration = ./home.nix;
 
         system = "x86_64-linux";
