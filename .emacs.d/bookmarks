@@ -7,8 +7,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/obsidian/ROAM/ResearchNotes/20211209115121-test.org")
- (front-context-string . "#+options: toc:n")
- (rear-context-string . ":\n#+title: test\n")
- (position . 82))
+ (filename . "~/Documents/Roam/20211231171947-flakes.org")
+ (front-context-string)
+ (rear-context-string . "#+title: Flakes\n")
+ (position . 84))
 )

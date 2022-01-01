@@ -1,4 +1,5 @@
-personal_ws-1.1 en 88 
+personal_ws-1.1 en 99 
+Abelian
 Agda
 Coq
 Dinaturality
@@ -8,6 +9,7 @@ Grothendieck
 Heliax
 HoTT
 Homological
+Injectivity
 Isomorphisms
 Mohabat
 Monoidal
@@ -15,6 +17,7 @@ NixOS
 Precategory
 Riehl
 Rijke
+Sylow
 Topos
 Unitors
 Yoneda
@@ -24,11 +27,14 @@ adjunction
 automorphism
 bicategories
 bicategory
+bicomplete
 bijection
 bimodule
+cardinality
 cartesian
 codiagonal
 coend
+coequaliser
 coequalisers
 cofibrant
 cofibration
@@ -36,8 +42,11 @@ cofibrations
 cohomology
 colimit
 colimits
+conjugacy
 coproduct
 coproducts
+coset
+cosets
 counit
 decrypt
 definitional
@@ -53,6 +62,7 @@ functorality
 functorial
 functors
 groupoid
+hom
 homomorphism
 homomorphisms
 homotopic
@@ -86,4 +96,5 @@ simplicial
 surjective
 surjectivity
 toposes
+unenriched
 univalence

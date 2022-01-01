@@ -1,4 +1,4 @@
-#+rgtitle: James' New Emacs Configuration
+#+title: James' New Emacs Configuration
 #+PROPERTY: header-args:elisp :tangle ./init.el
 #+options: toc:t
 * Table of Contents                                                     :toc:
@@ -105,6 +105,7 @@
 - [[#company-mode][Company mode]]
   - [[#initialisation-4][Initialisation]]
   - [[#prescient-company][Prescient company]]
+  - [[#company-shell][Company-shell]]
 - [[#projectile][Projectile]]
   - [[#keybindings-4][Keybindings]]
   - [[#initialisation-5][Initialisation]]
@@ -112,12 +113,13 @@
   - [[#keybindings-5][Keybindings]]
   - [[#initialisation-6][Initialisation]]
 - [[#flycheck][Flycheck]]
+  - [[#bashate][Bashate]]
 - [[#flyspell][Flyspell]]
   - [[#keybindings-6][Keybindings]]
   - [[#functions-5][Functions]]
   - [[#initialisation-7][Initialisation]]
   - [[#flyspell-correct][Flyspell correct]]
-  - [[#flyspell-popup][flyspell popup]]
+  - [[#flyspell-popup][Flyspell popup]]
 - [[#undo-tree][Undo Tree]]
   - [[#keybindings-7][Keybindings]]
   - [[#initialisation-8][Initialisation]]
@@ -148,6 +150,9 @@
 - [[#open-with][Open with]]
 - [[#dired][Dired]]
   - [[#peep][Peep]]
+- [[#fun][Fun]]
+  - [[#snow][Snow]]
+  - [[#fireplace][Fireplace]]
 
 * Lexical-binding
 #+begin_src elisp
@@ -542,7 +547,7 @@ Adds the popup for key commands with mulitple key presses
 #+end_src
 ** Warnings
 #+begin_src elisp
-(setq warning-suppress-types '((comp) (org-roam) ()(:warning)))
+(setq warning-suppress-types '((comp) (org-roam) (org-element-cache) ()(:warning)))
 #+end_src
 ** Font configuration
 #+begin_src elisp
@@ -712,7 +717,8 @@ Emacs 29 makes the modeline default to the variable pitch font face. I don't lik
   :init (winum-mode)
   :diminish winum-mode
   :config
-  (jl/winum-keys))
+  (jl/winum-keys)
+  )
 #+end_src
 ** Perspective
 *** Functions
@@ -816,10 +822,22 @@ If the universal prefix argument is used then kill also the window."
 #+END_SRC
 ** Scrolling
 We use Good Scroll for scrolling
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package good-scroll
   :config
   (good-scroll-mode 1)
+  )
+#+END_SRC
+*** Sublimity
+#+BEGIN_SRC elisp :tangle no
+(use-package sublimity
+  :defer t
+  :config
+  (sublimity-mode 1)
+  )
+
+(use-package sublimity-map
+  :straight sublimity
   )
 #+END_SRC
 * Ivy and Counsel completion framework
@@ -928,6 +946,7 @@ Provides better documentation.
     )
 
   (dashboard-setup-startup-hook)
+  :init
   )
 #+end_src
 * Minor modes
@@ -946,7 +965,7 @@ Provides better documentation.
   :init
   (defvar outline-minor-mode-prefix "\M-#")
   )
-#+end_src
+#+end_srC
 ** Aggressive indent
 #+BEGIN_SRC elisp
 (use-package aggressive-indent
@@ -981,7 +1000,9 @@ Provides better documentation.
 ** Smartparens
 #+BEGIN_SRC elisp
 (use-package smartparens
-  :hook (org-mode . smartparens-mode)
+  :hook ((org-mode . smartparens-mode)
+	 (emacs-lisp-mode . smartparens-mode)
+	 )
   :defer t
   )
 #+END_SRC
@@ -1177,7 +1198,7 @@ Provides better documentation.
   (general-define-key
    :keymaps 'org-mode-map
    :states '(normal visual motion)
-   "RET" 'org-link
+   "RET" 'org-open-at-point
    )
 
   (jl/major-modes
@@ -1199,9 +1220,6 @@ Provides better documentation.
     "tt" '(:ignore t :which-key "Toggle")
     "C" '(:ignore t :which-key "Clocks")
     "x" '(:ignore t :which-key "Text")
-    "r" '(:ignore t :which-key "Org Roam2")
-    "rd" '(:ignore t :which-key "Dailies")
-    "rt" '(:ignore t :which-key "Tags")
 
     "'" 'org-edit-special
     "c" 'org-capture
@@ -1365,7 +1383,6 @@ Provides better documentation.
 (defun jl/org-mode-global-keys ()
   (jl/SPC-keys
    "ao" '(:ignore t :which-key "org")
-   "aor" '(:ignore t :which-key "roam")
    "aoC" '(:ignore t :which-key "clocks")
    "aof" '(:ignore t :which-key "feeds")
 
@@ -1466,6 +1483,9 @@ Provides better documentation.
     :keymaps 'org-mode-map
     :major-mode '(org-mode)
 
+    "r" '(:ignore t :which-key "Org Roam2")
+    "rd" '(:ignore t :which-key "Dailies")
+    "rt" '(:ignore t :which-key "Tags")
     "rdy" 'org-roam-dailies-goto-yesterday
     "rdt" 'org-roam-dailies-goto-today
     "rdT" 'org-roam-dailies-goto-tomorrow
@@ -1501,23 +1521,25 @@ Provides better documentation.
 	   "%?"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
 	   :unnarrowed t)
-	  ))
-  )
+
+	  ("m" "mathematics note" plain
+	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros}\n\n* %?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	   :unnarrowed t)
+	  )))
 #+END_SRC
 *** Initialisation
 #+begin_src elisp
 (use-package org-roam
+  :after org
   :custom
   (org-roam-v2-ack t)
   (org-roam-graph-viewer #'browse-url-firefox)
-  (org-roam-directory "/home/james/Documents/Org/Roam")
-  ;; (org-roam-dailies-directory "/home/james/Documents/Org/Roam/Dailies/")
+  (org-roam-directory "/home/james/Documents/Roam/")
   :init
-  (setq org-roam-v2-ack t)
   (jl/org-roam-global-keys)
   (jl/org-roam-templates)
   :config
-  (setq org-roam-v2-ack t)
   (org-roam-db-autosync-mode)
   (jl/org-roam-key-bindings)
   )
@@ -1575,14 +1597,13 @@ Provides better documentation.
   (jl/org-mode-key-bindings)
   ;; (jl/org-font-setup)
   :custom
-  (org-return-follows-link t)
   (org-ellipsis " ▼")
   (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
   (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
   (org-startup-indented t)
-  (org-hide-emphasis-markers t)
+  (org-hide-emphasis-markers nil)
   (org-src-tab-acts-natively t)
-  (org-pretty-entities t)
+  (org-pretty-entities nil)
   (org-startup-folded t)
   (org-hide-block-startup t)
   (org-edit-src-content-indentation 0)
@@ -1591,6 +1612,7 @@ Provides better documentation.
   (org-protocol-default-template-key "w")
   (org-image-actual-width nil)
   (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
+  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
   ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
   ;;                     ;; "~/Documents/Org/GTD/inbox.org"
   ;;                     ;; "~/Documents/Org/GTD/gtd.org"
@@ -1905,6 +1927,32 @@ Calling org-babel languages in the following form saves a lot on startup time.
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
         #+END_SRC
+#+BEGIN_SRC elisp :tangle no
+(use-package ht)
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-core-utils.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-macros.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-customization.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-logging.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-themes.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-icons.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-faces.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-visuals.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-rendering.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-scope.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-follow-mode.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-filewatch-mode.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-mode.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-interface.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-persistence.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-async.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-compatibility.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-workspaces.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-fringe-indicator.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-header-line.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-extensions.el")
+(load-file "~/emacs-packages/treemacs/src/elisp/treemacs.el")
+;; (load-file "~/emacs-packages/treemacs/src/extra/treemacs-all-the-icons.el")
+#+END_SRC
 ** Treemacs evil
 #+BEGIN_SRC elisp
 (use-package treemacs-evil
@@ -1963,6 +2011,14 @@ Calling org-babel languages in the following form saves a lot on startup time.
     )
   )
 #+end_src
+#+BEGIN_SRC elisp :tangle no
+(load-file "~/emacs-packages/treemacs/src/extra/treemacs-all-the-icons.el")
+(treemacs-load-theme "all-the-icons")
+;; (add-hook 'treemacs-mode-hook (lambda ()
+;; 				treemacs-load-theme 'all-the-icons))
+;; (add-hook 'dired-mode-hook (lambda ()
+;; 			     treemacs-load-theme 'all-the-icons))
+#+END_SRC
 * Languages
 ** Tools
 *** LSP
@@ -2139,8 +2195,9 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :defer t
   :commands lsp-ui-mode
   :custom
-  ;; (lsp-ui-doc-enable nil)
   (lsp-lens-enable 1)
+  (lsp-ui-doc-show-with-mouse nil)
+  (lsp-ui-doc-show-with-cursor t)
   )
 #+end_src
 **** lsp-treemacs
@@ -2562,7 +2619,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   (jl/hlint-keys)
   )
 #+end_src
-*** Emacs-lisp
+*** TODO Emacs-lisp
 **** Ielm
 #+BEGIN_SRC elisp :tangle no
 (use-package ielm
@@ -2592,7 +2649,74 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   )
 #+END_SRC
 **** Debug
+*** Shell
+**** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/shell-keys ()
+  (jl/major-modes
+    :keymaps 'sh-mode-map
+    :states '(normal insert visual)
+    :major-modes t
+    "i" '(:ignore t :which-key "insert")
+    "g" '(:ignore t :which-key "goto")
 
+    "\\" 'sh-backslash-region
+    "ic" 'sh-case
+    "ii" 'sh-if
+    "if" 'sh-function
+    "io" 'sh-for
+    "ie" 'sh-indexed-loop
+    "iw" 'sh-while
+    "ir" 'sh-repeat
+    "is" 'sh-select
+    "iu" 'sh-until
+    "ig" 'sh-while-getopts
+    ))
+#+END_SRC
+**** Initialisation
+#+BEGIN_SRC elisp
+(use-package sh-script
+  :defer t
+  :mode ("\\.sh\\'"
+	 "\\.zsh\\'"
+         "zlogin\\'"
+         "zlogout\\'"
+         "zpreztorc\\'"
+         "zprofile\\'"
+         "zshenv\\'"
+         "zshrc\\'")
+  :config
+  (jl/shell-keys)
+  )
+#+END_SRC
+**** Shfmt
+Requires shfmt installed on system.
+#+BEGIN_SRC elisp
+(use-package shfmt
+  :defer t
+  :hook (sh-mode . shfmt-on-save-mode)
+  :config
+  (jl/major-modes
+    :keymaps 'sh-mode-map
+    :states '(normal insert visual)
+    :major-modes t
+    "=" 'shfmt-buffer)
+  )
+#+END_SRC
+**** Insert Shebang
+Not tested. Probably doesn't work.
+#+BEGIN_SRC elisp :tangle no
+(use-package insert-shebang
+  :defer t
+  :hook (sh-mode . insert-shebang-mode)
+  :config
+  (jl/major-modes
+    :keymaps 'sh-mode-map
+    :states '(normal insert visual)
+    :major-modes t
+    "i!" 'insert-shebang)
+  )
+#+END_SRC
 * Avy
 #+begin_src elisp
 (use-package avy
@@ -2633,24 +2757,49 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     :states 'normal
     :keymaps 'elfeed-show-mode-map
     "n" 'elfeed-show-next
-    "p" 'elfeed-show-prev)
+    "p" 'elfeed-show-prev))
 
+(defun jl/elfeed-global-keys ()
   (jl/SPC-keys
-    "are" 'elfeed)
-
-  )
+    "are" 'elfeed))
 #+end_src
 *** Initialisation
-#+begin_src elisp :tangle no
+#+begin_src elisp
 (use-package elfeed
   :commands (elfeed)
   :defer t
   :custom
-  (rmh-elfeed-org-files (list "~/Documents/Org/Elfeed/feeds.org"))
+  (elfeed-feeds '(;;Mathematics
+		  ("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
+		  ("https://homotopytypetheory.org/feed.xml" mathematics)
+		  ("https://terrytao.wordpress.com/feed.xml" mathematics)
+		  ("https://gowers.wordpress.com/feed.xml" mathematics)
+		  ("https://jadeedenstarmaster.wordpress.com/feed.xml" mathematics)
+		  ("https://bartoszmilewski.com/feed.xml" mathematics)
+		  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
+		  ("https://jeslie0.github.io/feed.xml" mathematics)
+
+		  ;; Webcomics
+		  ("https://xkcd.com/atom.xml" webcomic)
+		  ("https://www.smbc-comics.com/comic/rss" webcomic)
+		  ))
   :init
+  (jl/elfeed-global-keys)
+  (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
+  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/bookmarks"))
+  (add-to-list 'recentf-exclude (expand-file-name "~/.emacs.d/bookmarks"))
+  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org"))
+  :config
   (jl/elfeed-keys)
   )
 #+end_src
+*** Elfeed Goodies
+#+BEGIN_SRC elisp
+(use-package elfeed-goodies
+  :after elfeed
+  :config
+  (elfeed-goodies/setup))
+#+END_SRC
 ** Elpher
 *** Keybindings
 #+begin_src elisp
@@ -3489,6 +3638,15 @@ there are no attachments."
   (company-prescient-mode 1)
   )
 #+END_SRC
+** Company-shell
+#+BEGIN_SRC elisp
+(use-package company-shell
+  :defer t
+  :after sh
+  :config
+  (add-to-list 'company-backends 'company-shell)
+  )
+#+END_SRC
 * Projectile
 ** Keybindings
 #+begin_src elisp
@@ -3558,14 +3716,21 @@ there are no attachments."
   (global-flycheck-mode t)
   )
 #+end_src
+** Bashate
+#+BEGIN_SRC elisp
+(use-package flycheck-bashate
+  :defer t
+  :hook (sh-mode . flycheck-bashate-setup)
+  )
+#+END_SRC
 * Flyspell
 ** Keybindings
 #+begin_src elisp
 (defun jl/flyspell ()
   (jl/SPC-keys
-    "Sab" 'spacemacs/add-word-to-dict-buffer
-    "Sag" 'spacemacs/add-word-to-dict-global
-    "Sas" 'spacemacs/add-word-to-dict-session
+    "Sab" 'add-word-to-dict-buffer
+    "Sag" 'add-word-to-dict-global
+    "Sas" 'add-word-to-dict-session
     "Sb" 'flyspell-buffer
     "Sr" 'flyspell-region
     "Sd" 'spell-checking/change-dictionary
@@ -3593,22 +3758,22 @@ auto-dictionary is not used, use the adict version otherwise."
       (adict-change-dictionary)
     (call-interactively 'ispell-change-dictionary)))
 
-(defun spacemacs/add-word-to-dict-buffer ()
+(defun add-word-to-dict-buffer ()
   "Save word at point as correct in current buffer."
   (interactive)
-  (spacemacs//add-word-to-dict 'buffer))
+  (add-word-to-dict 'buffer))
 
-(defun spacemacs/add-word-to-dict-global ()
+(defun add-word-to-dict-global ()
   "Save word at point as a correct word globally."
   (interactive)
-  (spacemacs//add-word-to-dict 'save))
+  (add-word-to-dict 'save))
 
-(defun spacemacs/add-word-to-dict-session ()
+(defun add-word-to-dict-session ()
   "Save word at point as correct in current session."
   (interactive)
-  (spacemacs//add-word-to-dict 'session))
+  (add-word-to-dict 'session))
 
-(defun spacemacs//add-word-to-dict (scope)
+(defun add-word-to-dict (scope)
   "Save word at point as a correct word.
 SCOPE can be:
 `save' to save globally,
@@ -3672,7 +3837,7 @@ SCOPE can be:
   (flyspell-correct-interface #'flyspell-correct-ivy)
   )
 #+end_src
-** flyspell popup
+** Flyspell popup
 #+BEGIN_SRC elisp :tangle no
 (use-package flyspell-popup
   :hook (flyspell-mode . flyspell-popup-auto-correct-mode)
@@ -3746,7 +3911,7 @@ SCOPE can be:
 #+begin_src elisp
 (use-package evil-iedit-state
   :defer t
-  :config
+  :init
   (jl/iedit-keys))
 #+end_src
 ** wgrep
@@ -3808,8 +3973,22 @@ SCOPE can be:
   )
 #+END_SRC
 ** Nix-mode
+*** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/nix-keys ()
+  (jl/major-modes
+    :keymaps 'nix-mode-map
+    :states '(normal visual motion)
+    :major-modes t
+    "=" '(nix-format-buffer)
+    )
+  )
+#+END_SRC
+*** Initialisation
 #+begin_src elisp
 (use-package nix-mode
+  :config
+  (jl/nix-keys)
   :mode "\\.nix\\'")
 #+END_SRC
 ** Ivy nixos options
@@ -3841,6 +4020,8 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package company-nixos-options
   :defer t
+  :config
+  (add-to-list 'company-backends 'company-nixos-options)
   )
 #+END_SRC
 ** Nix-sandbox
@@ -3967,4 +4148,15 @@ SCOPE can be:
    )
   )
 
+#+END_SRC
+* Fun
+** Snow
+#+BEGIN_SRC elisp
+(use-package snow
+  :defer t)
+#+END_SRC
+** Fireplace
+#+BEGIN_SRC elisp
+(use-package fireplace
+  :defer t)
 #+END_SRC
