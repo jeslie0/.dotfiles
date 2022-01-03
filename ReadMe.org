@@ -1,6 +1,26 @@
 #+title: My Literate Dotfiles
 #+author: James Leslie
 This file is how I manage my personal dotfiles. I use Emacs to tangle the source blocks into the required files. As such, my Emacs configuration is not in this file, but can be found in the .emacs.d folder.
+
+* Table of Contents                                                     :toc:
+- [[#gitconfig][.gitconfig]]
+- [[#gitattributes][.gitattributes]]
+- [[#nix-channels][.nix-channels]]
+- [[#stowrc][.stowrc]]
+- [[#config][.config]]
+  - [[#gammastep][gammastep]]
+  - [[#i3status][i3status]]
+  - [[#mbsync][mbsync]]
+  - [[#neofetch][neofetch]]
+  - [[#nixpkgs][nixpkgs]]
+  - [[#spotifyd][spotifyd]]
+  - [[#sway][sway]]
+  - [[#systemd][systemd]]
+  - [[#waybar][waybar]]
+  - [[#xfce4][xfce4]]
+  - [[#zathura][zathura]]
+  - [[#nix-system][Nix System]]
+
 * .gitconfig
 :PROPERTIES:
 :header-args:conf: :tangle ./.gitconfig
@@ -2294,3 +2314,17 @@ set highlight-active-color	"#5e81ac"
 
 set adjust-open			"width"
 #+end_src
+
+** Nix System
+*** flake.nix
+:PROPERTIES:
+:header-args:nix: :tangle ./.config/Nix/flake.nix
+:END:
+*** configuration.nix
+:PROPERTIES:
+:header-args:nix: :tangle ./.config/Nix/configuration.nix
+:END:
+*** home.nix
+:PROPERTIES:
+:header-args:nix: :tangle ./.config/Nix/home.nix
+:END:
