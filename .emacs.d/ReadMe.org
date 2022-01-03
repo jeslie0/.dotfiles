@@ -3077,18 +3077,15 @@ Not tested. Probably doesn't work.
 *** Mail shortcuts
 #+begin_src elisp
 (defun jl/mu4e-shortcuts ()
-  (setq mu4e-maildir-shortcuts
-	'(
-	  ;; ("/Gmail/Inbox" . ?i)
-          ;; ("/Gmail/[Gmail]/Sent Mail" . ?s)
-          ;; ("/Gmail/[Gmail]/All Mail" . ?a)
-          ("/Posteo/Inbox" . ?I)
-          ("/Posteo/Sent" . ?S)
-          ("/Posteo/Archive" . ?A)
-          ("/Posteo/University" . ?U)
-	  )
-	)
-  )
+  (setq mu4e-maildir-shortcuts '(("/Posteo/Inbox" . ?i)
+				 ("/Posteo/Sent" . ?s)
+				 ("/Posteo/Archive" . ?a)
+				 ("/Posteo/University" . ?u)
+				 ("/Posteo/Banking" . ?b)
+				 ("/Posteo/Crypto" . ?c)
+				 ("/Posteo/Friends and Family" . ?f)
+				 ("/Posteo/Other" . ?O)
+				 ("/Posteo/Important" . ?I))))
 #+end_src
 *** Mu4e contexts
 #+begin_src elisp
@@ -3161,7 +3158,7 @@ Not tested. Probably doesn't work.
    mu4e-html2text-command "w3m -dump -T text/html -o display_link_number=true"
    mu4e-view-show-images t
    mu4e-image-max-width 800
-   mu4e-view-prefer-html t
+   ;; mu4e-view-prefer-html t
    mu4e-use-fancy-chars t)
   )
 #+end_src
