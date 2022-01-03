@@ -1,0 +1,3 @@
+[submodule ".config/System-Flake"]
+	path = .config/System-Flake
+	url = https://github.com/jeslie0/System-Flake
