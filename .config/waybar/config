@@ -1,6 +1,6 @@
 {
     "id": "bar-0",
-    
+
     "ipc": true,
 
     "layer": "top", // Waybar at top layer
@@ -21,7 +21,7 @@
 
     // "modules-center": ["sway/window"],
 
-    "modules-right": [ "idle_inhibitor" 
+    "modules-right": [ "idle_inhibitor"
     		     , "pulseaudio"
 		     , "network"
 		     , "cpu"
@@ -32,8 +32,8 @@
 		     , "clock"
 		     , "tray"
 		     ],
-    
-    
+
+
     // Module Configuration
 
     "idle_inhibitor": {
@@ -126,4 +126,3 @@
     },
 
 }
-
