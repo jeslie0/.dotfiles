@@ -223,6 +223,13 @@ bar {
         position bottom
 }
 
+# Status Bar: update when waybar and sway are both updated.
+# bar {
+#     swaybar_command waybar
+#     hidden_state hide
+#     mode hide
+# }
+
 # Gaps
 include /etc/sway/config.d/*
 include /home/james/.config/sway/gaps

@@ -1,4 +1,4 @@
-* {
+{
     border: none;
     border-radius: 0;
     /* `otf-font-awesome` is required to be installed for icons */
@@ -27,6 +27,21 @@ window#waybar.solo {
     background-color: #FFFFFF;
 }
 */
+
+#window {
+    margin-top: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 26px;
+    transition: none;
+    /*
+    color: #f8f8f2;
+	background: #282a36;
+   */
+    color: transparent;
+    background: transparent;
+}
+
 
 window#waybar.termite {
     background-color: #3F3F3F;
@@ -99,7 +114,9 @@ window#waybar.chromium {
 }
 
 #clock {
-    background-color: #64727D;
+    /* background-color: #64727D; */
+    background-color: #81a1c1;
+    color: #000000;
 }
 
 #battery {
@@ -139,7 +156,8 @@ label:focus {
 }
 
 #memory {
-    background-color: #9b59b6;
+    background-color: #9FD575;
+    color: #000000;
 }
 
 #disk {
@@ -148,10 +166,12 @@ label:focus {
 
 #backlight {
     background-color: #90b1b1;
+    color: #000000;
 }
 
 #network {
-    background-color: #2980b9;
+    background-color: #b48ead;
+    color: #000000;
 }
 
 #network.disconnected {
@@ -159,7 +179,7 @@ label:focus {
 }
 
 #pulseaudio {
-    background-color: #f1c40f;
+    background-color: #ebcb8b;
     color: #000000;
 }
 
@@ -184,6 +204,7 @@ label:focus {
 
 #temperature {
     background-color: #f0932b;
+    color: #000000;
 }
 
 #temperature.critical {
