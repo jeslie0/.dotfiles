@@ -1,0 +1,2296 @@
+#+title: My Literate Dotfiles
+#+author: James Leslie
+This file is how I manage my personal dotfiles. I use Emacs to tangle the source blocks into the required files. As such, my Emacs configuration is not in this file, but can be found in the .emacs.d folder.
+* .gitconfig
+:PROPERTIES:
+:header-args:conf: :tangle ./.gitconfig
+:END:
+#+begin_src conf
+[user]
+	name = James Leslie
+	email = jamesleslie@posteo.net
+#+end_src
+* .gitattributes
+:PROPERTIES:
+:header-args:conf: :tangle ./.gitattributes
+:END:
+#+begin_src conf
+.config/spotify-tui/client.yml filter=git-crypt diff=git-crypt
+.config/spotify-tui/.spotify_token_cache.json filter=git-crypt diff=git-crypt
+#+end_src
+* .nix-channels
+:PROPERTIES:
+:header-args:conf: :tangle ./.nix-channels
+:END:
+#+begin_src conf
+https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+https://nixos.org/channels/nixos-unstable nixos
+#+end_src
+* .stowrc
+:PROPERTIES:
+:header-args:conf: :tangle ./.stowrc
+:END:
+#+begin_src conf
+--ignore ./.stowrc
+--ignore ./ReadMe.org
+#+end_src
+* .config
+** gammastep
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/gammastep/config.ini
+:END:
+#+begin_src conf
+[general]
+; Set the day and night screen temperatures
+temp-day=5700
+temp-night=3500
+
+; Disable the smooth fade between temperatures when Redshift starts and stops.
+; 0 will cause an immediate change between screen temperatures.
+; 1 will gradually apply the new screen temperature over a couple of seconds.
+fade=1
+
+; Solar elevation thresholds.
+; By default, Redshift will use the current elevation of the sun to determine
+; whether it is daytime, night or in transition (dawn/dusk). When the sun is
+; above the degrees specified with elevation-high it is considered daytime and
+; below elevation-low it is considered night.
+;elevation-high=3
+;elevation-low=-6
+
+; Custom dawn/dusk intervals.
+; Instead of using the solar elevation, the time intervals of dawn and dusk
+; can be specified manually. The times must be specified as HH:MM in 24-hour
+; format.
+;dawn-time=6:00-7:45
+;dusk-time=18:35-20:15
+
+; Set the screen brightness. Default is 1.0.
+;brightness=0.9
+; It is also possible to use different settings for day and night
+; since version 1.8.
+;brightness-day=0.7
+;brightness-night=0.4
+; Set the screen gamma (for all colors, or each color channel
+; individually)
+gamma=0.8
+;gamma=0.8:0.7:0.8
+; This can also be set individually for day and night since
+; version 1.10.
+;gamma-day=0.8:0.7:0.8
+;gamma-night=0.6
+
+; Set the location-provider: 'geoclue2', 'manual'.
+; The location provider settings are in a different section.
+location-provider=manual
+
+; Set the adjustment-method: 'randr', 'vidmode', 'drm', 'wayland'.
+; 'randr' is the preferred X11 method, 'vidmode' is an older API
+; that works in some cases when 'randr' does not.
+; The adjustment method settings are in a different section.
+adjustment-method=wayland
+
+; Configuration of the location-provider:
+; type 'gammastep -l PROVIDER:help' to see the settings.
+; ex: 'gammastep -l manual:help'
+; Keep in mind that longitudes west of Greenwich (e.g. the Americas)
+; are negative numbers.
+[manual]
+lat=43.0
+lon=-81.3
+
+; Configuration of the adjustment-method
+; type 'gammastep -m METHOD:help' to see the settings.
+; ex: 'gammastep -m randr:help'
+; In this example, randr is configured to adjust only screen 0.
+; Note that the numbering starts from 0, so this is actually the first screen.
+; If this option is not specified, Redshift will try to adjust _all_ screens.
+; [randr]
+; screen=0
+#+end_src
+
+** i3status
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/i3status/config
+:END:
+#+begin_src conf
+# It is important that this file is edited as UTF-8.
+# The following line should contain a sharp s:
+# ß
+# If the above line is not correctly displayed, fix your editor first!
+
+general {
+        colors = false
+        interval = 1
+        output_format = "i3bar"
+        markup = pango
+        color_good = '#2f343f'
+	color_degraded = '#ebcb8b'
+	color_bad = '#ba5e57'
+}
+
+order += "volume master"
+order += "wireless _first_"
+order += "battery all"
+order += "disk /"
+order += "cpu_usage"
+order += "memory"
+order += "tztime local"
+
+cpu_usage {
+          format = "<span background='#9Fd575'> CPU : %usage </span>"
+}
+
+
+
+wireless _first_ {
+        format_up = "<span background='#b48ead'>  %quality at %essid </span>"
+        format_down = "<span background='#b48ead'>  Disconnected </span>"
+}
+
+battery all {
+	      last_full_capacity = true
+        format = "<span background='#a3be8c'>  %percentage </span>"
+        format_down = ""
+        status_chr = " Charging"
+        status_bat = " Battery"
+        status_unk = "Unknown"
+        status_full = ""
+        path = "/sys/class/power_supply/BAT%d/uevent"
+        low_threshold = 10
+}
+
+disk "/" {
+        format = "<span background='#fec7cd'>  %free Free </span>"
+}
+
+memory {
+        format = "<span background='#9FD575'>  %used | %available </span>"
+        threshold_degraded = "1G"
+        format_degraded = "MEMORY < %available"
+}
+
+
+Volume master {
+        format = "<span background='#ebcb8b'>  %volume </span>"
+        format_muted = "<span background='#ebcb8b'>  Muted </span>"
+        device = "default"
+        mixer = "Master"
+        mixer_idx = 0
+}
+
+tztime local {
+	format = "<span background='#81a1c1'>  %a %-d %b %H:%M:%S </span>"
+	# format_time = " %a %-d %b %H:%M:%S"
+}
+#+end_src
+
+** mbsync
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/mbsync/.mbsyncrc
+:END:
+#+begin_src conf
+# Posteo
+IMAPAccount jamesleslie
+Host posteo.de
+User jamesleslie@posteo.net
+PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.password-store/posteo.de/jamesleslie@posteo.net.gpg"
+Port 993
+SSLType IMAPS
+AuthMechs Login
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore jamesleslie-remote
+Account jamesleslie
+
+MaildirStore jamesleslie-local
+Subfolders Verbatim
+Path ~/.email/Posteo/
+Inbox ~/.email/Posteo/Inbox
+
+Channel jamesleslie
+Far :jamesleslie-remote: # Previously "Master"
+Near :jamesleslie-local: # Previously "Slave"
+Patterns *
+Create Near # Preciously Slave
+Sync All
+Expunge Both
+SyncState *
+#+end_src
+
+** neofetch
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/neofetch/config.conf
+:END:
+#+begin_src conf
+# See this wiki page for more info:
+# https://github.com/dylanaraps/neofetch/wiki/Customizing-Info
+print_info() {
+    info title
+    info underline
+
+    info "OS" distro
+    info "Host" model
+    info "Kernel" kernel
+    info "Uptime" uptime
+    info "Packages" packages
+    info "Shell" shell
+    info "Resolution" resolution
+    info "DE" de
+    info "WM" wm
+    info "WM Theme" wm_theme
+    info "Theme" theme
+    info "Icons" icons
+    info "Terminal" term
+    info "Terminal Font" term_font
+    info "CPU" cpu
+    info "GPU" gpu
+    info "Memory" memory
+
+    # info "GPU Driver" gpu_driver  # Linux/macOS only
+    # info "CPU Usage" cpu_usage
+    # info "Disk" disk
+    # info "Battery" battery
+    # info "Font" font
+    # info "Song" song
+    # [[ "$player" ]] && prin "Music Player" "$player"
+    # info "Local IP" local_ip
+    # info "Public IP" public_ip
+    # info "Users" users
+    # info "Locale" locale  # This only works on glibc systems.
+
+    info cols
+}
+
+# Title
+
+
+# Hide/Show Fully qualified domain name.
+#
+# Default:  'off'
+# Values:   'on', 'off'
+# Flag:     --title_fqdn
+title_fqdn="off"
+
+
+# Kernel
+
+
+# Shorten the output of the kernel function.
+#
+# Default:  'on'
+# Values:   'on', 'off'
+# Flag:     --kernel_shorthand
+# Supports: Everything except *BSDs (except PacBSD and PC-BSD)
+#
+# Example:
+# on:  '4.8.9-1-ARCH'
+# off: 'Linux 4.8.9-1-ARCH'
+kernel_shorthand="on"
+
+
+# Distro
+
+
+# Shorten the output of the distro function
+#
+# Default:  'off'
+# Values:   'on', 'tiny', 'off'
+# Flag:     --distro_shorthand
+# Supports: Everything except Windows and Haiku
+distro_shorthand="off"
+
+# Show/Hide OS Architecture.
+# Show 'x86_64', 'x86' and etc in 'Distro:' output.
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --os_arch
+#
+# Example:
+# on:  'Arch Linux x86_64'
+# off: 'Arch Linux'
+os_arch="on"
+
+
+# Uptime
+
+
+# Shorten the output of the uptime function
+#
+# Default: 'on'
+# Values:  'on', 'tiny', 'off'
+# Flag:    --uptime_shorthand
+#
+# Example:
+# on:   '2 days, 10 hours, 3 mins'
+# tiny: '2d 10h 3m'
+# off:  '2 days, 10 hours, 3 minutes'
+uptime_shorthand="on"
+
+
+# Memory
+
+
+# Show memory pecentage in output.
+#
+# Default: 'off'
+# Values:  'on', 'off'
+# Flag:    --memory_percent
+#
+# Example:
+# on:   '1801MiB / 7881MiB (22%)'
+# off:  '1801MiB / 7881MiB'
+memory_percent="off"
+
+# Change memory output unit.
+#
+# Default: 'mib'
+# Values:  'kib', 'mib', 'gib'
+# Flag:    --memory_unit
+#
+# Example:
+# kib  '1020928KiB / 7117824KiB'
+# mib  '1042MiB / 6951MiB'
+# gib: ' 0.98GiB / 6.79GiB'
+memory_unit="mib"
+
+
+# Packages
+
+
+# Show/Hide Package Manager names.
+#
+# Default: 'tiny'
+# Values:  'on', 'tiny' 'off'
+# Flag:    --package_managers
+#
+# Example:
+# on:   '998 (pacman), 8 (flatpak), 4 (snap)'
+# tiny: '908 (pacman, flatpak, snap)'
+# off:  '908'
+package_managers="on"
+
+
+# Shell
+
+
+# Show the path to $SHELL
+#
+# Default: 'off'
+# Values:  'on', 'off'
+# Flag:    --shell_path
+#
+# Example:
+# on:  '/bin/bash'
+# off: 'bash'
+shell_path="off"
+
+# Show $SHELL version
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --shell_version
+#
+# Example:
+# on:  'bash 4.4.5'
+# off: 'bash'
+shell_version="on"
+
+
+# CPU
+
+
+# CPU speed type
+#
+# Default: 'bios_limit'
+# Values: 'scaling_cur_freq', 'scaling_min_freq', 'scaling_max_freq', 'bios_limit'.
+# Flag:    --speed_type
+# Supports: Linux with 'cpufreq'
+# NOTE: Any file in '/sys/devices/system/cpu/cpu0/cpufreq' can be used as a value.
+speed_type="bios_limit"
+
+# CPU speed shorthand
+#
+# Default: 'off'
+# Values: 'on', 'off'.
+# Flag:    --speed_shorthand
+# NOTE: This flag is not supported in systems with CPU speed less than 1 GHz
+#
+# Example:
+# on:    'i7-6500U (4) @ 3.1GHz'
+# off:   'i7-6500U (4) @ 3.100GHz'
+speed_shorthand="off"
+
+# Enable/Disable CPU brand in output.
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --cpu_brand
+#
+# Example:
+# on:   'Intel i7-6500U'
+# off:  'i7-6500U (4)'
+cpu_brand="on"
+
+# CPU Speed
+# Hide/Show CPU speed.
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --cpu_speed
+#
+# Example:
+# on:  'Intel i7-6500U (4) @ 3.1GHz'
+# off: 'Intel i7-6500U (4)'
+cpu_speed="on"
+
+# CPU Cores
+# Display CPU cores in output
+#
+# Default: 'logical'
+# Values:  'logical', 'physical', 'off'
+# Flag:    --cpu_cores
+# Support: 'physical' doesn't work on BSD.
+#
+# Example:
+# logical:  'Intel i7-6500U (4) @ 3.1GHz' (All virtual cores)
+# physical: 'Intel i7-6500U (2) @ 3.1GHz' (All physical cores)
+# off:      'Intel i7-6500U @ 3.1GHz'
+cpu_cores="logical"
+
+# CPU Temperature
+# Hide/Show CPU temperature.
+# Note the temperature is added to the regular CPU function.
+#
+# Default: 'off'
+# Values:  'C', 'F', 'off'
+# Flag:    --cpu_temp
+# Supports: Linux, BSD
+# NOTE: For FreeBSD and NetBSD-based systems, you'll need to enable
+#       coretemp kernel module. This only supports newer Intel processors.
+#
+# Example:
+# C:   'Intel i7-6500U (4) @ 3.1GHz [27.2°C]'
+# F:   'Intel i7-6500U (4) @ 3.1GHz [82.0°F]'
+# off: 'Intel i7-6500U (4) @ 3.1GHz'
+cpu_temp="off"
+
+
+# GPU
+
+
+# Enable/Disable GPU Brand
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --gpu_brand
+#
+# Example:
+# on:  'AMD HD 7950'
+# off: 'HD 7950'
+gpu_brand="on"
+
+# Which GPU to display
+#
+# Default: 'all'
+# Values:  'all', 'dedicated', 'integrated'
+# Flag:    --gpu_type
+# Supports: Linux
+#
+# Example:
+# all:
+#   GPU1: AMD HD 7950
+#   GPU2: Intel Integrated Graphics
+#
+# dedicated:
+#   GPU1: AMD HD 7950
+#
+# integrated:
+#   GPU1: Intel Integrated Graphics
+gpu_type="all"
+
+
+# Resolution
+
+
+# Display refresh rate next to each monitor
+# Default: 'off'
+# Values:  'on', 'off'
+# Flag:    --refresh_rate
+# Supports: Doesn't work on Windows.
+#
+# Example:
+# on:  '1920x1080 @ 60Hz'
+# off: '1920x1080'
+refresh_rate="off"
+
+
+# Gtk Theme / Icons / Font
+
+
+# Shorten output of GTK Theme / Icons / Font
+#
+# Default: 'off'
+# Values:  'on', 'off'
+# Flag:    --gtk_shorthand
+#
+# Example:
+# on:  'Numix, Adwaita'
+# off: 'Numix [GTK2], Adwaita [GTK3]'
+gtk_shorthand="off"
+
+
+# Enable/Disable gtk2 Theme / Icons / Font
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --gtk2
+#
+# Example:
+# on:  'Numix [GTK2], Adwaita [GTK3]'
+# off: 'Adwaita [GTK3]'
+gtk2="on"
+
+# Enable/Disable gtk3 Theme / Icons / Font
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --gtk3
+#
+# Example:
+# on:  'Numix [GTK2], Adwaita [GTK3]'
+# off: 'Numix [GTK2]'
+gtk3="on"
+
+
+# IP Address
+
+
+# Website to ping for the public IP
+#
+# Default: 'http://ident.me'
+# Values:  'url'
+# Flag:    --ip_host
+public_ip_host="http://ident.me"
+
+# Public IP timeout.
+#
+# Default: '2'
+# Values:  'int'
+# Flag:    --ip_timeout
+public_ip_timeout=2
+
+
+# Desktop Environment
+
+
+# Show Desktop Environment version
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --de_version
+de_version="on"
+
+
+# Disk
+
+
+# Which disks to display.
+# The values can be any /dev/sdXX, mount point or directory.
+# NOTE: By default we only show the disk info for '/'.
+#
+# Default: '/'
+# Values:  '/', '/dev/sdXX', '/path/to/drive'.
+# Flag:    --disk_show
+#
+# Example:
+# disk_show=('/' '/dev/sdb1'):
+#      'Disk (/): 74G / 118G (66%)'
+#      'Disk (/mnt/Videos): 823G / 893G (93%)'
+#
+# disk_show=('/'):
+#      'Disk (/): 74G / 118G (66%)'
+#
+disk_show=('/')
+
+# Disk subtitle.
+# What to append to the Disk subtitle.
+#
+# Default: 'mount'
+# Values:  'mount', 'name', 'dir', 'none'
+# Flag:    --disk_subtitle
+#
+# Example:
+# name:   'Disk (/dev/sda1): 74G / 118G (66%)'
+#         'Disk (/dev/sdb2): 74G / 118G (66%)'
+#
+# mount:  'Disk (/): 74G / 118G (66%)'
+#         'Disk (/mnt/Local Disk): 74G / 118G (66%)'
+#         'Disk (/mnt/Videos): 74G / 118G (66%)'
+#
+# dir:    'Disk (/): 74G / 118G (66%)'
+#         'Disk (Local Disk): 74G / 118G (66%)'
+#         'Disk (Videos): 74G / 118G (66%)'
+#
+# none:   'Disk: 74G / 118G (66%)'
+#         'Disk: 74G / 118G (66%)'
+#         'Disk: 74G / 118G (66%)'
+disk_subtitle="mount"
+
+# Disk percent.
+# Show/Hide disk percent.
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --disk_percent
+#
+# Example:
+# on:  'Disk (/): 74G / 118G (66%)'
+# off: 'Disk (/): 74G / 118G'
+disk_percent="on"
+
+
+# Song
+
+
+# Manually specify a music player.
+#
+# Default: 'auto'
+# Values:  'auto', 'player-name'
+# Flag:    --music_player
+#
+# Available values for 'player-name':
+#
+# amarok
+# audacious
+# banshee
+# bluemindo
+# clementine
+# cmus
+# deadbeef
+# deepin-music
+# dragon
+# elisa
+# exaile
+# gnome-music
+# gmusicbrowser
+# gogglesmm
+# guayadeque
+# io.elementary.music
+# iTunes
+# juk
+# lollypop
+# mocp
+# mopidy
+# mpd
+# muine
+# netease-cloud-music
+# olivia
+# playerctl
+# pogo
+# pragha
+# qmmp
+# quodlibet
+# rhythmbox
+# sayonara
+# smplayer
+# spotify
+# strawberry
+# tauonmb
+# tomahawk
+# vlc
+# xmms2d
+# xnoise
+# yarock
+music_player="auto"
+
+# Format to display song information.
+#
+# Default: '%artist% - %album% - %title%'
+# Values:  '%artist%', '%album%', '%title%'
+# Flag:    --song_format
+#
+# Example:
+# default: 'Song: Jet - Get Born - Sgt Major'
+song_format="%artist% - %album% - %title%"
+
+# Print the Artist, Album and Title on separate lines
+#
+# Default: 'off'
+# Values:  'on', 'off'
+# Flag:    --song_shorthand
+#
+# Example:
+# on:  'Artist: The Fratellis'
+#      'Album: Costello Music'
+#      'Song: Chelsea Dagger'
+#
+# off: 'Song: The Fratellis - Costello Music - Chelsea Dagger'
+song_shorthand="off"
+
+# 'mpc' arguments (specify a host, password etc).
+#
+# Default:  ''
+# Example: mpc_args=(-h HOST -P PASSWORD)
+mpc_args=()
+
+
+# Text Colors
+
+
+# Text Colors
+#
+# Default:  'distro'
+# Values:   'distro', 'num' 'num' 'num' 'num' 'num' 'num'
+# Flag:     --colors
+#
+# Each number represents a different part of the text in
+# this order: 'title', '@', 'underline', 'subtitle', 'colon', 'info'
+#
+# Example:
+# colors=(distro)      - Text is colored based on Distro colors.
+# colors=(4 6 1 8 8 6) - Text is colored in the order above.
+colors=(distro)
+
+
+# Text Options
+
+
+# Toggle bold text
+#
+# Default:  'on'
+# Values:   'on', 'off'
+# Flag:     --bold
+bold="on"
+
+# Enable/Disable Underline
+#
+# Default:  'on'
+# Values:   'on', 'off'
+# Flag:     --underline
+underline_enabled="on"
+
+# Underline character
+#
+# Default:  '-'
+# Values:   'string'
+# Flag:     --underline_char
+underline_char="-"
+
+
+# Info Separator
+# Replace the default separator with the specified string.
+#
+# Default:  ':'
+# Flag:     --separator
+#
+# Example:
+# separator="->":   'Shell-> bash'
+# separator=" =":   'WM = dwm'
+separator=":"
+
+
+# Color Blocks
+
+
+# Color block range
+# The range of colors to print.
+#
+# Default:  '0', '15'
+# Values:   'num'
+# Flag:     --block_range
+#
+# Example:
+#
+# Display colors 0-7 in the blocks.  (8 colors)
+# neofetch --block_range 0 7
+#
+# Display colors 0-15 in the blocks. (16 colors)
+# neofetch --block_range 0 15
+block_range=(0 15)
+
+# Toggle color blocks
+#
+# Default:  'on'
+# Values:   'on', 'off'
+# Flag:     --color_blocks
+color_blocks="on"
+
+# Color block width in spaces
+#
+# Default:  '3'
+# Values:   'num'
+# Flag:     --block_width
+block_width=3
+
+# Color block height in lines
+#
+# Default:  '1'
+# Values:   'num'
+# Flag:     --block_height
+block_height=1
+
+# Color Alignment
+#
+# Default: 'auto'
+# Values: 'auto', 'num'
+# Flag: --col_offset
+#
+# Number specifies how far from the left side of the terminal (in spaces) to
+# begin printing the columns, in case you want to e.g. center them under your
+# text.
+# Example:
+# col_offset="auto" - Default behavior of neofetch
+# col_offset=7      - Leave 7 spaces then print the colors
+col_offset="auto"
+
+# Progress Bars
+
+
+# Bar characters
+#
+# Default:  '-', '='
+# Values:   'string', 'string'
+# Flag:     --bar_char
+#
+# Example:
+# neofetch --bar_char 'elapsed' 'total'
+# neofetch --bar_char '-' '='
+bar_char_elapsed="-"
+bar_char_total="="
+
+# Toggle Bar border
+#
+# Default:  'on'
+# Values:   'on', 'off'
+# Flag:     --bar_border
+bar_border="on"
+
+# Progress bar length in spaces
+# Number of chars long to make the progress bars.
+#
+# Default:  '15'
+# Values:   'num'
+# Flag:     --bar_length
+bar_length=15
+
+# Progress bar colors
+# When set to distro, uses your distro's logo colors.
+#
+# Default:  'distro', 'distro'
+# Values:   'distro', 'num'
+# Flag:     --bar_colors
+#
+# Example:
+# neofetch --bar_colors 3 4
+# neofetch --bar_colors distro 5
+bar_color_elapsed="distro"
+bar_color_total="distro"
+
+
+# Info display
+# Display a bar with the info.
+#
+# Default: 'off'
+# Values:  'bar', 'infobar', 'barinfo', 'off'
+# Flags:   --cpu_display
+#          --memory_display
+#          --battery_display
+#          --disk_display
+#
+# Example:
+# bar:     '[---=======]'
+# infobar: 'info [---=======]'
+# barinfo: '[---=======] info'
+# off:     'info'
+cpu_display="off"
+memory_display="off"
+battery_display="off"
+disk_display="off"
+
+
+# Backend Settings
+
+
+# Image backend.
+#
+# Default:  'ascii'
+# Values:   'ascii', 'caca', 'chafa', 'jp2a', 'iterm2', 'off',
+#           'pot', 'termpix', 'pixterm', 'tycat', 'w3m', 'kitty'
+# Flag:     --backend
+image_backend="ascii"
+
+# Image Source
+#
+# Which image or ascii file to display.
+#
+# Default:  'auto'
+# Values:   'auto', 'ascii', 'wallpaper', '/path/to/img', '/path/to/ascii', '/path/to/dir/'
+#           'command output (neofetch --ascii "$(fortune | cowsay -W 30)")'
+# Flag:     --source
+#
+# NOTE: 'auto' will pick the best image source for whatever image backend is used.
+#       In ascii mode, distro ascii art will be used and in an image mode, your
+#       wallpaper will be used.
+image_source="auto"
+
+
+# Ascii Options
+
+
+# Ascii distro
+# Which distro's ascii art to display.
+#
+# Default: 'auto'
+# Values:  'auto', 'distro_name'
+# Flag:    --ascii_distro
+# NOTE: AIX, Alpine, Anarchy, Android, Antergos, antiX, "AOSC OS",
+#       "AOSC OS/Retro", Apricity, ArcoLinux, ArchBox, ARCHlabs,
+#       ArchStrike, XFerience, ArchMerge, Arch, Artix, Arya, Bedrock,
+#       Bitrig, BlackArch, BLAG, BlankOn, BlueLight, bonsai, BSD,
+#       BunsenLabs, Calculate, Carbs, CentOS, Chakra, ChaletOS,
+#       Chapeau, Chrom*, Cleanjaro, ClearOS, Clear_Linux, Clover,
+#       Condres, Container_Linux, CRUX, Cucumber, Debian, Deepin,
+#       DesaOS, Devuan, DracOS, DarkOs, DragonFly, Drauger, Elementary,
+#       EndeavourOS, Endless, EuroLinux, Exherbo, Fedora, Feren, FreeBSD,
+#       FreeMiNT, Frugalware, Funtoo, GalliumOS, Garuda, Gentoo, Pentoo,
+#       gNewSense, GNOME, GNU, GoboLinux, Grombyang, Guix, Haiku, Huayra,
+#       Hyperbola, janus, Kali, KaOS, KDE_neon, Kibojoe, Kogaion,
+#       Korora, KSLinux, Kubuntu, LEDE, LFS, Linux_Lite,
+#       LMDE, Lubuntu, Lunar, macos, Mageia, MagpieOS, Mandriva,
+#       Manjaro, Maui, Mer, Minix, LinuxMint, MX_Linux, Namib,
+#       Neptune, NetBSD, Netrunner, Nitrux, NixOS, Nurunner,
+#       NuTyX, OBRevenge, OpenBSD, openEuler, OpenIndiana, openmamba,
+#       OpenMandriva, OpenStage, OpenWrt, osmc, Oracle, OS Elbrus, PacBSD,
+#       Parabola, Pardus, Parrot, Parsix, TrueOS, PCLinuxOS, Peppermint,
+#       popos, Porteus, PostMarketOS, Proxmox, Puppy, PureOS, Qubes, Radix,
+#       Raspbian, Reborn_OS, Redstar, Redcore, Redhat, Refracted_Devuan,
+#       Regata, Rosa, sabotage, Sabayon, Sailfish, SalentOS, Scientific,
+#       Septor, SereneLinux, SharkLinux, Siduction, Slackware, SliTaz,
+#       SmartOS, Solus, Source_Mage, Sparky, Star, SteamOS, SunOS,
+#       openSUSE_Leap, openSUSE_Tumbleweed, openSUSE, SwagArch, Tails,
+#       Trisquel, Ubuntu-Budgie, Ubuntu-GNOME, Ubuntu-MATE, Ubuntu-Studio,
+#       Ubuntu, Venom, Void, Obarun, windows10, Windows7, Xubuntu, Zorin,
+#       and IRIX have ascii logos
+# NOTE: Arch, Ubuntu, Redhat, and Dragonfly have 'old' logo variants.
+#       Use '{distro name}_old' to use the old logos.
+# NOTE: Ubuntu has flavor variants.
+#       Change this to Lubuntu, Kubuntu, Xubuntu, Ubuntu-GNOME,
+#       Ubuntu-Studio, Ubuntu-Mate  or Ubuntu-Budgie to use the flavors.
+# NOTE: Arcolinux, Dragonfly, Fedora, Alpine, Arch, Ubuntu,
+#       CRUX, Debian, Gentoo, FreeBSD, Mac, NixOS, OpenBSD, android,
+#       Antrix, CentOS, Cleanjaro, ElementaryOS, GUIX, Hyperbola,
+#       Manjaro, MXLinux, NetBSD, Parabola, POP_OS, PureOS,
+#       Slackware, SunOS, LinuxLite, OpenSUSE, Raspbian,
+#       postmarketOS, and Void have a smaller logo variant.
+#       Use '{distro name}_small' to use the small variants.
+ascii_distro="auto"
+
+# Ascii Colors
+#
+# Default:  'distro'
+# Values:   'distro', 'num' 'num' 'num' 'num' 'num' 'num'
+# Flag:     --ascii_colors
+#
+# Example:
+# ascii_colors=(distro)      - Ascii is colored based on Distro colors.
+# ascii_colors=(4 6 1 8 8 6) - Ascii is colored using these colors.
+ascii_colors=(distro)
+
+# Bold ascii logo
+# Whether or not to bold the ascii logo.
+#
+# Default: 'on'
+# Values:  'on', 'off'
+# Flag:    --ascii_bold
+ascii_bold="on"
+
+
+# Image Options
+
+
+# Image loop
+# Setting this to on will make neofetch redraw the image constantly until
+# Ctrl+C is pressed. This fixes display issues in some terminal emulators.
+#
+# Default:  'off'
+# Values:   'on', 'off'
+# Flag:     --loop
+image_loop="off"
+
+# Thumbnail directory
+#
+# Default: '~/.cache/thumbnails/neofetch'
+# Values:  'dir'
+thumbnail_dir="${XDG_CACHE_HOME:-${HOME}/.cache}/thumbnails/neofetch"
+
+# Crop mode
+#
+# Default:  'normal'
+# Values:   'normal', 'fit', 'fill'
+# Flag:     --crop_mode
+#
+# See this wiki page to learn about the fit and fill options.
+# https://github.com/dylanaraps/neofetch/wiki/What-is-Waifu-Crop%3F
+crop_mode="normal"
+
+# Crop offset
+# Note: Only affects 'normal' crop mode.
+#
+# Default:  'center'
+# Values:   'northwest', 'north', 'northeast', 'west', 'center'
+#           'east', 'southwest', 'south', 'southeast'
+# Flag:     --crop_offset
+crop_offset="center"
+
+# Image size
+# The image is half the terminal width by default.
+#
+# Default: 'auto'
+# Values:  'auto', '00px', '00%', 'none'
+# Flags:   --image_size
+#          --size
+image_size="auto"
+
+# Gap between image and text
+#
+# Default: '3'
+# Values:  'num', '-num'
+# Flag:    --gap
+gap=3
+
+# Image offsets
+# Only works with the w3m backend.
+#
+# Default: '0'
+# Values:  'px'
+# Flags:   --xoffset
+#          --yoffset
+yoffset=0
+xoffset=0
+
+# Image background color
+# Only works with the w3m backend.
+#
+# Default: ''
+# Values:  'color', 'blue'
+# Flag:    --bg_color
+background_color=
+
+
+# Misc Options
+
+# Stdout mode
+# Turn off all colors and disables image backend (ASCII/Image).
+# Useful for piping into another command.
+# Default: 'off'
+# Values: 'on', 'off'
+stdout="off"
+#+end_src
+
+** nixpkgs
+*** flake.nix
+:PROPERTIES:
+:header-args:nix: :tangle ./.config/nixpkgs/flake.nix
+:END:
+#+begin_src nix
+{
+  description = "Home Manager configurations";
+
+  inputs = {
+    nixpkgs.url = "flake:nixpkgs";
+    homeManager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = { self, nixpkgs, homeManager }: {
+    homeConfigurations = {
+      "james@James-Nix" = homeManager.lib.homeManagerConfiguration {
+        configuration = ./home.nix;
+
+        system = "x86_64-linux";
+        homeDirectory = "/home/james";
+        username = "james";
+        stateVersion = "21.05";
+      };
+    };
+  };
+}
+#+end_src
+*** home.nix
+:PROPERTIES:
+:header-args:nix: :tangle ./.config/nixpkgs/home.nix
+:END:
+#+begin_src nix
+{ config, pkgs, ... }:
+
+{ # imports = [  ];
+
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
+
+  # Home Manager needs a bit of information about you and the
+  # paths it should manage.
+  home.username = "james";
+  home.homeDirectory = "/home/james";
+
+  # This value determines the Home Manager release that your
+  # configuration is compatible with. This helps avoid breakage
+  # when a new Home Manager release introduces backwards
+  # incompatible changes.
+  #
+  # You can update Home Manager without changing this value. See
+  # the Home Manager release notes for a list of state version
+  # changes in each release.
+
+  home.stateVersion = "21.11";
+
+  nixpkgs.config.allowUnfree = true;
+
+  home.packages = with pkgs; [
+    pinentry_emacs
+    pciutils
+    jekyll
+    chromium
+    zoom-us
+    # (import (fetchTarball https://github.com/haskell/haskell-language-server/archive/745ef26f406dbdd5e4a538585f8519af9f1ccb09.tar.gz)).defaultPackage.x86_64-linux
+    # (import (fetchFromGitHub {
+    #   owner = "haskell";
+    #   repo = "haskell-language-server";
+    #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
+    #   sha256 = "10vj4wb0gdvfnrg1d7r3dqjnkw34ryh7v4fvxsby6fvn1l2kvsj5";
+    # }))
+    obs-studio
+    pcmanfm
+    gnuplot
+  ];
+
+
+}
+#+end_src
+
+** spotifyd
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/spotifyd/spotifyd.conf
+:END:
+#+begin_src conf
+[global]
+# Your Spotify account name.
+username = "g8r9m2iao5vg9kcqyqsd090pc"
+
+# Your Spotify account password.
+# password = password
+
+# A command that gets executed and can be used to
+# retrieve your password.
+# The command should return the password on stdout.
+#
+# This is an alternative to the `password` field. Both
+# can't be used simultaneously.
+password_cmd = "pass spotify.com/jamesleslie@posteo.net"
+use_mpris = true
+# If set to true, `spotifyd` tries to look up your
+# password in the system's password storage.
+#
+# This is an alternative to the `password` field. Both
+# can't be used simultaneously.
+# use_keyring = true
+
+# The audio backend used to play the your music. To get
+# a list of possible backends, run `spotifyd --help`.
+backend = "alsa"
+
+# The alsa audio device to stream audio to. To get a
+# list of valid devices, run `aplay -L`,
+device = "default"  # omit for macOS
+
+# # The alsa control device. By default this is the same
+# # name as the `device` field.
+control = "default"  # omit for macOS
+
+# # The alsa mixer used by `spotifyd`.
+# mixer = "PCM"
+
+# The volume controller. Each one behaves different to
+# volume increases. For possible values, run
+# `spotifyd --help`.
+volume_controller = "alsa"  # use softvol for macOS
+
+# # A command that gets executed in your shell after each song changes.
+# # on_song_change_hook = "command_to_run_on_playback_events"
+
+# The name that gets displayed under the connect tab on
+# official clients. Spaces are not allowed!
+# device_name = "James-Arch"
+device_name = "James-Nix"
+
+# The audio bitrate. 96, 160 or 320 kbit/s
+bitrate = 320
+
+# The director used to cache audio data. This setting can save
+# a lot of bandwidth when activated, as it will avoid re-downloading
+# audio files when replaying them.
+#
+# Note: The file path does not get expanded. Environment variables and
+# shell placeholders like $HOME or ~ don't work!
+cache_path = "/home/james/.cache/spotify/" # cache_directory
+
+# # If set to true, audio data does NOT get cached.
+# # no_audio_cache = true
+
+# If set to true, enables volume normalisation between songs.
+volume_normalisation = false
+
+# # The normalisation pregain that is applied for each song.
+# # normalisation_pregain = -10
+
+# # The port `spotifyd` uses to announce its service over the network.
+# zeroconf_port = 1234
+
+# # The proxy `spotifyd` will use to connect to spotify.
+# # proxy = "http://proxy.example.org:8080"
+
+# The displayed device type in Spotify clients.
+# Can be unknown, computer, tablet, smartphone, speaker, tv,
+# avr (Audio/Video Receiver), stb (Set-Top Box), and audiodongle.
+device_type = "computer"
+#+end_src
+
+** sway
+*** config
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/sway/config
+:END:
+#+begin_src conf
+# Default config for sway
+#
+# Copy this to ~/.config/sway/config and edit it to your liking.
+#
+# Read `man 5 sway` for a complete reference.
+
+### Variables
+#
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+# Your preferred terminal emulator
+set $term xfce4-terminal
+# Your preferred application launcher
+# Note: pass the final command to swaymsg so that the resulting window can be opened
+# on the original workspace that the command was run on.
+set $menu dmenu_path | bemenu -m "$(/home/james/bemenuFocus/bemenuFocus)" | xargs swaymsg exec --
+
+### Output configuration
+#
+# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
+# output * bg /home/james/Images/Wallpapers/wp6705749-moutains-ultra-hd-wallpapers.jpg fill
+# This gives backgrounds changing every 10 mins.
+exec "swayBGChanger ~/Images/Wallpapers/."
+#
+# Example configuration:
+#
+  # output HDMI-A-1 resolution 1920x1080 position 1920,0
+#
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+
+### Idle configuration
+#
+# Example configuration:
+#
+# exec swayidle -w \
+#          timeout 300 'swaylock -f -c 000000' \
+#          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+#          before-sleep 'swaylock -f -c 000000'
+#
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.
+
+### Input configuration
+#
+# Example configuration:
+#
+#   input "2:14:SynPS/2_Synaptics_TouchPad" {
+#       dwt enabled
+#       tap enabled
+#       natural_scroll enabled
+#       middle_emulation enabled
+#   }
+#
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+# Read `man 5 sway-input` for more information about this section.
+
+### Key bindings
+#
+# Basics:
+#
+    # Start a terminal
+    bindsym $mod+Return exec $term
+
+    # Kill focused window
+    bindsym $mod+Shift+q kill
+
+    # Start your launcher
+    bindsym $mod+d exec $menu
+
+    # Drag floating windows by holding down $mod and left mouse button.
+    # Resize them with right mouse button + $mod.
+    # Despite the name, also works for non-floating windows.
+    # Change normal to inverse to use left mouse button for resizing and right
+    # mouse button for dragging.
+    floating_modifier $mod normal
+
+    # Reload the configuration file
+    bindsym $mod+Shift+r reload
+
+    # Exit sway (logs you out of your Wayland session)
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+#
+# Moving around:
+#
+    # Move your focus around
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    # Or use $mod+[up|down|left|right]
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # Move the focused window with the same, but add Shift
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    # Ditto, with arrow keys
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+#
+# Workspaces:
+#
+    # Switch to workspace
+    bindsym $mod+1 workspace number 1
+    bindsym $mod+2 workspace number 2
+    bindsym $mod+3 workspace number 3
+    bindsym $mod+4 workspace number 4
+    bindsym $mod+5 workspace number 5
+    bindsym $mod+6 workspace number 6
+    bindsym $mod+7 workspace number 7
+    bindsym $mod+8 workspace number 8
+    bindsym $mod+9 workspace number 9
+    bindsym $mod+0 workspace number 10
+    # Move focused container to workspace
+    bindsym $mod+Shift+1 move container to workspace number 1
+    bindsym $mod+Shift+2 move container to workspace number 2
+    bindsym $mod+Shift+3 move container to workspace number 3
+    bindsym $mod+Shift+4 move container to workspace number 4
+    bindsym $mod+Shift+5 move container to workspace number 5
+    bindsym $mod+Shift+6 move container to workspace number 6
+    bindsym $mod+Shift+7 move container to workspace number 7
+    bindsym $mod+Shift+8 move container to workspace number 8
+    bindsym $mod+Shift+9 move container to workspace number 9
+    bindsym $mod+Shift+0 move container to workspace number 10
+    # Note: workspaces can have any name you want, not just numbers.
+    # We just use 1-10 as the default.
+#
+# Layout stuff:
+#
+    # You can "split" the current object of your focus with
+    # $mod+b or $mod+v, for horizontal and vertical splits
+    # respectively.
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+
+    # Switch the current container between different layout styles
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e layout toggle split
+
+    # Make the current focus fullscreen
+    bindsym $mod+f fullscreen
+
+    # Toggle the current focus between tiling and floating mode
+    bindsym $mod+Shift+space floating toggle
+
+    # Swap focus between the tiling area and the floating area
+    bindsym $mod+space focus mode_toggle
+
+    # Move focus to the parent container
+    bindsym $mod+a focus parent
+#
+# Scratchpad:
+#
+    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # You can send windows there and get them back later.
+
+    # Move the currently focused window to the scratchpad
+    bindsym $mod+Shift+minus move scratchpad
+
+    # Show the next scratchpad window or hide the focused scratchpad window.
+    # If there are multiple scratchpad windows, this command cycles through them.
+    bindsym $mod+minus scratchpad show
+#
+# Resizing containers:
+#
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+
+    # Ditto, with arrow keys
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+bar {
+       colors {
+         background #2f343f
+         statusline #2f343f
+         separator #4b5262
+
+         # colour of border, background, and text
+         focused_workspace       #2f343f #bf616a #d8dee8
+         active_workspace        #2f343f #2f343f #d8dee8
+         inactive_workspace      #2f343f #2f343f #d8dee8
+         urgent_workspace	 #2f343f #ebcb8b #2f343f
+               }
+        font pango:Source Code Pro, Font Awesome 10
+        status_command i3status
+
+        mode hide
+	hidden_state hide
+        modifier $mod
+        position bottom
+}
+
+# Status Bar: update when waybar and sway are both updated.
+# bar {
+#     swaybar_command waybar
+#     hidden_state hide
+#     mode hide
+# }
+
+# Gaps
+include /etc/sway/config.d/*
+include /home/james/.config/sway/gaps
+
+#
+# Keymap
+#
+input * {
+  xkb_layout "gb"
+  xkb_options "caps:swapescape"
+}
+
+# remove title bars
+# for_window [class="^.*"] border pixel 2
+default_border none
+hide_edge_borders both
+
+# screen brightness
+bindsym --locked XF86MonBrightnessUp exec light -A 2 # increase screen brightness
+bindsym --locked XF86MonBrightnessDown exec light -U 2 # decrease screen brightness
+
+# play/pause
+bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym --locked XF86AudioPlay+$mod exec playerctl play-pause
+
+bindsym --locked XF86AudioNext exec playerctl next
+bindsym --locked XF86AudioNext+$mod exec playerctl next
+
+bindsym --locked XF86AudioPrev exec playerctl next && playerctl previous && playerctl previous
+bindsym --locked XF86AudioPrev+$mod exec playerctl next && playerctl previous && playerctl previous
+
+bindsym --locked XF86AudioStop exec playerctl stop
+bindsym --locked XF86AudioStop+$mod exec playerctl stop
+
+# Use pactl to adjust volume in PulseAudio.
+set $refresh_i3status killall -SIGUSR1 i3status
+bindsym --locked XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && $refresh_i3status
+bindsym --locked XF86AudioRaiseVolume+$mod exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && $refresh_i3status
+
+bindsym --locked XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && $refresh_i3status
+bindsym --locked XF86AudioLowerVolume+$mod exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && $refresh_i3status
+
+bindsym --locked XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym --locked XF86AudioMute+$mod exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+
+bindsym --locked XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym --locked XF86AudioMicMute+$mod exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+font pango:Monospace, FontAwesome, 10
+
+# Gammashift
+exec gammastep
+
+# Screenshot
+bindsym Print exec "grim ~/Images/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png"
+bindsym Shift+Print exec 'grim -g "$(slurp)" ~/Images/Screenshots/`date +%Y-%m-%d_%H:%M:%S`.png'
+
+
+# options
+focus_follows_mouse no
+
+# Mouse pad settings
+input "1739:31251:SYNA2393:00_06CB:7A13_Touchpad" {
+      tap enabled
+      }
+
+# enable numlock
+input * xkb_numlock enable
+
+# Swaylock
+bindsym Ctrl+$mod+Delete exec "swaylock \
+	--screenshots \
+	--clock \
+	--indicator \
+	--indicator-radius 100 \
+	--indicator-thickness 7 \
+	--effect-blur 7x5 \
+	--effect-vignette 0.5:0.5 \
+	--ring-color bb00cc \
+	--key-hl-color 880033 \
+	--line-color 00000000 \
+	--inside-color 00000088 \
+	--separator-color 00000000 \
+	--grace 2 \
+	--fade-in 0.2"
+
+exec swayidle -w \
+  timeout 1800 'swaylock \
+	--screenshots \
+	--clock \
+	--indicator \
+	--indicator-radius 100 \
+	--indicator-thickness 7 \
+	--effect-blur 7x5 \
+	--effect-vignette 0.5:0.5 \
+	--ring-color bb00cc \
+	--key-hl-color 880033 \
+	--line-color 00000000 \
+	--inside-color 00000088 \
+	--separator-color 00000000 \
+	--grace 2 \
+	--fade-in 0.2' \
+  timeout 1805 'swaymsg "output * dpms off"' \
+  resume 'swaymsg "output * dpms on"'
+
+for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
+  kill
+}
+
+bindsym Ctrl+$mod+e exec 'emacsclient --create-frame --alternate-editor=""'
+bindsym Ctrl+$mod+f exec 'firefox'
+bindsym Ctrl+$mod+s exec 'signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland'
+bindsym Ctrl+$mod+z exec 'zathura'
+bindsym Ctrl+$mod+p exec 'passmenu'
+
+# Screensharing
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+# Cursor
+seat seat0 xcursor_theme Adwaita 24
+
+# Opacity settings. Not configured
+# set $opacity 0.9
+# for_window [class=".*"] opacity $opacity
+# for_window [app_id=".*"] opacity $opacity
+#+end_src
+
+*** gaps
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/sway/gaps
+:END:
+#+begin_src conf
+# Gaps
+set $mode_gaps Gaps: (o)uter, (i)nner, (h)orizontal, (v)ertical, (t)op, (r)ight, (b)ottom, (l)eft
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_horiz Horizontal Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_verti Vertical Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_top Top Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_right Right Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_bottom Bottom Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_left Left Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym h      mode "$mode_gaps_horiz"
+        bindsym v      mode "$mode_gaps_verti"
+        bindsym t      mode "$mode_gaps_top"
+        bindsym r      mode "$mode_gaps_right"
+        bindsym b      mode "$mode_gaps_bottom"
+        bindsym l      mode "$mode_gaps_left"
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
+
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_horiz" {
+        bindsym plus  gaps horizontal current plus 5
+        bindsym minus gaps horizontal current minus 5
+        bindsym 0     gaps horizontal current set 0
+
+        bindsym Shift+plus  gaps horizontal all plus 5
+        bindsym Shift+minus gaps horizontal all minus 5
+        bindsym Shift+0     gaps horizontal all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_verti" {
+        bindsym plus  gaps vertical current plus 5
+        bindsym minus gaps vertical current minus 5
+        bindsym 0     gaps vertical current set 0
+
+        bindsym Shift+plus  gaps vertical all plus 5
+        bindsym Shift+minus gaps vertical all minus 5
+        bindsym Shift+0     gaps vertical all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_top" {
+        bindsym plus  gaps top current plus 5
+        bindsym minus gaps top current minus 5
+        bindsym 0     gaps top current set 0
+
+        bindsym Shift+plus  gaps top all plus 5
+        bindsym Shift+minus gaps top all minus 5
+        bindsym Shift+0     gaps top all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_right" {
+        bindsym plus  gaps right current plus 5
+        bindsym minus gaps right current minus 5
+        bindsym 0     gaps right current set 0
+
+        bindsym Shift+plus  gaps right all plus 5
+        bindsym Shift+minus gaps right all minus 5
+        bindsym Shift+0     gaps right all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_bottom" {
+        bindsym plus  gaps bottom current plus 5
+        bindsym minus gaps bottom current minus 5
+        bindsym 0     gaps bottom current set 0
+
+        bindsym Shift+plus  gaps bottom all plus 5
+        bindsym Shift+minus gaps bottom all minus 5
+        bindsym Shift+0     gaps bottom all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_left" {
+        bindsym plus  gaps left current plus 5
+        bindsym minus gaps left current minus 5
+        bindsym 0     gaps left current set 0
+
+        bindsym Shift+plus  gaps left all plus 5
+        bindsym Shift+minus gaps left all minus 5
+        bindsym Shift+0     gaps left all set 0
+
+        bindsym Return mode "$mode_gaps"
+        bindsym Escape mode "default"
+}
+
+#+end_src
+** systemd
+*** Spotifyd
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/systemd/system/spotifyd.service
+:END:
+#+begin_src conf
+[Unit]
+Description=A spotify playing daemon
+Documentation=https://github.com/Spotifyd/spotifyd
+Wants=sound.target
+After=sound.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/spotifyd --no-daemon
+Restart=always
+RestartSec=12
+
+[Install]
+WantedBy=default.target
+#+end_src
+** waybar
+*** config
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/waybar/config
+:END:
+#+begin_src conf
+{
+    "id": "bar-0",
+
+    "ipc": true,
+
+    "layer": "top", // Waybar at top layer
+
+    "position": "bottom", // Waybar position (top|bottom|left|right)
+
+    "height": 20, // Waybar height (to be removed for auto height)
+
+    // "width": 1280, // Waybar width
+
+    "spacing": 4, // Gaps between modules (4px)
+
+    // Choose the order of the modules
+    "modules-left": [ "sway/workspaces"
+    		    , "sway/mode"
+		    , "custom/media"
+		    ],
+
+    // "modules-center": ["sway/window"],
+
+    "modules-right": [ "idle_inhibitor"
+    		     , "pulseaudio"
+		     , "network"
+		     , "cpu"
+		     , "memory"
+		     , "temperature"
+		     , "backlight"
+		     , "battery"
+		     , "clock"
+		     , "tray"
+		     ],
+
+
+    // Module Configuration
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        }
+    },
+
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 10
+    },
+
+    "clock": {
+        // "timezone": "America/New_York",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+	"format": " {:%a %-d %b %H:%M:%S}",
+	"interval": 1
+    },
+
+    "cpu": {
+        "format": " {usage}%",
+        "tooltip": false
+    },
+
+    "memory": {
+        "format": " {used:0.1f}G | {avail:0.1f}G"
+    },
+
+    "temperature": {
+        // "thermal-zone": 2,
+        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        "critical-threshold": 80,
+        // "format-critical": "{temperatureC}°C {icon}",
+        "format": "{temperatureC}°C {icon}",
+        "format-icons": ["", "", ""]
+    },
+
+    "backlight": {
+        // "device": "acpi_video1",
+        "format": "{icon} {percent}%",
+        "format-icons": ["", ""]
+    },
+
+    "battery": {
+        "states": {
+            // "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": " {capacity}%",
+        "format-alt": "{icon} {time}",
+        // "format-good": "", // An empty format will hide the module
+        // "format-full": "",
+        "format-icons": ["", "", "", "", ""]
+    },
+
+    "network": {
+        // "interface": "wlp2*", // (Optional) To force the use of this interface
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-ethernet": "{ipaddr}/{cidr} ",
+        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "⚠ Disconnected",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    },
+
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{icon} {volume}% {format_source}",
+        "format-bluetooth": "{icon} {volume}% {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": " {volume}%",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+
+}
+
+  
+#+end_src
+
+*** style.css
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/waybar/style.css
+:END:
+#+begin_src css
+{
+    border: none;
+    border-radius: 0;
+    /* `otf-font-awesome` is required to be installed for icons */
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: rgba(43, 48, 59, 0.5);
+    border-bottom: 3px solid rgba(100, 114, 125, 0.5);
+    color: #ffffff;
+    transition-property: background-color;
+    transition-duration: .5s;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/*
+window#waybar.empty {
+    background-color: transparent;
+}
+window#waybar.solo {
+    background-color: #FFFFFF;
+}
+*/
+
+#window {
+    margin-top: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 26px;
+    transition: none;
+    /*
+    color: #f8f8f2;
+	background: #282a36;
+   */
+    color: transparent;
+    background: transparent;
+}
+
+
+window#waybar.termite {
+    background-color: #3F3F3F;
+}
+
+window#waybar.chromium {
+    background-color: #000000;
+    border: none;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background-color: transparent;
+    color: #ffffff;
+    /* Use box-shadow instead of border so the text isn't offset */
+    box-shadow: inset 0 -3px transparent;
+}
+
+/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+#workspaces button:hover {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 -3px #ffffff;
+}
+
+#workspaces button.focused {
+    background-color: #64727D;
+    box-shadow: inset 0 -3px #ffffff;
+}
+
+#workspaces button.urgent {
+    background-color: #eb4d4b;
+}
+
+#mode {
+    background-color: #64727D;
+    border-bottom: 3px solid #ffffff;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#mpd {
+    padding: 0 10px;
+    color: #ffffff;
+}
+
+#window,
+#workspaces {
+    margin: 0 4px;
+}
+
+/* If workspaces is the leftmost module, omit left margin */
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 0;
+}
+
+/* If workspaces is the rightmost module, omit right margin */
+.modules-right > widget:last-child > #workspaces {
+    margin-right: 0;
+}
+
+#clock {
+    /* background-color: #64727D; */
+    background-color: #81a1c1;
+    color: #000000;
+}
+
+#battery {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#battery.charging, #battery.plugged {
+    color: #ffffff;
+    background-color: #26A65B;
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: #000000;
+    }
+}
+
+#battery.critical:not(.charging) {
+    background-color: #f53c3c;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+label:focus {
+    background-color: #000000;
+}
+
+#cpu {
+    background-color: #2ecc71;
+    color: #000000;
+}
+
+#memory {
+    background-color: #9FD575;
+    color: #000000;
+}
+
+#disk {
+    background-color: #964B00;
+}
+
+#backlight {
+    background-color: #90b1b1;
+    color: #000000;
+}
+
+#network {
+    background-color: #b48ead;
+    color: #000000;
+}
+
+#network.disconnected {
+    background-color: #f53c3c;
+}
+
+#pulseaudio {
+    background-color: #ebcb8b;
+    color: #000000;
+}
+
+#pulseaudio.muted {
+    background-color: #90b1b1;
+    color: #2a5c45;
+}
+
+#custom-media {
+    background-color: #66cc99;
+    color: #2a5c45;
+    min-width: 100px;
+}
+
+#custom-media.custom-spotify {
+    background-color: #66cc99;
+}
+
+#custom-media.custom-vlc {
+    background-color: #ffa000;
+}
+
+#temperature {
+    background-color: #f0932b;
+    color: #000000;
+}
+
+#temperature.critical {
+    background-color: #eb4d4b;
+}
+
+#tray {
+    background-color: #2980b9;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: #eb4d4b;
+}
+
+#idle_inhibitor {
+    background-color: #2d3436;
+}
+
+#idle_inhibitor.activated {
+    background-color: #ecf0f1;
+    color: #2d3436;
+}
+
+#mpd {
+    background-color: #66cc99;
+    color: #2a5c45;
+}
+
+#mpd.disconnected {
+    background-color: #f53c3c;
+}
+
+#mpd.stopped {
+    background-color: #90b1b1;
+}
+
+#mpd.paused {
+    background-color: #51a37a;
+}
+
+#language {
+    background: #00b093;
+    color: #740864;
+    padding: 0 5px;
+    margin: 0 5px;
+    min-width: 16px;
+}
+
+#keyboard-state {
+    background: #97e1ad;
+    color: #000000;
+    padding: 0 0px;
+    margin: 0 5px;
+    min-width: 16px;
+}
+
+#keyboard-state > label {
+    padding: 0 5px;
+}
+
+#keyboard-state > label.locked {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#+end_src
+** xfce4
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/xfce4/terminal/terminalrc
+:END:
+#+begin_src conf
+[Configuration]
+MiscAlwaysShowTabs=FALSE
+MiscBell=FALSE
+MiscBellUrgent=FALSE
+MiscBordersDefault=FALSE
+MiscCursorBlinks=FALSE
+MiscCursorShape=TERMINAL_CURSOR_SHAPE_BLOCK
+MiscDefaultGeometry=80x24
+MiscInheritGeometry=FALSE
+MiscMenubarDefault=FALSE
+MiscMouseAutohide=FALSE
+MiscMouseWheelZoom=TRUE
+MiscToolbarDefault=FALSE
+MiscConfirmClose=TRUE
+MiscCycleTabs=TRUE
+MiscTabCloseButtons=TRUE
+MiscTabCloseMiddleClick=TRUE
+MiscTabPosition=GTK_POS_TOP
+MiscHighlightUrls=TRUE
+MiscMiddleClickOpensUri=FALSE
+MiscCopyOnSelect=FALSE
+MiscShowRelaunchDialog=TRUE
+MiscRewrapOnResize=TRUE
+MiscUseShiftArrowsToScroll=FALSE
+MiscSlimTabs=FALSE
+MiscNewTabAdjacent=FALSE
+MiscSearchDialogOpacity=100
+MiscShowUnsafePasteDialog=TRUE
+FontName=Source Code Pro 11
+ColorForeground=#D8DEE9
+ColorBackground=#2E3440
+ColorPalette=#3B4252;#BF616A;#A3BE8C;#EBCB8B;#81A1C1;#B48EAD;#88C0D0;#E5E9F0;#4C566A;#BF616A;#A3BE8C;#EBCB8B;#81A1C1;#B48EAD;#8FBCBB;#ECEFF4
+ColorCursor=#D8DEE9
+ColorBold=#D8DEE9
+ColorBoldUseDefault=FALSE
+TabActivityColor=#88C0D0
+BackgroundDarkness=0.910000
+BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
+ScrollingBar=TERMINAL_SCROLLBAR_NONE
+
+#+end_src
+
+** zathura
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/zathura/zathurarcTEMP
+:END:
+#+begin_src conf
+set selection-clipboard clipboard
+
+set font			"JetBrains Mono Nerd Font 10"
+set default-fg      "#eceff4"
+set default-bg      "#2e3440"
+
+set completion-bg		"#3b4252"
+set completion-fg		"#eceff4"
+set completion-highlight-bg	"#4c566a"
+set completion-highlight-fg	"#eceff4"
+set completion-group-bg		"#3b4252"
+set completion-group-fg		"#88c0d0"
+
+set statusbar-fg		"#eceff4"
+set statusbar-bg		"#3b4252"
+set statusbar-h-padding		10
+set statusbar-v-padding		10
+
+set notification-bg		"#2e3440"
+set notification-fg		"#eceff4"
+set notification-error-bg	"#2e3440"
+set notification-error-fg	"#bf616a"
+set notification-warning-bg	"#2e3440"
+set notification-warning-fg	"#ebcb8b"
+set selection-notification	"true"
+
+set inputbar-fg			"#eceff4"
+set inputbar-bg     "#3b4252"
+
+set recolor			"true"
+set recolor-lightcolor		"#2e3440"
+set recolor-darkcolor		"#d8dee9"
+
+set index-fg			"#eceff4"
+set index-bg			"#2e3440"
+set index-active-fg		"#eceff4"
+set index-active-bg		"#4c566a"
+
+set render-loading-bg		"#2e3440"
+set render-loading-fg		"#eceff4"
+
+set highlight-color		"#88c0d0"
+set highlight-active-color	"#5e81ac"
+
+set adjust-open			"width"
+#+end_src
