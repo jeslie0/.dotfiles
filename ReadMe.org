@@ -1,5 +1,7 @@
 #+title: NixOS System Flake & Dotfiles
 #+author: James Leslie
+#+attr_html: :width 300px
+[[file:Images/NixOS/nixstorm.png]]
 This file is how I manage my personal dotfiles. I use Emacs to tangle the source blocks into the required files. As such, my Emacs configuration is not in this file, but can be found in the .emacs.d folder.
 
 * Table of Contents                                                     :toc:
