@@ -1,6 +1,8 @@
 #+title: James' New Emacs Configuration
 #+PROPERTY: header-args:elisp :tangle ./init.el
 #+options: toc:t
+#+attr_html: :width 300px
+[[file:Icons/EmacsLogo.svg]]
 * Table of Contents                                                     :toc:
 - [[#lexical-binding][Lexical-binding]]
 - [[#misc][Misc]]
@@ -275,12 +277,17 @@ shamelessly stolen from Spacemacs.
                             new-hop)))
            new-fname))))))
 #+end_src
-*** find-dotfile
+*** dotfiles
 #+begin_src elisp
-(defun find-dotfile ()
+(defun find-emacs-dotfile ()
   "Edit the `dotfile', in the current window."
   (interactive)
   (find-file-existing "~/.emacs.d/ReadMe.org"))
+
+(defun find-system-dotfile ()
+  "Edit the `dotfile', in the current window."
+  (interactive)
+  (find-file-existing "~/.dotfiles/ReadMe.org"))
 #+end_src
 *** delete-this-file
 #+BEGIN_SRC elisp
@@ -413,7 +420,8 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   "fc" 'copy-file
   "fd" 'delete-file-and-buffer
   "ff" '(counsel-find-file :which-key "find file")
-  "fed" '(find-dotfile :which-key "Open init file")
+  "fed" '(find-emacs-dotfile :which-key "Open init file")
+  "fnd" '(find-system-dotfile :which-key "Open dotfiles")
   "fE" '(sudo-edit :which-key "Edit with sudo...")
   "fR" 'rename-file-and-buffer
   "fs" '(save-buffer :which-key "save")
