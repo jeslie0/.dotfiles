@@ -5,6 +5,7 @@
 This file is how I manage my personal dotfiles. I use Emacs to tangle the source blocks into the required files. As such, my Emacs configuration is not in this file, but can be found in the .emacs.d folder.
 
 * Table of Contents                                                     :toc:
+- [[#housekeeping][Housekeeping]]
 - [[#gitconfig][.gitconfig]]
 - [[#gitattributes][.gitattributes]]
 - [[#nix-channels][.nix-channels]]
@@ -24,6 +25,8 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#zathura][zathura]]
   - [[#nix-system][Nix System]]
 
+* Housekeeping
+Generally, commits should start with the type of thing being changed, in square brackets.
 * .gitconfig
 :PROPERTIES:
 :header-args:conf: :tangle ./.gitconfig
