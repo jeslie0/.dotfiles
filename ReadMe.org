@@ -1,4 +1,4 @@
-#+title: My Literate Dotfiles
+#+title: NixOS System Flake & Dotfiles
 #+author: James Leslie
 This file is how I manage my personal dotfiles. I use Emacs to tangle the source blocks into the required files. As such, my Emacs configuration is not in this file, but can be found in the .emacs.d folder.
 
@@ -6,6 +6,7 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
 - [[#gitconfig][.gitconfig]]
 - [[#gitattributes][.gitattributes]]
 - [[#nix-channels][.nix-channels]]
+- [[#emacsd][.emacs.d]]
 - [[#stowrc][.stowrc]]
 - [[#config][.config]]
   - [[#gammastep][gammastep]]
@@ -46,6 +47,8 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
 https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 https://nixos.org/channels/nixos-unstable nixos
 #+end_src
+* .emacs.d
+The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
 * .stowrc
 :PROPERTIES:
 :header-args:conf: :tangle ./.stowrc
