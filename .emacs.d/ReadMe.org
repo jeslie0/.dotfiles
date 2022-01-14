@@ -155,6 +155,7 @@
 - [[#fun][Fun]]
   - [[#snow][Snow]]
   - [[#fireplace][Fireplace]]
+- [[#simple-httpd][Simple Httpd]]
 
 * Lexical-binding
 #+begin_src elisp
@@ -1531,7 +1532,7 @@ Provides better documentation.
 	   :unnarrowed t)
 
 	  ("m" "mathematics note" plain
-	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros}\n\n* %?"
+	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros} \\usepacakge{math-environments}\n\n* %?"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
 	   :unnarrowed t)
 	  )))
@@ -1604,6 +1605,7 @@ Provides better documentation.
   :config
   (jl/org-mode-key-bindings)
   ;; (jl/org-font-setup)
+  (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
   :custom
   (org-ellipsis " ▼")
   (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
@@ -3582,6 +3584,7 @@ there are no attachments."
   :custom
   (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
   (bibtex-completion-library-path "~/Documents/PDF/")
+  (org-latex-prefer-user-labels t)
   :init
   (jl/org-ref-keys)
   )
@@ -3970,6 +3973,7 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package direnv
   ;; :hook ((haskell-mode haskell-cabal-mode) . direnv-mode)
+  :hook (haskell-mode . direnv-update-environment)
   ;; :defer t
   :config
   (direnv-mode)
@@ -4164,4 +4168,10 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package fireplace
   :defer t)
+#+END_SRC
+* Simple Httpd
+#+BEGIN_SRC elisp
+(use-package simple-httpd
+  :defer t
+  :after httpd-serve-directory)
 #+END_SRC
