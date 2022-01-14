@@ -1,4 +1,3 @@
 --ignore ./.stowrc
 --ignore ./ReadMe.org
---ignore ./flake.nix
---ignore ./flake.lock
+--ignore ./result

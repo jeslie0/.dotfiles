@@ -21,12 +21,21 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#sway][sway]]
   - [[#systemd][systemd]]
   - [[#waybar][waybar]]
-  - [[#xfce4][xfce4]]
+  - [[#xfce4-terminal][xfce4-terminal]]
   - [[#zathura][zathura]]
-  - [[#nix-system][Nix System]]
+- [[#nix-system][Nix System]]
+  - [[#flakenix][flake.nix]]
+  - [[#configurationnix][configuration.nix]]
+  - [[#homenix][home.nix]]
 
 * Housekeeping
-Generally, commits should start with the type of thing being changed, in square brackets.
+Generally, commits should be prefixed with the type of thing being changed, in square brackets. Here is an incomplete list of used prefixes:
+- [Emacs];
+- [System];
+- [ReadMe];
+- [Sway];
+- [Waybar];
+- ...
 * .gitconfig
 :PROPERTIES:
 :header-args:conf: :tangle ./.gitconfig
@@ -67,6 +76,9 @@ The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/gammastep/config.ini
 :END:
+[[https://gitlab.com/chinstrap/gammastep][Gammastep]]. This is used to automatically change the gamma level of the screen, making the screen easier to use at night.
+
+This sets the day and night screen temperatures.
 #+begin_src conf
 [general]
 ; Set the day and night screen temperatures
@@ -136,11 +148,12 @@ lon=-81.3
 ; [randr]
 ; screen=0
 #+end_src
-
 ** i3status
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/i3status/config
 :END:
+[[https://github.com/Tazeg/i3status][i3status]]. i3Status is currently used as my status bar. At some point, I will change my status bar to waybar.
+
 #+begin_src conf
 # It is important that this file is edited as UTF-8.
 # The following line should contain a sharp s:
@@ -212,11 +225,11 @@ tztime local {
 	# format_time = " %a %-d %b %H:%M:%S"
 }
 #+end_src
-
 ** mbsync
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/mbsync/.mbsyncrc
 :END:
+[[https://isync.sourceforge.io/][isync]]. Isync is used to synchronise my imap mail boxes, for use with mu4e.
 #+begin_src conf
 # Posteo
 IMAPAccount jamesleslie
@@ -245,11 +258,11 @@ Sync All
 Expunge Both
 SyncState *
 #+end_src
-
 ** neofetch
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/neofetch/config.conf
 :END:
+[[https://github.com/dylanaraps/neofetch][neofetch]]. Gives system information in the terminal, with pretty printing.
 #+begin_src conf
 # See this wiki page for more info:
 # https://github.com/dylanaraps/neofetch/wiki/Customizing-Info
@@ -1117,7 +1130,7 @@ background_color=
 stdout="off"
 #+end_src
 
-** nixpkgs
+** TODO nixpkgs
 *** flake.nix
 :PROPERTIES:
 :header-args:nix: :tangle ./.config/nixpkgs/flake.nix
@@ -1204,6 +1217,7 @@ stdout="off"
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/spotifyd/spotifyd.conf
 :END:
+[[https://github.com/Spotifyd/spotifyd][spotifyd]]. A spotify daemon. I currently do not use this.
 #+begin_src conf
 [global]
 # Your Spotify account name.
@@ -1288,6 +1302,7 @@ device_type = "computer"
 #+end_src
 
 ** sway
+[[https://github.com/swaywm/sway][swaywm]]. Sway is my window manager of choice.
 *** config
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/sway/config
@@ -1805,6 +1820,7 @@ RestartSec=12
 WantedBy=default.target
 #+end_src
 ** waybar
+[[https://github.com/Alexays/Waybar][waybar]]. This is the status bar that I will be switching to at some point in the future.
 *** config
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/waybar/config
@@ -2224,10 +2240,11 @@ label:focus {
 }
 
 #+end_src
-** xfce4
+** xfce4-terminal
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/xfce4/terminal/terminalrc
 :END:
+[[https://www.systutorials.com/docs/linux/man/1-xfce4-terminal/][xfce4-terminal]]. My current terminal. I might end up swapping for a different one.
 #+begin_src conf
 [Configuration]
 MiscAlwaysShowTabs=FALSE
@@ -2270,11 +2287,11 @@ BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
 ScrollingBar=TERMINAL_SCROLLBAR_NONE
 
 #+end_src
-
 ** zathura
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/zathura/zathurarcTEMP
 :END:
+[[https://pwmt.org/projects/zathura/][zathura]]. My PDF viewer. Minimalistic but it works nicely.
 #+begin_src conf
 set selection-clipboard clipboard
 
@@ -2322,9 +2339,9 @@ set highlight-active-color	"#5e81ac"
 
 set adjust-open			"width"
 #+end_src
-
-** Nix System
-*** flake.nix
+* Nix System
+[[https://nixos.org/][nixos]]. My operating system. Everything is declaratively specified in these files
+** flake.nix
 :PROPERTIES:
 :header-args:nix: :tangle ./flake.nix
 :END:
@@ -2348,9 +2365,11 @@ set adjust-open			"width"
     swayBGChangerGitHub.url = "github:jeslie0/swayBGChanger";
     swayBGChangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
+    # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
+    # emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.
     # emacs-overlay.url = "github:nix-community/emacs-overlay/c77eefc7683c6c56694e4516f6bd5fc6b3b0cf48";
+    emacs-overlay.url = "github:nix-community/emacs-overlay/09d88e3894d691dd64e313abc1c231ba3a313822";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
     nur.url = "github:nix-community/NUR";
@@ -2395,7 +2414,7 @@ set adjust-open			"width"
   };
 }
 #+end_src
-*** configuration.nix
+** configuration.nix
 :PROPERTIES:
 :header-args:nix: :tangle ./.config/NixSystem/configuration.nix
 :END:
@@ -2617,8 +2636,8 @@ set adjust-open			"width"
     zulip-term
     netcat
 
-    ghc
-    haskell-language-server
+    # ghc
+    # haskell-language-server
     nix-prefetch-git
     cabal2nix
     cabal-install
@@ -2706,7 +2725,7 @@ set adjust-open			"width"
 
 }
 #+end_src
-*** home.nix
+** home.nix
 :PROPERTIES:
 :header-args:nix: :tangle ./.config/NixSystem/home.nix
 :END:

@@ -32,6 +32,7 @@
       "original": {
         "owner": "nix-community",
         "repo": "emacs-overlay",
+        "rev": "09d88e3894d691dd64e313abc1c231ba3a313822",
         "type": "github"
       }
     },
@@ -72,11 +73,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1640943848,
-        "narHash": "sha256-AXmbspe5EXTr2WsGdtBhFgKtGvzMmPBgqOanFvQq974=",
+        "lastModified": 1641766524,
+        "narHash": "sha256-XQT0psUWZ4QgA4EXzbeKsx8Rf8DDZKVbeq/Iz5Y+i4c=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "89bdef7994a20b5285454bf42c7d2b53b98d5754",
+        "rev": "05d655146b1e98bf38c57e2ed2bea0f354e73388",
         "type": "github"
       },
       "original": {
@@ -102,11 +103,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1640871638,
-        "narHash": "sha256-ty6sGnJUQEkCd43At5U3DRQZD7rPARz5VginSW6hZ3k=",
+        "lastModified": 1641528457,
+        "narHash": "sha256-FyU9E63n1W7Ql4pMnhW2/rO9OftWZ37pLppn/c1aisY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "5b091d4fbe3b7b7493c3b46fe0842e4b30ea24b3",
+        "rev": "ff377a78794d412a35245e05428c8f95fef3951f",
         "type": "github"
       },
       "original": {
@@ -117,11 +118,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1641305379,
-        "narHash": "sha256-OT24nFxAmD4BC3tyF5kerHAT675oH4SDGGlYFV+TVso=",
+        "lastModified": 1641767064,
+        "narHash": "sha256-meey2wV4LAjcefABAWu1d6/RWG31udjeTjACtiYmHWo=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "7b38c404528c62c98b2983b2dee3befda70fb2e0",
+        "rev": "390e09965904f42204ca9493698c859e35cefc61",
         "type": "github"
       },
       "original": {
@@ -169,11 +170,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1638814122,
-        "narHash": "sha256-aVTiC1uiGDbUG2I3eAoaY/RhVCIsuTrCdKO7lImtack=",
+        "lastModified": 1641768747,
+        "narHash": "sha256-OlW7WUVa7wmSlATQ9Ld+EtShRS7L1EX6i+Xv8cAI7W8=",
         "owner": "jeslie0",
         "repo": "swayBGChanger",
-        "rev": "db7da33e4406f879cfe6694e68dfc5bba849f8c8",
+        "rev": "91bff787b4a300c5066cc32cf88126506f130c28",
         "type": "github"
       },
       "original": {

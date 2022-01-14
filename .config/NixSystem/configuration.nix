@@ -215,8 +215,8 @@
     zulip-term
     netcat
 
-    ghc
-    haskell-language-server
+    # ghc
+    # haskell-language-server
     nix-prefetch-git
     cabal2nix
     cabal-install
