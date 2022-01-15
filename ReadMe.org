@@ -1963,7 +1963,7 @@ WantedBy=default.target
 :header-args:conf: :tangle ./.config/waybar/style.css
 :END:
 #+begin_src css
-{
+#{
     border: none;
     border-radius: 0;
     /* `otf-font-awesome` is required to be installed for icons */

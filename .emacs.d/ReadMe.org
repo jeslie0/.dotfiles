@@ -1536,6 +1536,13 @@ Provides better documentation.
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
 	   :unnarrowed t)
 	  )))
+
+(defun jl/org-roam-daily-templates ()
+  (setq org-roam-dailies-capture-templates
+	'(("d" "default" entry
+	   "* %?"
+	   :target (file+head "%<%Y-%m-%d>.org"
+			      "#+title: %<%Y-%m-%d>\n#+filetages: :Daily:\n [[id:24a82cf2-bc51-4b01-81f7-53968e483ee2][Daily Journal]]\n* [/] Daily Todos\n1. [ ]\n2. [ ]\n3. [ ]\n* Daily Tasks\n* Morning Thoughts\n* Evening Reflections")))))
 #+END_SRC
 *** Initialisation
 #+begin_src elisp
@@ -1546,6 +1553,7 @@ Provides better documentation.
   (org-roam-graph-viewer #'browse-url-firefox)
   (org-roam-directory "/home/james/Documents/Roam/")
   :init
+  (jl/org-roam-daily-templates)
   (jl/org-roam-global-keys)
   (jl/org-roam-templates)
   :config
