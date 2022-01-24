@@ -95,6 +95,7 @@
   - [[#erc][ERC]]
   - [[#eww][EWW]]
   - [[#mu4e][Mu4e]]
+  - [[#arxiv][Arxiv]]
 - [[#latex][LaTeX]]
   - [[#functions-4][Functions]]
   - [[#keybindings-3][Keybindings]]
@@ -1207,7 +1208,9 @@ Provides better documentation.
   (general-define-key
    :keymaps 'org-mode-map
    :states '(normal visual motion)
-   "RET" 'org-open-at-point
+   "RET" 'org-open-at-point ;; Allows links to be opened with RET
+   "$"   'end-of-line       ;; Evil-org changes this behaviour. This changes it back.
+   "0"   'beginning-of-line
    )
 
   (jl/major-modes
@@ -1490,11 +1493,11 @@ Provides better documentation.
   (jl/major-modes
     :states '(normal visual motion)
     :keymaps 'org-mode-map
-    :major-mode '(org-mode)
+    :major-modes t
 
-    "r" '(:ignore t :which-key "Org Roam2")
-    "rd" '(:ignore t :which-key "Dailies")
-    "rt" '(:ignore t :which-key "Tags")
+    "r" '(:ignore t :which-key "org-roam")
+    "rd" '(:ignore t :which-key "dailies")
+    "rt" '(:ignore t :which-key "tags")
     "rdy" 'org-roam-dailies-goto-yesterday
     "rdt" 'org-roam-dailies-goto-today
     "rdT" 'org-roam-dailies-goto-tomorrow
@@ -2040,11 +2043,15 @@ Calling org-babel languages in the following form saves a lot on startup time.
 * Languages
 ** Tools
 *** LSP
+We need to define a list of major mode maps to use =lsp-mode= in.
+#+BEGIN_SRC elisp
+(setq lsp-mode-maps '(haskell-mode-map))
+#+END_SRC
 **** Keybindings
 #+begin_src elisp :tangle no
 (defun jl/lsp-keys-descr ()
   (jl/major-modes
-   :keymaps 'lsp-mode-map
+   :keymaps lsp-mode-maps
    :states '(normal visual motion)
    :major-modes t
    "a" '(:ignore t :which-key "code action")
@@ -2062,7 +2069,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 
 (defun jl/lsp-keys ()
   (jl/major-modes
-   :keymaps 'lsp-mode-map
+   :keymaps lsp-mode-maps
    :major-modes t
    :states '(normal visual motion)
    ;; code actions
@@ -2109,73 +2116,80 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+end_src
 #+begin_src elisp
 (defun jl/lsp-keys ()
-  (general-define-key
-   :keymaps 'lsp-mode-map
-   :states '(normal visual motion)
-   :prefix ","
-   "ws" #'lsp
-   "wr" #'lsp-workspace-restart
-   "wq" #'lsp-workspace-shutdown
-   "wd" #'lsp-describe-session
-   "wD" #'lsp-disconnect
-   "wv" #'lsp-version
+  (jl/major-modes
+    :keymaps lsp-mode-maps
+    :states '(normal visual motion)
+    :major-modes t
+    "=" '(:ignore t :which-key "format")
+    "==" #'lsp-format-buffer
+    "=r" #'lsp-format-region
 
-   "==" #'lsp-format-buffer
-   "=r" #'lsp-format-region
+    "a" '(:ignore t :which-key "action")
+    "aa" #'lsp-execute-code-action
+    "al" #'lsp-avy-lens
+    "ah" #'lsp-document-highlight
+    "as" #'lsp-ui-sideline-apply-code-actions
 
-   "Fa" #'lsp-workspace-folders-add
-   "Fr" #'lsp-workspace-folders-remove
-   "Fs" #'lsp-workspace-folders-switch
-   "Fb" #'lsp-workspace-blacklist-remove
+    "F" '(:ignore t :which-key "folders")
+    "Fa" #'lsp-workspace-folders-add
+    "Fr" #'lsp-workspace-folders-remove
+    "Fs" #'lsp-workspace-folders-switch
+    "Fb" #'lsp-workspace-blacklist-remove
 
-   "Tl" #'lsp-lens-mode
-   "TL" #'lsp-toggle-trace-io
-   "Th" #'lsp-toggle-symbol-highlight
-   "TS" #'lsp-ui-sideline-mode
-   "Td" #'lsp-ui-doc-mode
-   "Ts" #'lsp-toggle-signature-auto-activate
-   "Tf" #'lsp-toggle-on-type-formatting
-   "TT" #'lsp-treemacs-sync-mode
-   "Tld" #'lsp-ui-doc-mode
-   "Tls" #'lsp-ui-sideline-mode
+    "g" '(:ignore t :which-key "go-to")
+    "gg" #'lsp-find-definition
+    "gr" #'lsp-find-references
+    "gi" #'lsp-find-implementation
+    "gt" #'lsp-find-type-definition
+    "gd" #'lsp-find-declaration
+    ;; "ga" #'lsp-find-m
 
-   "gg" #'lsp-find-definition
-   "gr" #'lsp-find-references
-   "gi" #'lsp-find-implementation
-   "gt" #'lsp-find-type-definition
-   "gd" #'lsp-find-declaration
-   "gh" #'lsp-treemacs-call-hierarchy
-   ;; "ga" #'lsp-find-m
+    "G" '(:ignore t :which-key "peek")
+    "Gg" #'lsp-ui-peek-find-definitions
+    "Gr" #'lsp-ui-peek-find-references
+    "Gi" #'lsp-ui-peek-find-implementation
+    "Gs" #'lsp-ui-peek-find-workspace-symbol
 
-   "hh" #'lsp-describe-thing-at-point
-   "hs" #'lsp-signature-activate
-   "hg" #'lsp-ui-doc-show
+    "h" '(:ignore t :which-key "help")
+    "hh" #'lsp-describe-thing-at-point
+    "hs" #'lsp-signature-activate
+    "hg" #'lsp-ui-doc-show
 
-   "rr" #'lsp-rename
-   "ro" #'lsp-organize-imports
+    "r" '(:ignore t :which-key "organize")
+    "rr" #'lsp-rename
+    "ro" #'lsp-organize-imports
 
-   "aa" #'lsp-execute-code-action
-   "al" #'lsp-avy-lens
-   "ah" #'lsp-document-highlight
-   "as" #'lsp-ui-sideline-apply-code-actions
+    "T" '(:ignore t :which-key "toggle")
+    "Tl" #'lsp-lens-mode
+    "TL" #'lsp-toggle-trace-io
+    "Th" #'lsp-toggle-symbol-highlight
+    "TS" #'lsp-ui-sideline-mode
+    "Td" #'lsp-ui-doc-mode
+    "Ts" #'lsp-toggle-signature-auto-activate
+    "Tf" #'lsp-toggle-on-type-formatting
+    "TT" #'lsp-treemacs-sync-mode
+    "Tld" #'lsp-ui-doc-mode
+    "Tls" #'lsp-ui-sideline-mode
 
-   "Gg" #'lsp-ui-peek-find-definitions
-   "Gr" #'lsp-ui-peek-find-references
-   "Gi" #'lsp-ui-peek-find-implementation
-   "Gs" #'lsp-ui-peek-find-workspace-symbol)
-  )
+    "w" '(:ignore t :which-key "workspaces")
+    "ws" #'lsp
+    "wr" #'lsp-workspace-restart
+    "wq" #'lsp-workspace-shutdown
+    "wd" #'lsp-describe-session
+    "wD" #'lsp-disconnect
+    "wv" #'lsp-version))
 #+end_src
 **** Initialisation
 #+begin_src elisp
 (use-package lsp-mode
   :defer t
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . lsp-enable-which-key-integration)
+  ;; :hook (lsp-mode . lsp-enable-which-key-integration)
   :config
   (jl/lsp-keys)
   ;; (jl/lsp-keys-descr)
   :custom
-  (lsp-keymap-prefix ",")
+  ;; (lsp-keymap-prefix ",")
   (lsp-idle-delay 0.500)
   (lsp-lens-place-position 'above-line)
   (lsp-log-io nil)
@@ -2222,15 +2236,16 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ***** Keybindings
 #+begin_src elisp
 (defun jl/lsp-treemacs-keys ()
-  (general-define-key
-   :keymaps 'lsp-mode-map
-   :states '(normal visual motion)
-   :prefix ","
-   "t"  '(:toggle nil :which-key "lsp-treemacs")
-   "te" 'lsp-treemacs-errors-list
-   "tr" 'lsp-treemacs-references
-   "ts" 'lsp-treemacs-symbols
-   )
+  (jl/major-modes
+    :keymaps lsp-mode-maps
+    :states '(normal visual motion)
+    :major-modes t
+    "t" '(:ignore t :which-key "lsp-treemacs")
+    "th" #'lsp-treemacs-call-hierarchy
+    "te" 'lsp-treemacs-errors-list
+    "tr" 'lsp-treemacs-references
+    "ts" 'lsp-treemacs-symbols
+    )
   )
 #+end_src
 ***** Initialisation
@@ -2258,10 +2273,10 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ***** Keybindings
 #+BEGIN_SRC elisp
 (defun jl/lsp-ivy-keys ()
-  (general-define-key
-    :keymaps 'lsp-mode-map
+  (jl/major-modes
+    :keymaps lsp-mode-maps
     :states '(normal visual motion)
-    :prefix ","
+    :major-modes t
     "i"  '(:toggle nil :which-key "lsp-ivy")
     "is" 'lsp-ivy-workspace-symbol
     "iS" 'lsp-ivy-global-workspace-symbol
@@ -3314,6 +3329,11 @@ there are no attachments."
   :hook (after-init . mu4e-alert-enable-mode-line-display)
   )
 #+end_src
+** Arxiv
+#+BEGIN_SRC elisp
+(use-package arxiv-mode
+  :straight (:host github :repo "fizban007/arxiv-mode" :branch "master" :files ("*")))
+#+END_SRC
 * LaTeX
 ** Functions
 #+begin_src elisp
@@ -3596,6 +3616,10 @@ there are no attachments."
   :init
   (jl/org-ref-keys)
   )
+
+(use-package org-ref-arxiv
+  :straight org-ref
+  :defer t)
   #+end_src
 ** Org Ref Ivy
 #+begin_src elisp

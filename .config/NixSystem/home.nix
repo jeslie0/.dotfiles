@@ -39,6 +39,9 @@
     pcmanfm
     gnuplot
     nmap
+    swaybg
+    nnn
+    qbittorrent
   ];
 
 

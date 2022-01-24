@@ -7,8 +7,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Roam/20220113204640-daily_journal.org")
+ (filename . "~/Documents/Roam/20220115182503-applied_category_theory_school_application.org")
  (front-context-string)
- (rear-context-string . ": Daily Journal\n")
- (position . 91))
+ (rear-context-string . "ool Application\n")
+ (position . 120))
 )
