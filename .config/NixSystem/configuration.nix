@@ -190,6 +190,7 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     git
     git-crypt
+    cryptsetup
     wget
     autoconf
     nix-index
@@ -214,6 +215,7 @@
     neofetch
     zulip-term
     netcat
+    mpv
 
     # ghc
     # haskell-language-server
