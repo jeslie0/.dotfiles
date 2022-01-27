@@ -6,11 +6,6 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
 
 * Table of Contents                                                     :toc:
 - [[#housekeeping][Housekeeping]]
-- [[#gitconfig][.gitconfig]]
-- [[#gitattributes][.gitattributes]]
-- [[#nix-channels][.nix-channels]]
-- [[#emacsd][.emacs.d]]
-- [[#stowrc][.stowrc]]
 - [[#config][.config]]
   - [[#gammastep][gammastep]]
   - [[#i3status][i3status]]
@@ -27,6 +22,12 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#flakenix][flake.nix]]
   - [[#configurationnix][configuration.nix]]
   - [[#homenix][home.nix]]
+- [[#miscellaneous][Miscellaneous]]
+  - [[#gitconfig][.gitconfig]]
+  - [[#gitattributes][.gitattributes]]
+  - [[#nix-channels][.nix-channels]]
+  - [[#emacsd][.emacs.d]]
+  - [[#stowrc][.stowrc]]
 
 * Housekeeping
 Generally, commits should be prefixed with the type of thing being changed, in square brackets. Here is an incomplete list of used prefixes:
@@ -36,41 +37,6 @@ Generally, commits should be prefixed with the type of thing being changed, in s
 - [Sway];
 - [Waybar];
 - ...
-* .gitconfig
-:PROPERTIES:
-:header-args:conf: :tangle ./.gitconfig
-:END:
-#+begin_src conf
-[user]
-	name = James Leslie
-	email = jamesleslie@posteo.net
-#+end_src
-* .gitattributes
-:PROPERTIES:
-:header-args:conf: :tangle ./.gitattributes
-:END:
-#+begin_src conf
-.config/spotify-tui/client.yml filter=git-crypt diff=git-crypt
-.config/spotify-tui/.spotify_token_cache.json filter=git-crypt diff=git-crypt
-#+end_src
-* .nix-channels
-:PROPERTIES:
-:header-args:conf: :tangle ./.nix-channels
-:END:
-#+begin_src conf
-https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-https://nixos.org/channels/nixos-unstable nixos
-#+end_src
-* .emacs.d
-The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
-* .stowrc
-:PROPERTIES:
-:header-args:conf: :tangle ./.stowrc
-:END:
-#+begin_src conf
---ignore ./.stowrc
---ignore ./ReadMe.org
-#+end_src
 * .config
 ** gammastep
 :PROPERTIES:
@@ -1534,11 +1500,13 @@ bar {
 }
 
 # Status Bar: update when waybar and sway are both updated.
-# bar {
-#     swaybar_command waybar
-#     hidden_state hide
-#     mode hide
-# }
+bar {
+    swaybar_command waybar
+    position bot
+    hidden_state hide
+    mode hide
+    modifier Mod4
+}
 
 # Gaps
 include /etc/sway/config.d/*
@@ -2366,10 +2334,10 @@ set adjust-open			"width"
     swayBGChangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
-    # emacs-overlay.url = "github:nix-community/emacs-overlay";
+    emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.
     # emacs-overlay.url = "github:nix-community/emacs-overlay/c77eefc7683c6c56694e4516f6bd5fc6b3b0cf48";
-    emacs-overlay.url = "github:nix-community/emacs-overlay/09d88e3894d691dd64e313abc1c231ba3a313822";
+    # emacs-overlay.url = "github:nix-community/emacs-overlay/011ec0706fa17de340c96d7d393c00af41f65cab"
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
     nur.url = "github:nix-community/NUR";
@@ -2446,7 +2414,8 @@ set adjust-open			"width"
   networking.networkmanager.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Set your time zone.
-  time.timeZone = "America/Toronto";
+  # time.timeZone = "America/Toronto";
+  time.timeZone = "Europe/London";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -2637,6 +2606,7 @@ set adjust-open			"width"
     zulip-term
     netcat
     mpv
+    rpi-imager
 
     # ghc
     # haskell-language-server
@@ -2780,4 +2750,40 @@ set adjust-open			"width"
 
 
 }
+#+end_src
+* Miscellaneous
+** .gitconfig
+:PROPERTIES:
+:header-args:conf: :tangle ./.gitconfig
+:END:
+#+begin_src conf
+[user]
+	name = James Leslie
+	email = jamesleslie@posteo.net
+#+end_src
+** .gitattributes
+:PROPERTIES:
+:header-args:conf: :tangle ./.gitattributes
+:END:
+#+begin_src conf
+.config/spotify-tui/client.yml filter=git-crypt diff=git-crypt
+.config/spotify-tui/.spotify_token_cache.json filter=git-crypt diff=git-crypt
+#+end_src
+** .nix-channels
+:PROPERTIES:
+:header-args:conf: :tangle ./.nix-channels
+:END:
+#+begin_src conf
+https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+https://nixos.org/channels/nixos-unstable nixos
+#+end_src
+** .emacs.d
+The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
+** .stowrc
+:PROPERTIES:
+:header-args:conf: :tangle ./.stowrc
+:END:
+#+begin_src conf
+--ignore ./.stowrc
+--ignore ./ReadMe.org
 #+end_src
