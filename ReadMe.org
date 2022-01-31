@@ -10,6 +10,7 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#gammastep][gammastep]]
   - [[#i3status][i3status]]
   - [[#mbsync][mbsync]]
+  - [[#mpv][mpv]]
   - [[#neofetch][neofetch]]
   - [[#nixpkgs][nixpkgs]]
   - [[#spotifyd][spotifyd]]
@@ -223,6 +224,13 @@ Create Near # Preciously Slave
 Sync All
 Expunge Both
 SyncState *
+#+end_src
+** mpv
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/mpv/mpv.conf
+:END:
+#+begin_src conf
+
 #+end_src
 ** neofetch
 :PROPERTIES:
@@ -1527,7 +1535,9 @@ hide_edge_borders both
 
 # screen brightness
 bindsym --locked XF86MonBrightnessUp exec light -A 2 # increase screen brightness
+bindsym --locked XF86MonBrightnessUp+$mod exec light -A 2 # increase screen brightness
 bindsym --locked XF86MonBrightnessDown exec light -U 2 # decrease screen brightness
+bindsym --locked XF86MonBrightnessDown+$mod exec light -U 2 # decrease screen brightness
 
 # play/pause
 bindsym --locked XF86AudioPlay exec playerctl play-pause
@@ -1578,42 +1588,42 @@ input "1739:31251:SYNA2393:00_06CB:7A13_Touchpad" {
 
 # enable numlock
 input * xkb_numlock enable
-
+# Swaylock is currently not working properly. Commenting it out for now.
 # Swaylock
-bindsym Ctrl+$mod+Delete exec "swaylock \
-	--screenshots \
-	--clock \
-	--indicator \
-	--indicator-radius 100 \
-	--indicator-thickness 7 \
-	--effect-blur 7x5 \
-	--effect-vignette 0.5:0.5 \
-	--ring-color bb00cc \
-	--key-hl-color 880033 \
-	--line-color 00000000 \
-	--inside-color 00000088 \
-	--separator-color 00000000 \
-	--grace 2 \
-	--fade-in 0.2"
+# bindsym Ctrl+$mod+Delete exec "swaylock \
+# 	--screenshots \
+# 	--clock \
+# 	--indicator \
+# 	--indicator-radius 100 \
+# 	--indicator-thickness 7 \
+# 	--effect-blur 7x5 \
+# 	--effect-vignette 0.5:0.5 \
+# 	--ring-color bb00cc \
+# 	--key-hl-color 880033 \
+# 	--line-color 00000000 \
+# 	--inside-color 00000088 \
+# 	--separator-color 00000000 \
+# 	--grace 2 \
+# 	--fade-in 0.2"
 
-exec swayidle -w \
-  timeout 1800 'swaylock \
-	--screenshots \
-	--clock \
-	--indicator \
-	--indicator-radius 100 \
-	--indicator-thickness 7 \
-	--effect-blur 7x5 \
-	--effect-vignette 0.5:0.5 \
-	--ring-color bb00cc \
-	--key-hl-color 880033 \
-	--line-color 00000000 \
-	--inside-color 00000088 \
-	--separator-color 00000000 \
-	--grace 2 \
-	--fade-in 0.2' \
-  timeout 1805 'swaymsg "output * dpms off"' \
-  resume 'swaymsg "output * dpms on"'
+# exec swayidle -w \
+#   timeout 1800 'swaylock \
+# 	--screenshots \
+# 	--clock \
+# 	--indicator \
+# 	--indicator-radius 100 \
+# 	--indicator-thickness 7 \
+# 	--effect-blur 7x5 \
+# 	--effect-vignette 0.5:0.5 \
+# 	--ring-color bb00cc \
+# 	--key-hl-color 880033 \
+# 	--line-color 00000000 \
+# 	--inside-color 00000088 \
+# 	--separator-color 00000000 \
+# 	--grace 2 \
+# 	--fade-in 0.2' \
+#   timeout 1805 'swaymsg "output * dpms off"' \
+#   resume 'swaymsg "output * dpms on"'
 
 for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
   kill
@@ -1935,7 +1945,8 @@ WantedBy=default.target
     border: none;
     border-radius: 0;
     /* `otf-font-awesome` is required to be installed for icons */
-    font-family: Roboto, Helvetica, Arial, sans-serif;
+    /* font-family: "Ubuntu mono", Roboto, Helvetica, Arial, sans-serif; */
+    font-family: Source Code Pro;
     font-size: 13px;
     min-height: 0;
 }
@@ -1959,7 +1970,7 @@ window#waybar.empty {
 window#waybar.solo {
     background-color: #FFFFFF;
 }
-*/
+,*/
 
 #window {
     margin-top: 8px;
@@ -1970,7 +1981,7 @@ window#waybar.solo {
     /*
     color: #f8f8f2;
 	background: #282a36;
-   */
+   ,*/
     color: transparent;
     background: transparent;
 }
@@ -2502,6 +2513,7 @@ set adjust-open			"width"
     noto-fonts-emoji
     source-code-pro
     terminus_font
+    ubuntu_font_family
   ];
 
   # Firefox screensharing
@@ -2607,6 +2619,7 @@ set adjust-open			"width"
     netcat
     mpv
     rpi-imager
+    openvpn
 
     # ghc
     # haskell-language-server
@@ -2680,6 +2693,9 @@ set adjust-open			"width"
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  # Disable ipv6 for vpn
+  networking.enableIPv6 = false;
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 2000 ];
@@ -2786,4 +2802,7 @@ The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
 #+begin_src conf
 --ignore ./.stowrc
 --ignore ./ReadMe.org
+--ignore ./result
+--ignore ./.config/NixSystem
+--ignore /nix/*
 #+end_src
