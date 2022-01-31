@@ -1938,15 +1938,14 @@ WantedBy=default.target
 
 *** style.css
 :PROPERTIES:
-:header-args:conf: :tangle ./.config/waybar/style.css
+:header-args:css: :tangle ./.config/waybar/style.css
 :END:
 #+begin_src css
-#{
+,* {
     border: none;
     border-radius: 0;
     /* `otf-font-awesome` is required to be installed for icons */
-    /* font-family: "Ubuntu mono", Roboto, Helvetica, Arial, sans-serif; */
-    font-family: Source Code Pro;
+    font-family: "Ubuntu mono", Roboto, Helvetica, Arial, sans-serif;
     font-size: 13px;
     min-height: 0;
 }
