@@ -157,6 +157,7 @@
   - [[#snow][Snow]]
   - [[#fireplace][Fireplace]]
 - [[#simple-httpd][Simple Httpd]]
+- [[#define-word][Define word]]
 
 * Lexical-binding
 #+begin_src elisp
@@ -2754,6 +2755,8 @@ Not tested. Probably doesn't work.
 #+begin_src elisp
 (use-package avy
   :defer t
+  :custom
+  (avy-background t)
   :commands (avy-pop-mark
 	     evil-avy-goto-char-timer
 	     evil-avy-goto-line
@@ -4112,7 +4115,7 @@ SCOPE can be:
 ** Vterm
 #+BEGIN_SRC elisp :tangle no
 (use-package vterm
-  :commands vterm
+  :commands 2 vterm
   :config
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
   ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
@@ -4206,4 +4209,11 @@ SCOPE can be:
 (use-package simple-httpd
   :defer t
   :after httpd-serve-directory)
+#+END_SRC
+* Define word
+#+BEGIN_SRC elisp
+(use-package define-word
+  :defer t
+  :commands
+  define-word define-word-at-point)
 #+END_SRC

@@ -1,2 +1,5 @@
 --ignore ./.stowrc
 --ignore ./ReadMe.org
+--ignore ./result
+--ignore ./.config/NixSystem
+--ignore /nix/*

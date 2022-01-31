@@ -113,6 +113,7 @@
     noto-fonts-emoji
     source-code-pro
     terminus_font
+    ubuntu_font_family
   ];
 
   # Firefox screensharing
@@ -218,6 +219,7 @@
     netcat
     mpv
     rpi-imager
+    openvpn
 
     # ghc
     # haskell-language-server
@@ -291,6 +293,9 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+
+  # Disable ipv6 for vpn
+  networking.enableIPv6 = false;
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 2000 ];

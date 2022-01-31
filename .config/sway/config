@@ -251,7 +251,9 @@ hide_edge_borders both
 
 # screen brightness
 bindsym --locked XF86MonBrightnessUp exec light -A 2 # increase screen brightness
+bindsym --locked XF86MonBrightnessUp+$mod exec light -A 2 # increase screen brightness
 bindsym --locked XF86MonBrightnessDown exec light -U 2 # decrease screen brightness
+bindsym --locked XF86MonBrightnessDown+$mod exec light -U 2 # decrease screen brightness
 
 # play/pause
 bindsym --locked XF86AudioPlay exec playerctl play-pause
@@ -302,42 +304,42 @@ input "1739:31251:SYNA2393:00_06CB:7A13_Touchpad" {
 
 # enable numlock
 input * xkb_numlock enable
-
+# Swaylock is currently not working properly. Commenting it out for now.
 # Swaylock
-bindsym Ctrl+$mod+Delete exec "swaylock \
-	--screenshots \
-	--clock \
-	--indicator \
-	--indicator-radius 100 \
-	--indicator-thickness 7 \
-	--effect-blur 7x5 \
-	--effect-vignette 0.5:0.5 \
-	--ring-color bb00cc \
-	--key-hl-color 880033 \
-	--line-color 00000000 \
-	--inside-color 00000088 \
-	--separator-color 00000000 \
-	--grace 2 \
-	--fade-in 0.2"
+# bindsym Ctrl+$mod+Delete exec "swaylock \
+# 	--screenshots \
+# 	--clock \
+# 	--indicator \
+# 	--indicator-radius 100 \
+# 	--indicator-thickness 7 \
+# 	--effect-blur 7x5 \
+# 	--effect-vignette 0.5:0.5 \
+# 	--ring-color bb00cc \
+# 	--key-hl-color 880033 \
+# 	--line-color 00000000 \
+# 	--inside-color 00000088 \
+# 	--separator-color 00000000 \
+# 	--grace 2 \
+# 	--fade-in 0.2"
 
-exec swayidle -w \
-  timeout 1800 'swaylock \
-	--screenshots \
-	--clock \
-	--indicator \
-	--indicator-radius 100 \
-	--indicator-thickness 7 \
-	--effect-blur 7x5 \
-	--effect-vignette 0.5:0.5 \
-	--ring-color bb00cc \
-	--key-hl-color 880033 \
-	--line-color 00000000 \
-	--inside-color 00000088 \
-	--separator-color 00000000 \
-	--grace 2 \
-	--fade-in 0.2' \
-  timeout 1805 'swaymsg "output * dpms off"' \
-  resume 'swaymsg "output * dpms on"'
+# exec swayidle -w \
+#   timeout 1800 'swaylock \
+# 	--screenshots \
+# 	--clock \
+# 	--indicator \
+# 	--indicator-radius 100 \
+# 	--indicator-thickness 7 \
+# 	--effect-blur 7x5 \
+# 	--effect-vignette 0.5:0.5 \
+# 	--ring-color bb00cc \
+# 	--key-hl-color 880033 \
+# 	--line-color 00000000 \
+# 	--inside-color 00000088 \
+# 	--separator-color 00000000 \
+# 	--grace 2 \
+# 	--fade-in 0.2' \
+#   timeout 1805 'swaymsg "output * dpms off"' \
+#   resume 'swaymsg "output * dpms on"'
 
 for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
   kill
