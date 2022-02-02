@@ -7,8 +7,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Roam/20220124154829-luks.org")
+ (filename . "~/Documents/Roam/20220131191016-jekyll_configuration.org")
  (front-context-string)
- (rear-context-string . ":\n#+title: LUKS\n")
- (position . 82))
+ (rear-context-string . "l Configuration\n")
+ (position . 98))
 )
