@@ -2762,6 +2762,9 @@ Not tested. Probably doesn't work.
 	     evil-avy-goto-line
 	     evil-avy-goto-word-or-subword-1)
   :init
+  (eneral-define-key
+   :states '(normal visual motion)
+   "f" 'evil-avy-goto-char-timer)
   (jl/SPC-keys
     "jb" 'avy-pop-mark
     "jj" 'evil-avy-goto-char-timer
