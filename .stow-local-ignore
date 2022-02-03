@@ -1,0 +1,9 @@
+.stowrc
+.stow-local-ignore
+ReadMe.org
+result
+.config/NixSystem
+flake.nix
+flake.lock
+.gitignore
+.git-crypt

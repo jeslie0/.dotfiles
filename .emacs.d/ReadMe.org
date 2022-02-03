@@ -146,7 +146,7 @@
   - [[#company-nixos-options][Company NixOS Options]]
   - [[#nix-sandbox][Nix-sandbox]]
   - [[#cabal-nix-sync][Cabal nix sync]]
-- [[#terminals][Terminals]]
+- [[#shells][Shells]]
   - [[#term][Term]]
   - [[#vterm][Vterm]]
   - [[#eshell][Eshell]]
@@ -4095,7 +4095,7 @@ SCOPE can be:
 	     cabal-nix-sync-mode)
   )
 #+END_SRC
-* Terminals
+* Shells
 ** Term
 #+BEGIN_SRC elisp :tangle no
 (use-package term
@@ -4144,10 +4144,11 @@ SCOPE can be:
   (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
   (evil-normalize-keymaps)
 
-  (setq eshell-history-size         10000
-        eshell-buffer-maximum-lines 10000
-        eshell-hist-ignoredups t
-        eshell-scroll-to-bottom-on-input t))
+  (setq
+   eshell-history-size         10000
+   eshell-buffer-maximum-lines 10000
+   eshell-hist-ignoredups t
+   eshell-scroll-to-bottom-on-input t))
 
 (use-package eshell-git-prompt)
 
@@ -4162,8 +4163,7 @@ SCOPE can be:
     (setq eshell-destroy-buffer-when-process-dies t)
     (setq eshell-visual-commands '("htop" "zsh" "vim")))
 
-  (eshell-git-prompt-use-theme 'powerline)
-  )
+  (eshell-git-prompt-use-theme 'powerline))
 #+END_SRC
 * Open with
 #+BEGIN_SRC elisp :tangle no

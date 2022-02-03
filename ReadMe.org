@@ -28,7 +28,7 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#gitattributes][.gitattributes]]
   - [[#nix-channels][.nix-channels]]
   - [[#emacsd][.emacs.d]]
-  - [[#stowrc][.stowrc]]
+  - [[#stow-local-ignore][.stow-local-ignore]]
 
 * Housekeeping
 Generally, commits should be prefixed with the type of thing being changed, in square brackets. Here is an incomplete list of used prefixes:
@@ -1276,13 +1276,12 @@ device_type = "computer"
 #+end_src
 
 ** sway
-[[https://github.com/swaywm/sway][swaywm]]. Sway is my window manager of choice.
-*** config
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/sway/config
 :END:
+[[https://github.com/swaywm/sway][swaywm]]. Sway is my window manager of choice.
 This is my configuration for sway. The man page can be found be typing =man 5 sway=.
-**** Variables
+*** Variables
 #+begin_src conf
 ### Variables
 #
@@ -1300,7 +1299,7 @@ set $term xfce4-terminal
 # on the original workspace that the command was run on.
 set $menu dmenu_path | bemenu -m "$(/home/james/bemenuFocus/bemenuFocus)" | xargs swaymsg exec --
 #+end_src
-**** Output
+*** Output
 #+begin_src conf
 ### Output configuration
 #
@@ -1315,7 +1314,7 @@ exec "swayBGChanger ~/Images/Wallpapers/"
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 #+end_src
-**** Idle Configuation
+*** Idle Configuation
 #+begin_src conf
 ### Idle configuration
 #
@@ -1329,7 +1328,8 @@ exec "swayBGChanger ~/Images/Wallpapers/"
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
-**** Input configuration
+#+end_src
+*** Input configuration
 #+begin_src conf
 ### Input configuration
 #
@@ -1345,7 +1345,7 @@ exec "swayBGChanger ~/Images/Wallpapers/"
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 #+end_src
-**** Key bindings
+*** Key bindings
 #+begin_src conf
 ### Key bindings
 #
@@ -1538,8 +1538,8 @@ bindsym Ctrl+$mod+s exec 'signal-desktop --enable-features=UseOzonePlatform --oz
 bindsym Ctrl+$mod+z exec 'zathura'
 bindsym Ctrl+$mod+p exec 'passbemenu'
 #+end_src
-**** Status bar
-***** i3 status
+*** Status bar
+**** i3 status
 #+begin_src conf :tangle no
 bar {
        colors {
@@ -1562,7 +1562,7 @@ bar {
         position bottom
 	}
 #+end_src
-***** Waybar
+**** Waybar
 #+begin_src conf
 bar {
     swaybar_command waybar
@@ -1572,7 +1572,7 @@ bar {
     modifier $mod
 }
 #+end_src
-**** Gaps
+*** Gaps
 #+begin_src conf
 set $mode_gaps Gaps: (o)uter, (i)nner, (h)orizontal, (v)ertical, (t)op, (r)ight, (b)ottom, (l)eft
 set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
@@ -1696,7 +1696,7 @@ mode "$mode_gaps_left" {
 }
 
 #+end_src
-**** My additions
+*** My additions
 #+begin_src conf
 for_window [app_id="firefox" title="Firefox — Sharing Indicator"] {
   kill
@@ -1708,7 +1708,7 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 # Cursor
 seat seat0 xcursor_theme Adwaita 24
 #+end_src
-**** Keymap
+*** Keymap
 #+begin_src conf
 #
 # Keymap
@@ -1746,7 +1746,7 @@ input "1739:31251:SYNA2393:00_06CB:7A13_Touchpad" {
 # enable numlock
 input * xkb_numlock enable
 #+end_src
-**** Swaylock
+*** Swaylock
 Swaylock is currently not working properly. Commenting it out for now.
 #+begin_src conf :tangle no
 bindsym Ctrl+$mod+Delete exec "swaylock \
@@ -1784,14 +1784,14 @@ exec swayidle -w \
   timeout 1805 'swaymsg "output * dpms off"' \
   resume 'swaymsg "output * dpms on"'
 #+end_src
-**** Opacity
+*** Opacity
 #+begin_src conf
 # Opacity settings. Not configured
 # set $opacity 0.9
 # for_window [class=".*"] opacity $opacity
 # for_window [app_id=".*"] opacity $opacity
 #+end_src
-**** Nix
+*** Nix
 #+begin_src conf
 include /etc/sway/config.d/*
 #+end_src
@@ -2806,14 +2806,18 @@ https://nixos.org/channels/nixos-unstable nixos
 #+end_src
 ** .emacs.d
 The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
-** .stowrc
+** .stow-local-ignore
 :PROPERTIES:
-:header-args:conf: :tangle ./.stowrc
+:header-args:conf: :tangle ./.stow-local-ignore
 :END:
 #+begin_src conf
---ignore ./.stowrc
---ignore ./ReadMe.org
---ignore ./result
---ignore ./.config/NixSystem
---ignore /nix/*
+.stowrc
+.stow-local-ignore
+ReadMe.org
+result
+.config/NixSystem
+flake.nix
+flake.lock
+.gitignore
+.git-crypt
 #+end_src
