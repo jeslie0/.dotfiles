@@ -2347,6 +2347,9 @@ set adjust-open			"width"
 {
   description = "James' NixOS system configuration Flake";
 
+  nixConfig.extra-substituters = "https://nix-community.cachix.org https://jeslie0.cachix.org";
+  nixConfig.extra-trusted-public-keys = "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8=";
+
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
 
@@ -2364,10 +2367,9 @@ set adjust-open			"width"
     swayBGChangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
+    # emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.
-    # emacs-overlay.url = "github:nix-community/emacs-overlay/c77eefc7683c6c56694e4516f6bd5fc6b3b0cf48";
-    # emacs-overlay.url = "github:nix-community/emacs-overlay/011ec0706fa17de340c96d7d393c00af41f65cab"
+    emacs-overlay.url = "github:nix-community/emacs-overlay/9b87f32ac912eeadc444f3920d41105ab697a123";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
     nur.url = "github:nix-community/NUR";
@@ -2375,41 +2377,41 @@ set adjust-open			"width"
   };
 
   outputs = { self, nixpkgs, home-manager, ... }:
-  let
-    system = "x86_64-linux"; #current system
-    pkgs = import nixpkgs {
-      inherit system;
-      config = { allowUnfree = true; };
-    };
+    let
+      system = "x86_64-linux"; #current system
+      pkgs = import nixpkgs {
+        inherit system;
+        config = { allowUnfree = true; };
+      };
 
-    lib = nixpkgs.lib;
+      lib = nixpkgs.lib;
 
-  in {
-    homeManagerConfigurations = {
-      james = home-manager.lib.homeManagerConfiguration {
-        inherit system pkgs;
-        username = "james";
-        homeDirectory = "/home/james";
-        configuration = {
-          imports = [
-            ./.config/NixSystem/home.nix
+    in {
+      homeManagerConfigurations = {
+        james = home-manager.lib.homeManagerConfiguration {
+          inherit system pkgs;
+          username = "james";
+          homeDirectory = "/home/james";
+          configuration = {
+            imports = [
+              ./.config/NixSystem/home.nix
+            ];
+          };
+        };
+      };
+
+      nixosConfigurations = {
+        James-Nix = lib.nixosSystem {
+          inherit system;
+
+          modules = [
+            (import ./.config/NixSystem/configuration.nix { inherit self; })
           ];
         };
       };
+
+
     };
-
-    nixosConfigurations = {
-      James-Nix = lib.nixosSystem {
-        inherit system;
-
-        modules = [
-          (import ./.config/NixSystem/configuration.nix { inherit self; })
-        ];
-      };
-    };
-
-
-  };
 }
 #+end_src
 ** configuration.nix
@@ -2516,6 +2518,8 @@ programs.sway = {
     i3status
     rofi
     waybar
+    self.inputs.passbemenuGitHub.defaultPackage.${system}
+    self.inputs.swayBGChangerGitHub.defaultPackage.${system}
   ];
 };
 #+end_src
@@ -2545,7 +2549,6 @@ fonts.fonts = with pkgs; [ cantarell-fonts
 *** Wayland Screensharing
 #+begin_src nix
 # Firefox screensharing
-# services.pipewire.enable = true;
 xdg.portal = {
   enable = true;
   gtkUsePortal = true;
@@ -2557,6 +2560,10 @@ xdg.portal = {
 #+begin_src nix
 environment = {
   sessionVariables = {
+    QT_SCALE_FACTOR="1";
+    QT_QPA_PLATFORM="wayland";
+    XDG_SESSION_TYPE="wayland";
+    GDK_BACKEND="wayland";
     MOZ_ENABLE_WAYLAND = "1";
     XDG_CURRENT_DESKTOP = "sway";
   };
@@ -2568,10 +2575,10 @@ environment = {
 #+end_src
 *** Binary Caches
 #+begin_src nix
-nix = {
-  binaryCaches = [ "https://nix-community.cachix.org"
+nix.settings = {
+  substituters = [ "https://nix-community.cachix.org"
                    "https://jeslie0.cachix.org" ];
-  binaryCachePublicKeys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+  trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
                             "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8=" ];
 };
 #+end_src
@@ -2599,7 +2606,7 @@ environment.systemPackages = with pkgs;
     vim
 
     # Browsers
-    firefox
+    firefox-wayland
     nyxt
     qutebrowser
 
@@ -2661,8 +2668,6 @@ environment.systemPackages = with pkgs;
     direnv
     unzip
     gnome3.adwaita-icon-theme
-    self.inputs.passbemenuGitHub.defaultPackage.${system}
-    self.inputs.swayBGChangerGitHub.defaultPackage.${system}
     self.inputs.agdaGitHub.packages.${system}.Agda
     # self.inputs.hlsGitHub.defaultPackage.${system}
 
@@ -2672,6 +2677,23 @@ environment.systemPackages = with pkgs;
 
 programs.light.enable = true;
 #+end_src
+*** Systemd
+**** Keychron
+This will hopefully allow me to use my function keys on my K6 keyboard.
+#+begin_src nix
+systemd.services.keychron = {
+  enable = true;
+  description = "The command to make the Keychron K6 function keys work";
+  unitConfig = {
+    Type = "oneshot";
+  };
+  serviceConfig = {
+    ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/module/hid_apple/parameters/fnmode'";
+  };
+  wantedBy = [ "multi-user.target" ];
+};
+#+end_src
+
 *** Miscellaneous
 #+begin_src nix
 # Enable CUPS to print documents.

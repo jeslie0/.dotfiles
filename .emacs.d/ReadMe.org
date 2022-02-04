@@ -1613,6 +1613,7 @@ Provides better documentation.
   :defer t
   :hook (org-mode . jl/org-font-setup)
   :init
+  (jl/org-font-setup)
   (jl/org-mode-Cc-keys)
   :config
   (jl/org-mode-key-bindings)
@@ -2762,7 +2763,7 @@ Not tested. Probably doesn't work.
 	     evil-avy-goto-line
 	     evil-avy-goto-word-or-subword-1)
   :init
-  (eneral-define-key
+  (general-define-key
    :states '(normal visual motion)
    "f" 'evil-avy-goto-char-timer)
   (jl/SPC-keys
