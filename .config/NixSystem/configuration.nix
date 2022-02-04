@@ -81,6 +81,8 @@ programs.sway = {
     i3status
     rofi
     waybar
+    self.inputs.passbemenuGitHub.defaultPackage.${system}
+    self.inputs.swayBGChangerGitHub.defaultPackage.${system}
   ];
 };
 
@@ -103,7 +105,6 @@ fonts.fonts = with pkgs; [ cantarell-fonts
                          ];
 
 # Firefox screensharing
-# services.pipewire.enable = true;
 xdg.portal = {
   enable = true;
   gtkUsePortal = true;
@@ -113,6 +114,10 @@ xdg.portal = {
 
 environment = {
   sessionVariables = {
+    QT_SCALE_FACTOR="1";
+    QT_QPA_PLATFORM="wayland";
+    XDG_SESSION_TYPE="wayland";
+    GDK_BACKEND="wayland";
     MOZ_ENABLE_WAYLAND = "1";
     XDG_CURRENT_DESKTOP = "sway";
   };
@@ -122,10 +127,10 @@ environment = {
   };
 };
 
-nix = {
-  binaryCaches = [ "https://nix-community.cachix.org"
+nix.settings = {
+  substituters = [ "https://nix-community.cachix.org"
                    "https://jeslie0.cachix.org" ];
-  binaryCachePublicKeys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+  trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
                             "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8=" ];
 };
 
@@ -146,7 +151,7 @@ environment.systemPackages = with pkgs;
     vim
 
     # Browsers
-    firefox
+    firefox-wayland
     nyxt
     qutebrowser
 
@@ -208,8 +213,6 @@ environment.systemPackages = with pkgs;
     direnv
     unzip
     gnome3.adwaita-icon-theme
-    self.inputs.passbemenuGitHub.defaultPackage.${system}
-    self.inputs.swayBGChangerGitHub.defaultPackage.${system}
     self.inputs.agdaGitHub.packages.${system}.Agda
     # self.inputs.hlsGitHub.defaultPackage.${system}
 
@@ -218,6 +221,18 @@ environment.systemPackages = with pkgs;
   ];
 
 programs.light.enable = true;
+
+systemd.services.keychron = {
+  enable = true;
+  description = "The command to make the Keychron K6 function keys work";
+  unitConfig = {
+    Type = "oneshot";
+  };
+  serviceConfig = {
+    ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/module/hid_apple/parameters/fnmode'";
+  };
+  wantedBy = [ "multi-user.target" ];
+};
 
 # Enable CUPS to print documents.
 # services.printing.enable = true;
