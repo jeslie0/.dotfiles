@@ -83,6 +83,7 @@ programs.sway = {
     waybar
     self.inputs.passbemenuGitHub.defaultPackage.${system}
     self.inputs.swayBGChangerGitHub.defaultPackage.${system}
+    self.inputs.bemenuFocusGitHub.defaultPackage.${system}
   ];
 };
 

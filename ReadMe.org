@@ -1297,7 +1297,7 @@ set $term xfce4-terminal
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | bemenu -m "$(/home/james/bemenuFocus/bemenuFocus)" | xargs swaymsg exec --
+set $menu dmenu_path | bemenu -m "$(bemenuFocus)" | xargs swaymsg exec --
 #+end_src
 *** Output
 #+begin_src conf
@@ -2366,6 +2366,9 @@ set adjust-open			"width"
     swayBGChangerGitHub.url = "github:jeslie0/swayBGChanger";
     swayBGChangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
+    bemenuFocusGitHub.url = "github:jeslie0/bemenuFocus";
+    bemenuFocusGitHub.inputs.nixpkgs.follows = "nixpkgs";
+
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
     # emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.
@@ -2520,6 +2523,7 @@ programs.sway = {
     waybar
     self.inputs.passbemenuGitHub.defaultPackage.${system}
     self.inputs.swayBGChangerGitHub.defaultPackage.${system}
+    self.inputs.bemenuFocusGitHub.defaultPackage.${system}
   ];
 };
 #+end_src

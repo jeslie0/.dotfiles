@@ -20,6 +20,9 @@
     swayBGChangerGitHub.url = "github:jeslie0/swayBGChanger";
     swayBGChangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
+    bemenuFocusGitHub.url = "github:jeslie0/bemenuFocus";
+    bemenuFocusGitHub.inputs.nixpkgs.follows = "nixpkgs";
+
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
     # emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.

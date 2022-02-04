@@ -12,7 +12,7 @@ set $term xfce4-terminal
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | bemenu -m "$(/home/james/bemenuFocus/bemenuFocus)" | xargs swaymsg exec --
+set $menu dmenu_path | bemenu -m "$(bemenuFocus)" | xargs swaymsg exec --
 
 ### Output configuration
 #
