@@ -14,7 +14,7 @@ boot.loader.grub.version = 2;
 boot.loader.grub.device = "nodev";
 boot.loader.grub.efiSupport = true;
 # boot.loader.grub.useOSProber = true; # Allows other operating systems to be found, but takes a long time to reload.
-boot.loader.grub.gfxmodeEfi = "1920x1080";
+# boot.loader.grub.gfxmodeEfi = "1920x1080";
 boot.loader.efi.canTouchEfiVariables = true;
 
 networking.hostName = "James-Nix"; # Define your hostname.

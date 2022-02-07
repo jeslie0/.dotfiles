@@ -1311,7 +1311,9 @@ exec "swayBGChanger ~/Images/Wallpapers/"
 # Example configuration:
 #
   # output HDMI-A-1 resolution 1920x1080 position 1920,0
-#
+# output eDP-1 res 1920x1080@60.000Hz pos 0,0
+output eDP-1 res 3840x2160@60.000Hz pos 0,0
+output eDP-1 scale 2
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 #+end_src
 *** Idle Configuation
@@ -2441,7 +2443,7 @@ boot.loader.grub.version = 2;
 boot.loader.grub.device = "nodev";
 boot.loader.grub.efiSupport = true;
 # boot.loader.grub.useOSProber = true; # Allows other operating systems to be found, but takes a long time to reload.
-boot.loader.grub.gfxmodeEfi = "1920x1080";
+# boot.loader.grub.gfxmodeEfi = "1920x1080";
 boot.loader.efi.canTouchEfiVariables = true;
 #+end_src
 *** Networking
