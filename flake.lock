@@ -102,6 +102,21 @@
         "type": "github"
       }
     },
+    "flake-utils_4": {
+      "locked": {
+        "lastModified": 1642700792,
+        "narHash": "sha256-XqHrk7hFb+zBvRg6Ghl+AZDq03ov6OshJLiSWOoX5es=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "846b2ae0fc4cc943637d3d1def4454213e203cba",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -197,26 +212,27 @@
         "nixpkgs": "nixpkgs_2",
         "nur": "nur",
         "passbemenuGitHub": "passbemenuGitHub",
-        "swayBGChangerGitHub": "swayBGChangerGitHub"
+        "swaybgchangerGitHub": "swaybgchangerGitHub"
       }
     },
-    "swayBGChangerGitHub": {
+    "swaybgchangerGitHub": {
       "inputs": {
+        "flake-utils": "flake-utils_4",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1641768747,
-        "narHash": "sha256-OlW7WUVa7wmSlATQ9Ld+EtShRS7L1EX6i+Xv8cAI7W8=",
+        "lastModified": 1644351699,
+        "narHash": "sha256-sjXZM8O5WhlEPi3CCb4uEpTJ34J3Udhar/yhNXo1Q1s=",
         "owner": "jeslie0",
-        "repo": "swayBGChanger",
-        "rev": "91bff787b4a300c5066cc32cf88126506f130c28",
+        "repo": "swaybgchanger",
+        "rev": "655d27805922e7203a608144ad83800099c6baf3",
         "type": "github"
       },
       "original": {
         "owner": "jeslie0",
-        "repo": "swayBGChanger",
+        "repo": "swaybgchanger",
         "type": "github"
       }
     }

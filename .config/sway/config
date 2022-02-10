@@ -19,7 +19,7 @@ set $menu dmenu_path | bemenu -m "$(bemenuFocus)" | xargs swaymsg exec --
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 # output * bg /home/james/Images/Wallpapers/wp6705749-moutains-ultra-hd-wallpapers.jpg fill
 # This gives backgrounds changing every 10 mins.
-exec "swayBGChanger ~/Images/Wallpapers/"
+exec "swaybgchanger ~/Images/Wallpapers/ 900"
 #
 # Example configuration:
 #

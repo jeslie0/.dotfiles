@@ -17,8 +17,8 @@
     passbemenuGitHub.url = "github:jeslie0/passbemenu";
     passbemenuGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
-    swayBGChangerGitHub.url = "github:jeslie0/swayBGChanger";
-    swayBGChangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
+    swaybgchangerGitHub.url = "github:jeslie0/swaybgchanger";
+    swaybgchangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
     bemenuFocusGitHub.url = "github:jeslie0/bemenuFocus";
     bemenuFocusGitHub.inputs.nixpkgs.follows = "nixpkgs";

@@ -1613,11 +1613,10 @@ Provides better documentation.
   :defer t
   :hook (org-mode . jl/org-font-setup)
   :init
-  (jl/org-font-setup)
   (jl/org-mode-Cc-keys)
   :config
   (jl/org-mode-key-bindings)
-  ;; (jl/org-font-setup)
+  (jl/org-font-setup)
   (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
   :custom
   (org-ellipsis " ▼")
@@ -1873,9 +1872,9 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ** Initialisation
 #+begin_src elisp
 (use-package treemacs
-  :straight (treemacs :type git :host github :repo "Alexander-Miller/treemacs"
-		      :fork (:host github
-				   :repo "jeslie0/treemacs"))
+  ;; :straight (treemacs :type git :host github :repo "Alexander-Miller/treemacs"
+  ;; 		      :fork (:host github
+  ;; 				   :repo "jeslie0/treemacs"))
   :defer t
   :commands (treemacs)
   :init
@@ -1950,32 +1949,6 @@ Calling org-babel languages in the following form saves a lot on startup time.
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
         #+END_SRC
-#+BEGIN_SRC elisp :tangle no
-(use-package ht)
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-core-utils.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-macros.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-customization.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-logging.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-themes.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-icons.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-faces.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-visuals.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-rendering.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-scope.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-follow-mode.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-filewatch-mode.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-mode.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-interface.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-persistence.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-async.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-compatibility.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-workspaces.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-fringe-indicator.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-header-line.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs-extensions.el")
-(load-file "~/emacs-packages/treemacs/src/elisp/treemacs.el")
-;; (load-file "~/emacs-packages/treemacs/src/extra/treemacs-all-the-icons.el")
-#+END_SRC
 ** Treemacs evil
 #+BEGIN_SRC elisp
 (use-package treemacs-evil
@@ -2014,9 +1987,9 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ** Treemacs all-the-icons
 #+begin_src elisp
 (use-package treemacs-all-the-icons
-  :straight (treemacs-all-the-icons :type git :host github :repo "Alexander-Miller/treemacs"
-				    :fork (:host github
-						 :repo "jeslie0/treemacs"))
+  ;; :straight (treemacs-all-the-icons :type git :host github :repo "Alexander-Miller/treemacs"
+  ;; 				    :fork (:host github
+  ;; 						 :repo "jeslie0/treemacs"))
   :hook ((treemacs-mode dired-mode) . (lambda ()
 					(treemacs-load-theme 'all-the-icons)))
   :config
@@ -2656,7 +2629,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+end_src
 *** TODO Emacs-lisp
 **** Ielm
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package ielm
   :defer t
   :init
@@ -2664,26 +2637,32 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     :states '(normal operator motion)
     :keymaps 'inferior-emacs-lisp-mode-map
     :major-modes t
-    "hh" 'helpful-at-point
-    )
+    "hh" 'helpful-at-point)
+
   (jl/major-modes
     :states '(normal operator motion)
-    :keymaps 'emacs-lisp-mode-hook
+    :keymaps 'emacs-lisp-mode-map
     :major-modes t
     "s" '(:ignore t :which-key "ielm")
     "'" 'ielm
     "si" 'ielm
     )
-  :config
-  (defun ielm-indent-line ()
-    (interactive)
-    (let ((current-point (point)))
-      (save-restriction
-        (narrow-to-region (search-backward-regexp "^ELISP>") (goto-char current-point))
-        (lisp-indent-line))))
   )
 #+END_SRC
 **** Debug
+#+BEGIN_SRC elisp
+(use-package debug
+  :defer t
+  )
+
+(use-package edebug
+  :defer t
+  )
+
+#+END_SRC
+*** TODO Common-lisp
+#+BEGIN_SRC elisp
+#+END_SRC
 *** Shell
 **** Keybindings
 #+BEGIN_SRC elisp
@@ -2924,20 +2903,19 @@ Not tested. Probably doesn't work.
   :commands (erc
  	     erc-tls)
   :defer t
-  :straight nil
-  :hook (erc-mode . erc-image-mode)
+  ;; :straight nil
+  ;; :hook (erc-mode . erc-image-mode)
   :custom
   (erc-server "irc.libera.chat")
-  (erc-nick "jeslie0")
+  (erc-nick "KanFibration")
   (erc-port "6697")
-  (erc-password (shell-command-to-string "gpg2 -q --for-your-eyes-only --no-tty -d ~/.password-store/irc.libra.chat/jeslie0.gpg"))
+  (erc-password (shell-command-to-string "gpg2 -q --for-your-eyes-only --no-tty -d ~/.password-store/irc.libra.chat/KanFibration.gpg"))
   (erc-prompt-for-password nil)
   (erc-user-full-name "James Leslie")
   (erc-track-shorten-start 8)
-  (erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs" "##math" "#categorytheory" "#haskell")))
+  (erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs" "##math" "#categorytheory" "#haskell" "#nyxt" "#nixos")))
   (erc-kill-buffer-on-part t)
   (erc-auto-query 'bury)
-  (erc-image-inline-rescale 400)
   :init
   (jl/erc-keys-global)
   :config
@@ -2952,12 +2930,14 @@ Not tested. Probably doesn't work.
   :after erc)
 #+end_src
 *** erc-image
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package erc-image
   :hook (erc-mode . erc-image-mode)
   :defer t
+  :custom
+  (erc-image-inline-rescale 400)
   :after erc)
-  #+end_src
+#+end_src
 ** EWW
 *** Keybindings
 #+begin_src elisp
@@ -3130,7 +3110,7 @@ Not tested. Probably doesn't work.
 *** Mu4e contexts
 #+begin_src elisp
 (defun jl/mu4e-contexts ()
-  (setq mu4e-compose-signature "James Leslie")
+  ;; (setq mu4e-compose-signature "James Leslie") ;; Issue where signature is in the wrong position for email replies
   (setq mu4e-contexts
 	`(
 	  ;; ,(make-mu4e-context

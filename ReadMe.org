@@ -1306,7 +1306,7 @@ set $menu dmenu_path | bemenu -m "$(bemenuFocus)" | xargs swaymsg exec --
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 # output * bg /home/james/Images/Wallpapers/wp6705749-moutains-ultra-hd-wallpapers.jpg fill
 # This gives backgrounds changing every 10 mins.
-exec "swayBGChanger ~/Images/Wallpapers/"
+exec "swaybgchanger ~/Images/Wallpapers/ 900"
 #
 # Example configuration:
 #
@@ -2365,8 +2365,8 @@ set adjust-open			"width"
     passbemenuGitHub.url = "github:jeslie0/passbemenu";
     passbemenuGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
-    swayBGChangerGitHub.url = "github:jeslie0/swayBGChanger";
-    swayBGChangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
+    swaybgchangerGitHub.url = "github:jeslie0/swaybgchanger";
+    swaybgchangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
     bemenuFocusGitHub.url = "github:jeslie0/bemenuFocus";
     bemenuFocusGitHub.inputs.nixpkgs.follows = "nixpkgs";
@@ -2524,7 +2524,7 @@ programs.sway = {
     rofi
     waybar
     self.inputs.passbemenuGitHub.defaultPackage.${system}
-    self.inputs.swayBGChangerGitHub.defaultPackage.${system}
+    self.inputs.swaybgchangerGitHub.defaultPackage.${system}
     self.inputs.bemenuFocusGitHub.defaultPackage.${system}
   ];
 };
@@ -2572,6 +2572,7 @@ environment = {
     GDK_BACKEND="wayland";
     MOZ_ENABLE_WAYLAND = "1";
     XDG_CURRENT_DESKTOP = "sway";
+    WEBKIT_FORCE_SANDBOX= "0";
   };
   variables = {
     XCURSOR_THEME = "Adwaita";
@@ -2800,7 +2801,6 @@ system.stateVersion = "21.05"; # Did you read the comment?
     pcmanfm
     gnuplot
     nmap
-    swaybg
     nnn
     qbittorrent
   ];
