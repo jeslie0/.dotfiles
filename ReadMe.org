@@ -2815,6 +2815,8 @@ system.stateVersion = "21.05"; # Did you read the comment?
 [user]
 	name = James Leslie
 	email = jamesleslie@posteo.net
+[commit]
+	gpgsign = true
 #+end_src
 ** .gitattributes
 :PROPERTIES:

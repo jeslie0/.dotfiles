@@ -1,3 +1,5 @@
 [user]
 	name = James Leslie
 	email = jamesleslie@posteo.net
+[commit]
+	gpgsign = true
