@@ -1,4 +1,3 @@
-
 (define-bookmarklet-command hack-youtube-speed
     "Tweak YouTube videos' speed beyond the UI options and limits."
   "(function() {
