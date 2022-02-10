@@ -82,7 +82,7 @@ programs.sway = {
     rofi
     waybar
     self.inputs.passbemenuGitHub.defaultPackage.${system}
-    self.inputs.swayBGChangerGitHub.defaultPackage.${system}
+    self.inputs.swaybgchangerGitHub.defaultPackage.${system}
     self.inputs.bemenuFocusGitHub.defaultPackage.${system}
   ];
 };
@@ -121,6 +121,7 @@ environment = {
     GDK_BACKEND="wayland";
     MOZ_ENABLE_WAYLAND = "1";
     XDG_CURRENT_DESKTOP = "sway";
+    WEBKIT_FORCE_SANDBOX= "0";
   };
   variables = {
     XCURSOR_THEME = "Adwaita";
