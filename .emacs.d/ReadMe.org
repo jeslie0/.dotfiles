@@ -3285,13 +3285,39 @@ there are no attachments."
   )
 #+end_src
 *** Initialisation
+#+BEGIN_SRC elisp :tangle no
+(use-package mu4e
+  :straight nil
+  :load-path "/run/current-system/sw/share/emacs/site-lisp/mu4e/"
+  :custom
+  (mu4e-maildir "~/.email")
+  (mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a")
+  (mu4e-compose-signature-auto-include t)
+  (mu4e-view-show-addresses t)
+  (mu4e-headers-include-related nil)
+  (mu4e-headers-skip-duplicates t)
+  (mu4e-headers-auto-update t)
+  (mu4e-update-interval 300)
+  (message-send-mail-function 'smtpmail-send-it)
+  (mu4e-attachment-dir  "~/Downloads/")
+  (mu4e-change-filenames-when-moving t)
+  (mu4e-compose-format-flowed t)
+  (mu4e-compose-dont-reply-to-self t)
+  (mu4e-sent-messages-behavior 'sent)
+  (mu4e-use-fancy-chars t)
+  (mu4e-display-update-status-in-modeline nil)
+
+  )
+#+END_SRC
 #+begin_src elisp
 (use-package mu4e
   :straight nil
-  :hook ((mu4e-compose-mode . visual-fill-column-mode)
-	 (mu4e-compose-mode . variable-pitch-mode)
-	 (mu4e-view-mode . visual-fill-column-mode)
-	 )
+  ;; :load-path "/run/current-system/sw/share/emacs/site-lisp/mu4e/"
+  :load-path "~/MU4E"
+  ;; :hook ((mu4e-compose-mode . visual-fill-column-mode)
+  ;; 	 (mu4e-compose-mode . variable-pitch-mode)
+  ;; 	 (mu4e-view-mode . visual-fill-column-mode)
+  ;; 	 )
   :init
   (jl/mu4e-global-keys)
   :config
@@ -3305,14 +3331,14 @@ there are no attachments."
   :custom
   (mu4e-maildir "~/.email")
   (mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a")
-  (mu4e-compose-signature-auto-include t)
+  (mu4e-compose-signature-auto-include nil)
   (mu4e-view-show-addresses t)
   (mu4e-headers-include-related nil)
   (mu4e-headers-skip-duplicates t)
   (mu4e-headers-auto-update t)
   (mu4e-update-interval 300)
   (message-send-mail-function 'smtpmail-send-it)
-  (mu4e-attachment-dir  "~/Downloads/")
+  (mu4e-attachment-dir "~/Downloads/")
   (mu4e-change-filenames-when-moving t)
   (mu4e-compose-format-flowed t)
   (mu4e-compose-dont-reply-to-self t)
@@ -4108,14 +4134,16 @@ SCOPE can be:
   )
 #+END_SRC
 ** Vterm
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package vterm
-  :commands 2 vterm
+  :straight nil
+  :commands vterm
   :config
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
   ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000))
 #+END_SRC
+
 ** Eshell
 *** Keybindings
 #+BEGIN_SRC elisp

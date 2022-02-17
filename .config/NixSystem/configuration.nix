@@ -222,7 +222,8 @@ environment.systemPackages = with pkgs;
     mkvtoolnix
 
     ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm
-                                                          ]))
+                                                                   epkgs.mu4e
+                                                                 ]))
 
   ];
 
