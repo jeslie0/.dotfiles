@@ -2375,6 +2375,7 @@ set adjust-open			"width"
     # emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.
     emacs-overlay.url = "github:nix-community/emacs-overlay/9b87f32ac912eeadc444f3920d41105ab697a123";
+    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
@@ -2532,6 +2533,8 @@ services.emacs.package = pkgs.emacsPgtkGcc;
 services.emacs.enable = true;
 
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay) ];
+
+
 #+end_src
 *** Fonts
 #+begin_src nix
@@ -2676,10 +2679,14 @@ environment.systemPackages = with pkgs;
 
     nixfmt
     mkvtoolnix
+
+    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm
+                                                          ]))
+
   ];
 
 programs.light.enable = true;
-#+end_src
+    #+end_src
 *** Systemd
 **** Keychron
 This will hopefully allow me to use my function keys on my K6 keyboard.
@@ -2809,10 +2816,10 @@ system.stateVersion = "21.05"; # Did you read the comment?
 :END:
 #+begin_src conf
 [user]
-	name = James Leslie
-	email = jamesleslie@posteo.net
+name = James Leslie
+email = jamesleslie@posteo.net
 [commit]
-	gpgsign = true
+gpgsign = true
 #+end_src
 ** .gitattributes
 :PROPERTIES:

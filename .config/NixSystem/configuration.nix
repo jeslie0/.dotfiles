@@ -220,6 +220,10 @@ environment.systemPackages = with pkgs;
 
     nixfmt
     mkvtoolnix
+
+    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm
+                                                          ]))
+
   ];
 
 programs.light.enable = true;

@@ -1,4 +1,4 @@
-#+title: James' New Emacs Configuration
+#+Title: James' New Emacs Configuration
 #+PROPERTY: header-args:elisp :tangle ./init.el
 #+options: toc:t
 #+attr_html: :width 300px
@@ -957,7 +957,6 @@ Provides better documentation.
     )
 
   (dashboard-setup-startup-hook)
-  :init
   )
 #+end_src
 * Minor modes
@@ -2815,11 +2814,11 @@ Not tested. Probably doesn't work.
 		  ("https://www.smbc-comics.com/comic/rss" webcomic)
 		  ))
   :init
-  (jl/elfeed-global-keys)
   (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/bookmarks"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.emacs.d/bookmarks"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org"))
+  (jl/elfeed-global-keys)
   :config
   (jl/elfeed-keys)
   )
@@ -2990,18 +2989,18 @@ Not tested. Probably doesn't work.
 #+end_src
 *** Initialisation
 #+begin_src elisp
-(use-package eww
-  :defer t
-  :commands (eww)
-  :hook (eww-mode . variable-pitch-mode)
-  :init
-  (jl/eww-global-keys)
-  :config
-  (jl/eww-keys)
-  (evil-collection-define-key 'normal 'eww-mode-map
-    (kbd "SPC") nil)
-  )
-#+end_src
+ (use-package eww
+   :defer t
+   :commands (eww)
+   :hook (eww-mode . variable-pitch-mode)
+   :init
+   (jl/eww-global-keys)
+   :config
+   (jl/eww-keys)
+   (evil-collection-define-key 'normal 'eww-mode-map
+     (kbd "SPC") nil)
+   )
+ #+end_src
 ** Mu4e
 *** Keybindings
 #+begin_src elisp
@@ -3323,7 +3322,7 @@ there are no attachments."
   )
   #+end_src
 *** mu4e-alert
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package mu4e-alert
   :hook (after-init . mu4e-alert-enable-mode-line-display)
   )

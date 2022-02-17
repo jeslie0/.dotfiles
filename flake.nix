@@ -27,6 +27,7 @@
     # emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.
     emacs-overlay.url = "github:nix-community/emacs-overlay/9b87f32ac912eeadc444f3920d41105ab697a123";
+    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
