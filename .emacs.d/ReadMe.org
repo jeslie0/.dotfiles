@@ -88,6 +88,7 @@
   - [[#tools][Tools]]
   - [[#proof-assistants][Proof Assistants]]
   - [[#programming][Programming]]
+  - [[#other][Other]]
 - [[#avy][Avy]]
 - [[#readers][Readers]]
   - [[#elfeed][Elfeed]]
@@ -594,7 +595,6 @@ Adds the popup for key commands with mulitple key presses
 					       'doom-palenight t)))
   )
 #+end_src
-
 *** Nord
 #+begin_src elisp
 (use-package nord-theme
@@ -1539,6 +1539,11 @@ Provides better documentation.
 	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros} \\usepacakge{math-environments}\n\n* %?"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
 	   :unnarrowed t)
+
+	  ("f" "film note" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: :films:\n[[id:352cef44-05f6-494c-8f65-c04241335eb0][Films]]\n* ")
+	   :unnarrowed t)
 	  )))
 
 (defun jl/org-roam-daily-templates ()
@@ -1546,7 +1551,7 @@ Provides better documentation.
 	'(("d" "default" entry
 	   "* %?"
 	   :target (file+head "%<%Y-%m-%d>.org"
-			      "#+title: %<%Y-%m-%d>\n#+filetages: :Daily:\n [[id:24a82cf2-bc51-4b01-81f7-53968e483ee2][Daily Journal]]\n* [/] Daily Todos\n1. [ ]\n2. [ ]\n3. [ ]\n* Daily Tasks\n* Morning Thoughts\n* Evening Reflections")))))
+			      "#+title: %<%Y-%m-%d>\n#+filetags: :Daily:\n [[id:24a82cf2-bc51-4b01-81f7-53968e483ee2][Daily Journal]]\n* [/] Daily Todos\n1. [ ]\n2. [ ]\n3. [ ]\n* Daily Tasks\n* Morning Thoughts\n* Evening Reflections")))))
 #+END_SRC
 *** Initialisation
 #+begin_src elisp
@@ -2730,6 +2735,13 @@ Not tested. Probably doesn't work.
     :major-modes t
     "i!" 'insert-shebang)
   )
+#+END_SRC
+** Other
+*** Yaml
+#+BEGIN_SRC elisp
+(use-package yaml-mode
+  :hook (yaml-mode . (lambda () (variable-pitch-mode 0)))
+  :defer t)
 #+END_SRC
 * Avy
 #+begin_src elisp

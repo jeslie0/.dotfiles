@@ -27,13 +27,12 @@
     # emacs-overlay.url = "github:nix-community/emacs-overlay";
     # This is a nice working version of emacs \/.
     emacs-overlay.url = "github:nix-community/emacs-overlay/9b87f32ac912eeadc444f3920d41105ab697a123";
-    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
     nur.url = "github:nix-community/NUR";
     nur.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
+  outputs = { self, nixpkgs, home-manager, nur, ... }:
     let
       system = "x86_64-linux"; #current system
       pkgs = import nixpkgs {
@@ -60,10 +59,7 @@
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
           inherit system;
-
-          modules = [
-            (import ./.config/NixSystem/configuration.nix { inherit self; })
-          ];
+          modules = [ (import ./.config/NixSystem/configuration.nix { inherit self; }) ];
         };
       };
 

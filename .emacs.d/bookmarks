@@ -7,8 +7,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Roam/20220202221314-mpv_synchronised_playing.org")
+ (filename . "~/Documents/Roam/20220216121024-leon.org")
  (front-context-string)
- (rear-context-string . "ronised Playing\n")
- (position . 102))
+ (rear-context-string . "5eb0][Films]]\n*\n")
+ (position . 155))
 )
