@@ -1073,6 +1073,9 @@ Provides better documentation.
 #+begin_src elisp
 (setq epa-pinentry-mode 'loopback)
 (setq auth-sources '(password-store))
+(setq epa-file-encrypt-to '("jamesleslie@posteo.net")
+      epa-file-select-keys 1)
+
 (auth-source-pass-enable)
 #+end_src
 * Pass
@@ -1532,6 +1535,11 @@ Provides better documentation.
 	'(("q" "quick note" plain
 	   "%?"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	   :unnarrowed t)
+
+	  ("e" "encrypted note" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}\n")
 	   :unnarrowed t)
 
 	  ("m" "mathematics note" plain
@@ -4134,7 +4142,7 @@ SCOPE can be:
   )
 #+END_SRC
 ** Vterm
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package vterm
   :straight nil
   :commands vterm
