@@ -87,9 +87,8 @@ programs.sway = {
   ];
 };
 
-services.emacs.package = pkgs.emacsPgtkGcc;
+services.emacs.package = with pkgs; ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
 services.emacs.enable = true;
-
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay) ];
 
 fonts.fonts = with pkgs; [ cantarell-fonts
@@ -221,9 +220,7 @@ environment.systemPackages = with pkgs;
     nixfmt
     mkvtoolnix
 
-    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm
-                                                                 ]))
-
+    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
   ];
 
 programs.light.enable = true;

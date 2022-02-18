@@ -1329,8 +1329,6 @@ stdout="off"
 (define-configuration nyxt/blocker-mode:blocker-mode
     ((hotlists (append '() %slot-default%)))
 #+end_src
-
-
 ** spotifyd
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/spotifyd/spotifyd.conf
@@ -2671,14 +2669,11 @@ programs.sway = {
 };
 #+end_src
 *** EmacsPgtkGcc
-We use the pure GTK, GCC compiled version of Emacs. To change the version used, this section and the corresponding flake input needs to be changed
+We use the pure GTK, GCC compiled version of Emacs. To change the version used, this section and the corresponding flake input needs to be changed. As we want vterm enabled and we use emacsclient primarily, we add it to the service packages.
 #+begin_src nix
-services.emacs.package = pkgs.emacsPgtkGcc;
+services.emacs.package = with pkgs; ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
 services.emacs.enable = true;
-
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay) ];
-
-
 #+end_src
 *** Fonts
 #+begin_src nix
@@ -2824,9 +2819,7 @@ environment.systemPackages = with pkgs;
     nixfmt
     mkvtoolnix
 
-    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm
-                                                                 ]))
-
+    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
   ];
 
 programs.light.enable = true;

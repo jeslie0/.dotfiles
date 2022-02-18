@@ -7,8 +7,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Roam/20220218105131-dreams_and_other_hallucinations.org")
+ (filename . "~/Documents/Roam/20220218105434-dreams_and_other_hallucinations.org.gpg")
  (front-context-string)
- (rear-context-string . " Hallucinations\n")
+ (rear-context-string . " hallucinations\n")
  (position . 109))
 )

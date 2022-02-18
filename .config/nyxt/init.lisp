@@ -90,13 +90,6 @@
         video.playbackRate = parseFloat(rate);
     }})();")
 
-(define-command-global jl/bookmark-url ()
-  "Query the user which URL to bookmark."
-  (let ((url (prompt
-              :prompt "Bookmark URL"
-              :sources (make-instance 'prompter:raw-source))))
-    (bookmark-add url)))
-
 ;; Create a function to launch mpv with given url
 (defun mpv (url)
   "MPV launches with given url using the fast profile."
@@ -116,3 +109,6 @@
                                  (mpv url)))
                              :annotate-visible-only-p
                              nyxt/web-mode::annotate-visible-only-p))
+
+(define-configuration nyxt/blocker-mode:blocker-mode
+    ((hotlists (append '() %slot-default%)))
