@@ -1934,6 +1934,11 @@ exec swayidle -w \
 #+begin_src conf
 include /etc/sway/config.d/*
 #+end_src
+*** Lid
+#+begin_src conf
+bindswitch lid:on  output eDP-1 disable
+bindswitch lid:off output eDP-1 enable
+#+end_src
 ** systemd
 *** Spotifyd
 :PROPERTIES:
