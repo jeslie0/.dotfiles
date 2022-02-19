@@ -221,6 +221,7 @@ environment.systemPackages = with pkgs;
 
     nixfmt
     mkvtoolnix
+    sbcl
 
     ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
   ];

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: major mode keys
+# key: <majorkeys
+# --
+(jl/major-modes
+    :keymaps '$1
+    :states '(normal insert visual)
+    :major-modes t
+    $0
+    )
