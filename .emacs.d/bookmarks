@@ -2,7 +2,12 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("Start Page"
+(("floobits-jeslie0-18750"
+ (filename . "~/floobits/share/main.hs")
+ (front-context-string)
+ (rear-context-string . " \"hello world!\"\n")
+ (position . 62))
+("Start Page"
  (position . 435)
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))

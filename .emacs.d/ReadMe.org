@@ -4358,3 +4358,7 @@ SCOPE can be:
   define-word define-word-at-point)
 #+END_SRC
 * TODO Pair Programming
+#+BEGIN_SRC elisp
+(use-package floobits
+  :defer t)
+#+END_SRC
