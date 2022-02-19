@@ -89,7 +89,8 @@ programs.sway = {
 
 services.emacs.package = with pkgs; ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
 services.emacs.enable = true;
-nixpkgs.overlays = [ (import self.inputs.emacs-overlay) ];
+nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
+];
 
 fonts.fonts = with pkgs; [ cantarell-fonts
                            emacs-all-the-icons-fonts
@@ -131,8 +132,9 @@ environment = {
 nix.settings = {
   substituters = [ "https://nix-community.cachix.org"
                    "https://jeslie0.cachix.org" ];
+
   trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-                            "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8=" ];
+                          "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8=" ];
 };
 
 nix = {

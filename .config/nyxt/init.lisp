@@ -109,6 +109,3 @@
                                  (mpv url)))
                              :annotate-visible-only-p
                              nyxt/web-mode::annotate-visible-only-p))
-
-(define-configuration nyxt/blocker-mode:blocker-mode
-    ((hotlists (append '() %slot-default%)))
