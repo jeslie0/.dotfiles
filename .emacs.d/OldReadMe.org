@@ -3,75 +3,195 @@
 #+options: toc:t
 #+attr_html: :width 300px
 [[file:Icons/EmacsLogo.svg]]
+* Table of Contents                                                     :toc:
+- [[#lexical-binding][Lexical-binding]]
+- [[#misc][Misc]]
+- [[#package-managers][Package managers]]
+  - [[#packageel-and-use-package][package.el and use-package]]
+  - [[#straightel][Straight.el]]
+- [[#cleaning-folders-and-files][Cleaning folders and files]]
+  - [[#folders][Folders]]
+  - [[#files][Files]]
+- [[#garbage-collection][Garbage collection]]
+- [[#keybindings][Keybindings]]
+  - [[#functions][Functions]]
+  - [[#general][General]]
+  - [[#misc-1][Misc]]
+  - [[#hydra][Hydra]]
+  - [[#evil-mode][Evil mode]]
+  - [[#which-key][Which-key]]
+- [[#ui-configuration][UI configuration]]
+  - [[#warnings][Warnings]]
+  - [[#font-configuration][Font configuration]]
+  - [[#solaire-mode][Solaire mode]]
+  - [[#themes][Themes]]
+  - [[#all-the-icons][All the icons]]
+  - [[#modeline][Modeline]]
+  - [[#emacs-winum][Emacs-winum]]
+  - [[#perspective][Perspective]]
+  - [[#pretty-symbols][Pretty symbols]]
+  - [[#fillings][Fillings]]
+  - [[#transparency][Transparency]]
+  - [[#scrolling][Scrolling]]
+- [[#ivy-and-counsel-completion-framework][Ivy and Counsel completion framework]]
+- [[#helpful][Helpful]]
+- [[#dashboard][Dashboard]]
+  - [[#functions-1][Functions]]
+  - [[#initialisation][Initialisation]]
+- [[#minor-modes][Minor modes]]
+  - [[#rainbow-delimiters][Rainbow Delimiters]]
+  - [[#outshine][Outshine]]
+  - [[#aggressive-indent][Aggressive indent]]
+  - [[#golden-ratio][Golden Ratio]]
+  - [[#highlight-indent-guides][Highlight-indent-guides]]
+  - [[#page-break-lines][Page break lines]]
+  - [[#smartparens][Smartparens]]
+  - [[#save-place-mode][Save place mode]]
+  - [[#variable-pitch][Variable pitch]]
+  - [[#visual-line-mode][Visual line mode]]
+- [[#multiple-cursors][Multiple cursors]]
+  - [[#keybindings-1][Keybindings]]
+  - [[#initialisation-1][Initialisation]]
+- [[#pin-entry][Pin entry]]
+- [[#pass][Pass]]
+  - [[#functions-2][Functions]]
+  - [[#ivy-pass][Ivy-pass]]
+  - [[#password-store][Password-store]]
+  - [[#password-store-otp][Password-store otp]]
+  - [[#auth-source-pass][Auth source pass]]
+- [[#org-mode][Org mode]]
+  - [[#functions-3][Functions]]
+  - [[#key-bindings][Key bindings]]
+  - [[#font-configuration-1][Font configuration]]
+  - [[#org-roam][Org Roam]]
+  - [[#org-mode-minor-modes][Org mode minor modes]]
+  - [[#org-initialisation][Org Initialisation]]
+  - [[#org-babel][Org Babel]]
+  - [[#evil-org][Evil Org]]
+  - [[#org-caldav][Org CalDav]]
+  - [[#org-present][Org Present]]
+  - [[#org-capture][Org Capture]]
+  - [[#org-source-blocks][Org Source blocks]]
+  - [[#table-of-contents][Table of Contents]]
+  - [[#org-protocol][Org Protocol]]
+  - [[#publish][Publish]]
+- [[#treemacs][Treemacs]]
+  - [[#keybindings-2][Keybindings]]
+  - [[#initialisation-2][Initialisation]]
+  - [[#treemacs-evil][Treemacs evil]]
+  - [[#treemacs-projectile][Treemacs projectile]]
+  - [[#treemacs-icons-dired][Treemacs icons dired]]
+  - [[#treemacs-magit][Treemacs magit]]
+  - [[#treemacs-persp][Treemacs persp]]
+  - [[#treemacs-all-the-icons][Treemacs all-the-icons]]
+- [[#languages][Languages]]
+  - [[#tools][Tools]]
+  - [[#proof-assistants][Proof Assistants]]
+  - [[#programming][Programming]]
+  - [[#other][Other]]
+- [[#avy][Avy]]
+- [[#readers][Readers]]
+  - [[#elfeed][Elfeed]]
+  - [[#elpher][Elpher]]
+  - [[#erc][ERC]]
+  - [[#eww][EWW]]
+  - [[#mu4e][Mu4e]]
+  - [[#arxiv][Arxiv]]
+- [[#latex][LaTeX]]
+  - [[#functions-4][Functions]]
+  - [[#keybindings-3][Keybindings]]
+  - [[#initialisation-3][Initialisation]]
+- [[#bibtex][Bibtex]]
+  - [[#ivy-bibtex][Ivy-bibtex]]
+  - [[#org-ref][Org Ref]]
+  - [[#org-ref-ivy][Org Ref Ivy]]
+- [[#yasnippet][Yasnippet]]
+- [[#company-mode][Company mode]]
+  - [[#initialisation-4][Initialisation]]
+  - [[#prescient-company][Prescient company]]
+  - [[#company-shell][Company-shell]]
+- [[#projectile][Projectile]]
+  - [[#keybindings-4][Keybindings]]
+  - [[#initialisation-5][Initialisation]]
+- [[#magit][Magit]]
+  - [[#keybindings-5][Keybindings]]
+  - [[#initialisation-6][Initialisation]]
+- [[#flycheck][Flycheck]]
+  - [[#bashate][Bashate]]
+- [[#flyspell][Flyspell]]
+  - [[#keybindings-6][Keybindings]]
+  - [[#functions-5][Functions]]
+  - [[#initialisation-7][Initialisation]]
+  - [[#flyspell-correct][Flyspell correct]]
+  - [[#flyspell-popup][Flyspell popup]]
+- [[#undo-tree][Undo Tree]]
+  - [[#keybindings-7][Keybindings]]
+  - [[#initialisation-8][Initialisation]]
+- [[#pandoc][Pandoc]]
+  - [[#keybindings-8][Keybindings]]
+  - [[#initialisation-9][Initialisation]]
+- [[#iedit][Iedit]]
+  - [[#keybindings-9][Keybindings]]
+  - [[#initialisation-10][Initialisation]]
+  - [[#wgrep][wgrep]]
+- [[#ranger][Ranger]]
+  - [[#keybindings-10][Keybindings]]
+  - [[#initialisation-11][Initialisation]]
+- [[#sql][SQL]]
+- [[#nix][Nix]]
+  - [[#functions-6][Functions]]
+  - [[#direnv][Direnv]]
+  - [[#nix-mode][Nix-mode]]
+  - [[#ivy-nixos-options][Ivy nixos options]]
+  - [[#nixos-options][NixOS options]]
+  - [[#company-nixos-options][Company NixOS Options]]
+  - [[#nix-sandbox][Nix-sandbox]]
+  - [[#cabal-nix-sync][Cabal nix sync]]
+  - [[#nix-haskell-mode][nix-haskell-mode]]
+- [[#shells][Shells]]
+  - [[#term][Term]]
+  - [[#vterm][Vterm]]
+  - [[#eshell][Eshell]]
+- [[#open-with][Open with]]
+- [[#dired][Dired]]
+  - [[#peep][Peep]]
+- [[#fun][Fun]]
+  - [[#snow][Snow]]
+  - [[#fireplace][Fireplace]]
+- [[#simple-httpd][Simple httpd]]
+- [[#define-word][Define word]]
+- [[#pair-programming][Pair Programming]]
 
-* early-init.el
-#+BEGIN_SRC elisp :tangle ./early-init.el
-;; -*- lexical-binding: t; -*-
-(setq package-enable-at-startup nil)
-;;; speedup blub
-(let ((default-gc-threshold gc-cons-threshold)
-      (default-gc-percentage gc-cons-percentage))
-  (setq gc-cons-threshold most-positive-fixnum
-        default-gc-percentage 0.8)
-  (add-hook 'after-init-hook
-            (lambda ()
-              (setq gc-cons-percentage default-gc-percentage
-                    gc-cons-threshold default-gc-threshold))))
-
-(setq load-prefer-newer t)
-
-
-;;; UI Stuff
-(setq inhibit-startup-message t) ;; Disables the startup message
-
-(scroll-bar-mode -1)   ; Disables visible scroll bar
-(tool-bar-mode -1)     ; Disable the toolbar
-(tooltip-mode -1)      ; Disable tooltips
-(set-fringe-mode 10)   ; Give some breathing room
-(menu-bar-mode -1)     ; Disable the menu bar
-(blink-cursor-mode -1) ; Makes cursor not blink
-(column-number-mode 1) ;; Adds column numbering to the modeline
-(electric-indent-mode -1)
-
-
-(defvar jl/prog-font
-  "Source Code Pro")
-
-(defvar jl/text-font
-  "Cantarell")
-
-
-(set-face-attribute 'default nil :font jl/prog-font :height 110)
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font jl/prog-font :height 110)
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font jl/text-font :height 120 :weight 'regular)
-
-(set-face-attribute 'cursor nil :background "DarkGoldenrod2")
-(set-face-attribute 'mode-line-active nil :inherit nil)
-
-(setq frame-inhibit-implied-resize t)
-#+END_SRC
 * Lexical-binding
-#+begin_src elisp :tangle
+#+begin_src elisp
 ;; -*- lexical-binding: t; -*-
 #+end_src
 * Misc
 #+begin_src elisp
 (setq default-directory "/home/james/Documents/")
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
-(setq gc-cons-threshold 9000000000)
+;; (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024))
-
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "Emacs ready in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract after-init-time before-init-time)))
-                     gcs-done)))
 #+end_src
 * Package managers
+** package.el and use-package
+#+begin_src elisp :tangle no
+  (require 'package)
+
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			   ("elpa"  . "https://elpa.gnu.org/packages/")
+			   ("org"   . "https://orgmode.org/elpa/")))
+
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents))
+
+  (unless (package-installed-p 'use-package) ;; If use-package is not installed, install it.
+    (package-install 'use-package))
+
+  (require 'use-package)
+  (setq use-package-always-ensure t)
+#+end_src
 ** Straight.el
 #+begin_src elisp
 (setq straight-fix-flycheck t)
@@ -119,7 +239,6 @@ auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-
   :config
   (gcmh-mode 1))
 #+END_SRC
-
 * Keybindings
 ** Functions
 *** sudo-edit
@@ -259,45 +378,48 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 #+end_src
 *** SPC keys
 #+begin_src elisp
+  (jl/SPC-keys
+    "a" '(:ignore t :which-key "applications")
+    "ae" '(:ignore t :which-key "email")
+    "ar" '(:ignore t :which-key "readers")
+    "as" '(:ignore t :which-key "shells")
+
+    "at" '(:ignore t :which-key "tools")
+
+    "b" '(:ignore t :which-key "buffers")
+    "c" '(:ignore t :which-key "compile/Comments")
+    "e" '(:ignore t :which-key "errors")
+    "f" '(:which-key "files")
+    "fe" '(:which-key "Emacs")
+
+
+    "g" '(:ignore t :which-key "git")
+    "h" '(:ignore t :which-key "help")
+    "i" '(:ignore t :which-key "insertion")
+    "j" '(:ignore t :which-key "jump/join/split")
+    "k" '(:ignore t :which-key "lisp")
+    "n" '(:ignore t :which-key "narrow/numbers")
+    "p" '(:ignore t :which-key "projects")
+    "q" '(:ignore t :which-key "quit")
+    "r" '(:ignore t :which-key "registers/rings/resume")
+    "s" '(:ignore t :which-key "search/symbol")
+    "q" '(:ignore t :which-key "quit")
+    "t" '(:ignore t :which-key "toggles")
+    "w" '(:ignore t :which-key "windows")
+    "z" '(:ignore t :which-key "zoom")
+    "C" '(:ignore t :which-key "Capture/Colours")
+    "D" '(:ignore t :which-key "Diff/compare")
+    "F" '(:ignore t :which-key "Frames")
+    "K" '(:ignore t :which-key "Keyboard Macros")
+    "N" '(:ignore t :which-key "Navigation")
+    "S" '(:ignore t :which-key "Spelling")
+    "T" '(:ignore t :which-key "UI toggles/Themes")
+    "C-v" '(:ignore t :which-key "Rectangles")
+    "m" '(:ignore t :which-key "major mode")
+    )
+#+end_src
+#+begin_src elisp
 (jl/SPC-keys
-  "a" '(:ignore t :which-key "applications")
-  "ae" '(:ignore t :which-key "email")
-  "ar" '(:ignore t :which-key "readers")
-  "as" '(:ignore t :which-key "shells")
-
-  "at" '(:ignore t :which-key "tools")
-
-  "b" '(:ignore t :which-key "buffers")
-  "c" '(:ignore t :which-key "compile/Comments")
-  "e" '(:ignore t :which-key "errors")
-  "f" '(:which-key "files")
-  "fe" '(:which-key "Emacs")
-
-
-  "g" '(:ignore t :which-key "git")
-  "h" '(:ignore t :which-key "help")
-  "i" '(:ignore t :which-key "insertion")
-  "j" '(:ignore t :which-key "jump/join/split")
-  "k" '(:ignore t :which-key "lisp")
-  "n" '(:ignore t :which-key "narrow/numbers")
-  "p" '(:ignore t :which-key "projects")
-  "q" '(:ignore t :which-key "quit")
-  "r" '(:ignore t :which-key "registers/rings/resume")
-  "s" '(:ignore t :which-key "search/symbol")
-  "q" '(:ignore t :which-key "quit")
-  "t" '(:ignore t :which-key "toggles")
-  "w" '(:ignore t :which-key "windows")
-  "z" '(:ignore t :which-key "zoom")
-  "C" '(:ignore t :which-key "Capture/Colours")
-  "D" '(:ignore t :which-key "Diff/compare")
-  "F" '(:ignore t :which-key "Frames")
-  "K" '(:ignore t :which-key "Keyboard Macros")
-  "N" '(:ignore t :which-key "Navigation")
-  "S" '(:ignore t :which-key "Spelling")
-  "T" '(:ignore t :which-key "UI toggles/Themes")
-  "C-v" '(:ignore t :which-key "Rectangles")
-  "m" '(:ignore t :which-key "major mode")
-
   "SPC" '(counsel-M-x :which-key "M-x")
 
   "!" 'eshell
@@ -323,7 +445,6 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   "/" 'counsel-rg
   )
 #+end_src
-
 ** Misc
 #+begin_src elisp
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -334,12 +455,9 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
  "u" 'undo-tree-undo
  )
 #+end_src
-
 ** Hydra
 #+begin_src elisp
-(use-package hydra
-  :defer t)
-
+(use-package hydra)
 (defhydra hydra-text-scale () ;;(:timeout 4) ;; -- I don't want a timeout
   "scale text"
   ("j" text-scale-increase "in")
@@ -360,7 +478,6 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   )
 
 #+end_src
-
 ** Evil mode
 *** Evil
 #+begin_src elisp
@@ -408,19 +525,15 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   :diminish t
   :after evil
   :config
-  (evil-escape-mode)
   (setq-default evil-escape-key-sequence "jk")
   (setq-default evil-escape-delay 0.2)
   )
 #+END_SRC
-
 ** Which-key
 Adds the popup for key commands with mulitple key presses
 #+begin_src elisp
 (use-package which-key
-  :after evil
-  :config
-  (which-key-mode)
+  :init (which-key-mode)
   :diminish which-key-mode
   :custom
   (which-key-idle-delay 0.4)
@@ -433,16 +546,44 @@ Adds the popup for key commands with mulitple key presses
   (which-key-allow-multiple-replacements t)
   )
 #+end_src
-
 * UI configuration
+#+begin_src elisp
+(setq inhibit-startup-message t) ;; Disables the startup message
+
+(scroll-bar-mode -1)   ; Disables visible scroll bar
+(tool-bar-mode -1)     ; Disable the toolbar
+(tooltip-mode -1)      ; Disable tooltips
+(set-fringe-mode 10)   ; Give some breathing room
+(menu-bar-mode -1)     ; Disable the menu bar
+(blink-cursor-mode -1) ; Makes cursor not blink
+(column-number-mode 1) ;; Adds column numbering to the modeline
+(electric-indent-mode -1)
+#+end_src
 ** Warnings
 #+begin_src elisp
 (setq warning-suppress-types '((comp) (org-roam) (org-element-cache) ()(:warning)))
 #+end_src
+** Font configuration
+#+begin_src elisp
+(defvar jl/prog-font
+  "Source Code Pro")
+
+(defvar jl/text-font
+  "Cantarell")
+
+
+(set-face-attribute 'default nil :font jl/prog-font :height 110)
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil :font jl/prog-font :height 110)
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil :font jl/text-font :height 120 :weight 'regular)
+
+(set-face-attribute 'cursor nil :background "DarkGoldenrod2")
+#+end_src
 ** Solaire mode
 #+BEGIN_SRC elisp
 (use-package solaire-mode
-  :defer 0.5
+  :defer t
   :custom
   (solaire-global-mode +1)
   )
@@ -464,6 +605,7 @@ Adds the popup for key commands with mulitple key presses
 *** Dracula
 #+begin_src elisp
 (use-package dracula-theme
+  :straight t
   :defer t)
 #+end_src
 ** All the icons
@@ -486,7 +628,6 @@ Adds the popup for key commands with mulitple key presses
 *** All the icons dired
 #+BEGIN_SRC elisp
 (use-package all-the-icons-dired
-  :commands (dired)
   :defer t
   :hook (dired-mode . all-the-icons-dired-mode)
   :custom
@@ -497,12 +638,15 @@ Adds the popup for key commands with mulitple key presses
 We use doom modeline.
 #+begin_src elisp
 (use-package doom-modeline
-  ;; :defer t
-  :custom
-  (inhibit-compacting-font-caches t)
-  :init (doom-modeline-mode)
+  :defer t
+  :straight t
+  :init (doom-modeline-mode 1)
   )
 #+end_src
+Emacs 29 makes the modeline default to the variable pitch font face. I don't like this really, so we change it back.
+#+BEGIN_SRC elisp
+(set-face-attribute 'mode-line-active nil :inherit nil)
+#+END_SRC
 ** Emacs-winum
 *** Keybindings
 #+begin_src elisp
@@ -583,8 +727,7 @@ We use doom modeline.
 *** Initialisation
 #+begin_src elisp
 (use-package winum
-  :after doom-modeline
-  :config (winum-mode)
+  :init (winum-mode)
   :diminish winum-mode
   :config
   (jl/winum-keys)
@@ -655,23 +798,61 @@ If the universal prefix argument is used then kill also the window."
 *** Initialisation
 #+begin_src elisp
 (use-package perspective
-  :defer 1
   :bind (("C-x k" . persp-kill-buffer*))
-  :config
+  :init
   (jl/persp-keys)
   (persp-mode)
   )
 #+end_src
+** Pretty symbols
+#+BEGIN_SRC elisp
+(defconst haskell-pretty-symbols '(("->" . #x2192)
+			       ("=>" . #x21d2)
+			       ("<-" . #x2190)
+			       ("\\"  . #x03bb)
+			       ("/=" . #x2260)
+			       ("<=" . #x2264)
+			       (">=" . #x2265)
+			       ("&&" . #x22c0)
+			       ("||" . #x22c1)
+			       ))
+#+END_SRC
 ** Fillings
 #+BEGIN_SRC elisp
 ;; (add-hook 'prog-mode-hook 'auto-fill-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
 #+END_SRC
+** Transparency
+#+BEGIN_SRC elisp :tangle no
+;; set transparency
+;; (set-frame-parameter (selected-frame) 'alpha '(85 85))
+;; (add-to-list 'default-frame-alist '(alpha 85 85))
+;; (setq default-frame-alist
+;;       '((alpha . 50)))
+#+END_SRC
+** Scrolling
+We use Good Scroll for scrolling
+#+BEGIN_SRC elisp :tangle no
+(use-package good-scroll
+  :config
+  (good-scroll-mode 1)
+  )
+#+END_SRC
+*** Sublimity
+#+BEGIN_SRC elisp :tangle no
+(use-package sublimity
+  :defer t
+  :config
+  (sublimity-mode 1)
+  )
 
+(use-package sublimity-map
+  :straight sublimity
+  )
+#+END_SRC
 * Ivy and Counsel completion framework
 #+begin_src elisp
 (use-package ivy
-  :defer 0.5
   :diminish ;; Hides minor mode from mode-line minor mode list
   :bind (("C-s" . swiper)
          :map ivy-minibuffer-map
@@ -693,7 +874,6 @@ If the universal prefix argument is used then kill also the window."
   )
 
 (use-package counsel
-  :after ivy
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
@@ -704,17 +884,16 @@ If the universal prefix argument is used then kill also the window."
   )
 
 (use-package all-the-icons-ivy-rich
-  :after (ivy ivy-rich all-the-icons)
-  :config
+  :init
   (all-the-icons-ivy-rich-mode 1))
 
 (use-package ivy-rich
-  :after (ivy counsel)
-  :config
+  :after counsel
+  :init
   (ivy-rich-mode 1))
 
 (use-package ivy-prescient
-  :after (ivy counsel)
+  :after counsel
   :custom
   (prescient-sort-length-enable t)
   (ivy-prescient-retain-classic-highlighting t)
@@ -724,25 +903,22 @@ If the universal prefix argument is used then kill also the window."
   (prescient-persist-mode 1)
   )
   #+end_src
-
 * Helpful
-# Provides better documentation.
-# #+begin_src elisp
-# (use-package helpful
-#   :after ivy
-#   :custom
-#   (counsel-describe-function-function #'helpful-callable)
-#   (counsel-describe-variable-function #'helpful-variable)
-#   :bind
-#   ([remap describe-function] . counsel-describe-function)
-#   ([remap describe-command]  . helpful-command)
-#   ([remap describe-variable] . counsel-describe-variable)
-#   ([remap describe-key]      . helpful-key)
-#   :init
-#   (defvar read-symbol-positions-list nil) ;; bug fix
-# )
-# #+end_src
-
+Provides better documentation.
+#+begin_src elisp
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command]  . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key]      . helpful-key)
+  :init
+  (defvar read-symbol-positions-list nil) ;; bug fix
+)
+#+end_src
 * Dashboard
 ** Functions
 #+begin_src elisp
@@ -754,81 +930,37 @@ If the universal prefix argument is used then kill also the window."
 #+end_src
 ** Initialisation
 #+begin_src elisp
-(use-package dashboard
-  :custom
-  ;; Set the title
-  (dashboard-banner-logo-title "Welcome to Emacs")
-  ;; Set the logo
-  (dashboard-startup-banner "/home/james/.emacs.d/Icons/EmacsLogo.svg")
-  (dashboard-image-banner-max-width 300)
+  (use-package dashboard
+    :custom
+    ;; Set the title
+    (dashboard-banner-logo-title "Welcome to Emacs")
+    ;; Set the logo
+    (dashboard-startup-banner "/home/james/.emacs.d/Icons/EmacsLogo.svg")
+    (dashboard-image-banner-max-width 300)
 
-  ;; Content is not centered by default. To center, set
-  (dashboard-center-content t)
+    ;; Content is not centered by default. To center, set
+    (dashboard-center-content t)
 
-  ;; To disable shortcut "jump" indicators for each section, set
-  (dashboard-show-shortcuts nil)
-  (dashboard-set-heading-icons t)
-  (dashboard-set-file-icons t)
-  (dashboard-set-init-info t)
-  (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
-  (dashboard-items '((recents . 5)
-		     (projects . 5)))
+    ;; To disable shortcut "jump" indicators for each section, set
+    (dashboard-show-shortcuts nil)
+    (dashboard-set-heading-icons t)
+    (dashboard-set-file-icons t)
+    (dashboard-set-init-info t)
+    ;; (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+    (dashboard-items '((recents . 5)
+		       (projects . 5)))
 
-  (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+    (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
-  :config
-  (general-evil-define-key '(normal motion) 'dashboard-mode-map
-    "j"  'widget-forward
-    "k"  'widget-backward
+    :config
+    (general-evil-define-key '(normal motion) 'dashboard-mode-map
+      "j"  'widget-forward
+      "k"  'widget-backward
+      )
+
+    (dashboard-setup-startup-hook)
     )
-
-  (dashboard-setup-startup-hook)
-  )
 #+end_src
-
-* Projectile
-** Keybindings
-#+begin_src elisp
-(defun jl/projectile-keys ()
-  (jl/SPC-keys
-    ;; Project
-    "p!" 'projectile-run-shell-command-in-root
-    "p&" 'projectile-run-async-shell-command-in-root
-    "p%" 'projectile-replace-regexp
-    "pa" 'projectile-toggle-between-implementation-and-test
-    "pb" 'projectile-switch-to-buffer
-    "pc" 'projectile-compile-project
-    "pd" 'projectile-find-dir
-    "pD" 'projectile-dired
-    "pe" 'projectile-edit-dir-locals
-    "pf" 'projectile-find-file
-    "pF" 'projectile-find-file-dwim
-    "pg" 'projectile-find-tag
-    "pG" 'projectile-regenerate-tags
-    "pI" 'projectile-invalidate-cache
-    "pk" 'projectile-kill-buffers
-    "pp" 'projectile-switch-project
-    "pr" 'projectile-recentf
-    "pR" 'projectile-replace
-    "pT" 'projectile-test-project
-    "pv" 'projectile-vc))
-#+end_src
-** Initialisation
-#+begin_src elisp
-(use-package projectile
-  :after ivy
-  :diminish projectile-mode
-  :custom
-  (projectile-completion-system 'ivy)
-  :config
-  (projectile-mode)
-  (jl/projectile-keys))
-
-(use-package counsel-projectile
-  :after (projectile counsel)
-  :config (counsel-projectile-mode))
-#+end_src
-
 * Minor modes
 ** Rainbow Delimiters
 #+begin_src elisp
@@ -841,23 +973,25 @@ If the universal prefix argument is used then kill also the window."
 #+begin_src elisp
 (use-package outshine
   :defer t
-  :after org
   :hook ((emacs-lisp-mode latex-mode prog-mode) . outshine-mode)
+  :init
+  (defvar outline-minor-mode-prefix "\M-#")
   )
-#+end_src
+#+end_srC
 ** Aggressive indent
 #+BEGIN_SRC elisp
 (use-package aggressive-indent
-  :defer t
-  :hook (prog-mode . aggressive-indent-mode)
-  :config
+  :defer 2
+  :init
+  (global-aggressive-indent-mode 1)
   (add-to-list 'aggressive-indent-excluded-modes 'haskell-cabal-mode)
   )
-#+END_SRC
+  #+END_SRC
 ** Golden Ratio
 #+BEGIN_SRC elisp
 (use-package golden-ratio
-  :defer t)
+  :defer t
+  )
 #+END_SRC
 ** Highlight-indent-guides
 #+BEGIN_SRC elisp
@@ -865,20 +999,22 @@ If the universal prefix argument is used then kill also the window."
   :defer t
   :hook ((prog-mode LaTeX-mode). highlight-indent-guides-mode)
   :custom
-  (highlight-indent-guides-method 'character))
+  (highlight-indent-guides-method 'character)
+  )
 #+END_SRC
 ** Page break lines
 #+BEGIN_SRC elisp
 (use-package page-break-lines
   :defer t
-  :after dashboard)
+  :after dashboard
+  )
 #+END_SRC
 ** Smartparens
 #+BEGIN_SRC elisp
 (use-package smartparens
-  :hook (
-	 ;; (org-mode . smartparens-mode)
-	 (emacs-lisp-mode . smartparens-mode))
+  :hook ((org-mode . smartparens-mode)
+	 (emacs-lisp-mode . smartparens-mode)
+	 )
   :defer t
   )
 #+END_SRC
@@ -891,16 +1027,50 @@ If the universal prefix argument is used then kill also the window."
 #+end_src
 ** Variable pitch
 #+BEGIN_SRC elisp
-(use-package variable-pitch
-  :defer t
-  :straight face-remap
-  :hook (text-mode . variable-pitch-mode))
-#+END_SRC
+  (use-package variable-pitch
+    :defer t
+    :straight face-remap
+    :hook (text-mode . variable-pitch-mode)
+    )
+    #+END_SRC
 ** Visual line mode
 #+BEGIN_SRC elisp
-(add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'text-mode-hook 'visual-line-mode)
+  #+END_SRC
+* Multiple cursors
+** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/evil-mc-keybindings ()
+  (jl/SPC-keys
+    :states '(normal visual motion)
+    "M" '(:ignore t :which-key "multiple cursors")
+    "Mf" 'evil-mc-make-and-goto-first-cursor
+    "Mh" 'evil-mc-make-cursor-here
+    "Mj" 'evil-mc-make-cursor-move-next-line
+    "Mk" 'evil-mc-make-cursor-move-prev-line
+    "Ml" 'evil-mc-make-and-goto-last-cursor
+    "Mm" 'evil-mc-make-all-cursors
+    "Mn" 'evil-mc-skip-and-goto-next-match
+    "MN" 'evil-mc-skip-and-goto-next-cursor
+    "Mp" 'evil-mc-skip-and-goto-prev-match
+    "MP" 'evil-mc-skip-and-goto-prev-cursor
+    "Mr" 'evil-mc-resume-cursors
+    "Ms" 'evil-mc-pause-cursors
+    "Mq" 'evil-mc-undo-all-cursors
+    "Mu" 'evil-mc-undo-last-added-cursor
+    "MA" 'evil-mc-make-cursor-in-visual-selection-end
+    "MU" 'evil-mc-make-cursor-in-visual-selection-beg)
+  )
 #+END_SRC
-
+** Initialisation
+#+BEGIN_SRC elisp
+(use-package evil-mc
+  :defer t
+  :hook ((prog-mode text-mode) . turn-on-evil-mc-mode)
+  :init
+  (jl/evil-mc-keybindings)
+  )
+#+END_SRC
 * Pin entry
 #+begin_src elisp
 (setq epa-pinentry-mode 'loopback)
@@ -909,7 +1079,6 @@ If the universal prefix argument is used then kill also the window."
       epa-file-select-keys 1)
 (auth-source-pass-enable)
 #+end_src
-
 * Pass
 ** Functions
 #+begin_src elisp
@@ -997,7 +1166,6 @@ If the universal prefix argument is used then kill also the window."
   (auth-source-pass-enable)
   )
 #+end_src
-
 * Org mode
 ** Functions
 #+begin_src elisp
@@ -1299,71 +1467,6 @@ If the universal prefix argument is used then kill also the window."
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :font jl/prog-font)
   )
   #+end_src
-** Org Initialisation
-#+begin_src elisp
-(use-package org
-  :defer 10
-  :hook (org-mode . jl/org-font-setup)
-  :init
-  (jl/org-mode-Cc-keys)
-  :config
-  (jl/org-mode-key-bindings)
-  (jl/org-font-setup)
-  (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
-  :custom
-  (org-ellipsis " ▼")
-  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
-  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
-  (org-startup-indented t)
-  (org-hide-emphasis-markers nil)
-  (org-src-tab-acts-natively t)
-  (org-pretty-entities nil)
-  (org-startup-folded t)
-  (org-hide-block-startup t)
-  (org-edit-src-content-indentation 0)
-  (org-startup-with-latex-preview t)
-  (org-enable-reveal-js-support t)
-  (org-protocol-default-template-key "w")
-  (org-image-actual-width nil)
-  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
-  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-  ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
-  ;;                     ;; "~/Documents/Org/GTD/inbox.org"
-  ;;                     ;; "~/Documents/Org/GTD/gtd.org"
-  ;;                     ;; "~/Documents/Org/GTD/tickler.org"
-  ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
-  ;;                     ))
-  (org-export-backends '(ascii beamer html icalendar latex md odt))
-  ;; Latex in Org
-  (org-preview-latex-default-process 'dvisvgm)
-  (org-highlight-latex-and-related '(latex script entities))
-  (org-format-latex-options '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-					  ("begin" "$1" "$" "$$" "\\(" "\\[")))
-  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
-  ;; Org capture
-  (org-capture-templates
-   '(("t" "Todo [inbox]" entry
-      (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
-      "* TODO %i%?")
-
-     ("T" "Tickler" entry
-      (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
-      "* %i%? \n %U")
-     ("n" "Notes" entry
-      (file "~/Documents/Org/Notes/notes.org")
-      "* %?")
-     ("r" "Research Notes" entry
-      (file "~/Documents/Org/Research/notes.org")
-      "* %u \n %?")
-     ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
-      "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
-     ))
-  ;; GTD in org
-  (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
-                        ("~/Documents/Org/GTD/someday.org" :level . 1)
-                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
-  )
-#+end_src
 ** Org Roam
 *** Keybindings
 #+begin_src elisp
@@ -1415,16 +1518,16 @@ If the universal prefix argument is used then kill also the window."
   )
 
 #+end_src
-# *** Org Roam UI
-# **** Initialisation
-# #+begin_src elisp
-# (use-package org-roam-ui
-#   :defer t
-#   :commands (org-roam-ui-mode
-# 	     org-roam-ui-open)
-#   :after org-roam
-#   )
-#   #+end_src
+*** Org Roam UI
+**** Initialisation
+#+begin_src elisp
+(use-package org-roam-ui
+  :defer t
+  :commands (org-roam-ui-mode
+	     org-roam-ui-open)
+  :after org-roam
+  )
+  #+end_src
 *** Templates
 #+BEGIN_SRC elisp
 (defun jl/org-roam-templates ()
@@ -1501,7 +1604,6 @@ If the universal prefix argument is used then kill also the window."
   #+end_src
 #+begin_src elisp
 (use-package org-superstar
-  :defer t
   :after org
   :hook (org-mode . org-superstar-mode)
   )
@@ -1512,13 +1614,75 @@ If the universal prefix argument is used then kill also the window."
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
-  :defer t
   :hook (org-mode . jl/org-mode-visual-fill))
 
 (use-package org-fragtog
-  :defer t
-  :after org
   :hook (org-mode . org-fragtog-mode)
+  )
+#+end_src
+** Org Initialisation
+#+begin_src elisp
+(use-package org
+  :defer 10
+  :hook (org-mode . jl/org-font-setup)
+  :init
+  (jl/org-mode-Cc-keys)
+  :config
+  (jl/org-mode-key-bindings)
+  (jl/org-font-setup)
+  (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
+  :custom
+  (org-ellipsis " ▼")
+  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
+  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
+  (org-startup-indented t)
+  (org-hide-emphasis-markers nil)
+  (org-src-tab-acts-natively t)
+  (org-pretty-entities nil)
+  (org-startup-folded t)
+  (org-hide-block-startup t)
+  (org-edit-src-content-indentation 0)
+  (org-startup-with-latex-preview t)
+  (org-enable-reveal-js-support t)
+  (org-protocol-default-template-key "w")
+  (org-image-actual-width nil)
+  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
+  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
+  ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
+  ;;                     ;; "~/Documents/Org/GTD/inbox.org"
+  ;;                     ;; "~/Documents/Org/GTD/gtd.org"
+  ;;                     ;; "~/Documents/Org/GTD/tickler.org"
+  ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
+  ;;                     ))
+  (org-export-backends '(ascii beamer html icalendar latex md odt))
+  ;; Latex in Org
+  (org-preview-latex-default-process 'dvisvgm)
+  (org-highlight-latex-and-related '(latex script entities))
+  (org-format-latex-options '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+					  ("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
+  ;; Org capture
+  (org-capture-templates
+   '(("t" "Todo [inbox]" entry
+      (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
+      "* TODO %i%?")
+
+     ("T" "Tickler" entry
+      (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
+      "* %i%? \n %U")
+     ("n" "Notes" entry
+      (file "~/Documents/Org/Notes/notes.org")
+      "* %?")
+     ("r" "Research Notes" entry
+      (file "~/Documents/Org/Research/notes.org")
+      "* %u \n %?")
+     ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
+      "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
+     ))
+  ;; GTD in org
+  (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
+                        ("~/Documents/Org/GTD/someday.org" :level . 1)
+                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
   )
 #+end_src
 ** Org Babel
@@ -1666,7 +1830,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
   )
 #+END_SRC
 ** Org Capture
-#+begin_src elisp :tangle no
+#+begin_src elisp
 (with-eval-after-load 'org-capture
   (defun org-capture-start ()
     "Make sure that the keybindings are available for org capture."
@@ -1693,7 +1857,6 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+BEGIN_SRC elisp
 (use-package toc-org
   :defer t
-  :after org
   :hook (org-mode . toc-org-mode)
   )
   #+END_SRC
@@ -1707,10 +1870,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+begin_src elisp
 (use-package ox-publish
   :defer t
-  :after org
   :straight org)
 #+end_src
-
 * Treemacs
 ** Keybindings
 #+begin_src elisp
@@ -1724,6 +1885,9 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ** Initialisation
 #+begin_src elisp
 (use-package treemacs
+  ;; :straight (treemacs :type git :host github :repo "Alexander-Miller/treemacs"
+  ;; 		      :fork (:host github
+  ;; 				   :repo "jeslie0/treemacs"))
   :defer t
   :commands (treemacs)
   :init
@@ -1802,13 +1966,15 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+BEGIN_SRC elisp
 (use-package treemacs-evil
   :defer t
-  :after (treemacs evil))
+  :after (treemacs evil)
+  )
 #+END_SRC
 ** Treemacs projectile
 #+BEGIN_SRC elisp
 (use-package treemacs-projectile
   :defer t
-  :after (treemacs projectile))
+  :after (treemacs projectile)
+  )
 #+END_SRC
 ** Treemacs icons dired
 #+BEGIN_SRC elisp
@@ -1821,7 +1987,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+BEGIN_SRC elisp
 (use-package treemacs-magit
   :defer t
-  :after (treemacs magit))
+  :after (treemacs magit)
+  )
 #+END_SRC
 ** Treemacs persp
 #+BEGIN_SRC elisp
@@ -1833,11 +2000,34 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ** Treemacs all-the-icons
 #+begin_src elisp
 (use-package treemacs-all-the-icons
-  :after (treemacs all-the-icons)
+  ;; :straight (treemacs-all-the-icons :type git :host github :repo "Alexander-Miller/treemacs"
+  ;; 				    :fork (:host github
+  ;; 						 :repo "jeslie0/treemacs"))
   :hook ((treemacs-mode dired-mode) . (lambda ()
-					(treemacs-load-theme 'all-the-icons))))
-#+end_src
+					(treemacs-load-theme 'all-the-icons)))
+  :config
+  (treemacs-modify-theme "all-the-icons"
+    :icon-directory "/home/james/Downloads/"
+    :config
+    (progn
+      (treemacs-create-icon :icon (format "  %s%s" (all-the-icons-fileicon "org" :face 'all-the-icons-lgreen) treemacs-all-the-icons-tab) :extensions ("org") :fallback 'same-as-icon)
+      (treemacs-create-icon :icon (format "  %s%s" (all-the-icons-fileicon "coq" :face 'all-the-icons-lred) treemacs-all-the-icons-tab) :extensions ("v") :fallback 'same-as-icon)
+      ;; (treemacs-create-icon :file "agdaIcon.svg"
+      ;; :extensions ("agda") :fallback "FFF")
+      ;; (treemacs-create-icon :icon (format "  %s%s" (all-the-icons-fileicon "agda" :face 'all-the-icons-lblue) treemacs-all-the-icons-tab) :extensions ("agda") :fallback 'same-as-icon)
 
+      )
+    )
+  )
+#+end_src
+#+BEGIN_SRC elisp :tangle no
+(load-file "~/emacs-packages/treemacs/src/extra/treemacs-all-the-icons.el")
+(treemacs-load-theme "all-the-icons")
+;; (add-hook 'treemacs-mode-hook (lambda ()
+;; 				treemacs-load-theme 'all-the-icons))
+;; (add-hook 'dired-mode-hook (lambda ()
+;; 			     treemacs-load-theme 'all-the-icons))
+#+END_SRC
 * Languages
 ** Tools
 *** LSP
@@ -2024,73 +2214,78 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 			  )
   )
 #+end_src
-**** lsp-ui
-#+begin_src elisp
-(use-package lsp-ui
-  :defer t
-  :after lsp
-  :commands lsp-ui-mode
-  :custom
-  (lsp-lens-enable 1)
-  (lsp-ui-doc-show-with-mouse nil)
-  (lsp-ui-doc-show-with-cursor t)
-  )
-#+end_src
-**** lsp-treemacs
-***** Keybindings
-#+begin_src elisp
-(defun jl/lsp-treemacs-keys ()
-  (jl/major-modes
-    :keymaps lsp-mode-maps
-    :states '(normal visual motion)
-    :major-modes t
-    "t" '(:ignore t :which-key "lsp-treemacs")
-    "th" #'lsp-treemacs-call-hierarchy
-    "te" 'lsp-treemacs-errors-list
-    "tr" 'lsp-treemacs-references
-    "ts" 'lsp-treemacs-symbols
-    )
-  )
-#+end_src
-***** Initialisation
-#+begin_src elisp
-(use-package lsp-treemacs
-  :defer t
-  :after (lsp treemacs)
-  :commands (lsp-treemacs-syombols
-	     lsp-treemacs-references
-	     lsp-treemacs-errors-list)
-  :init
-  (jl/lsp-treemacs-keys)
-  :custom
-  (lsp-treemacs-sync-mode 1)
-  )
-  #+end_src
-**** lsp-ivy
-***** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/lsp-ivy-keys ()
-  (jl/major-modes
-    :keymaps lsp-mode-maps
-    :states '(normal visual motion)
-    :major-modes t
-    "i"  '(:toggle nil :which-key "lsp-ivy")
-    "is" 'lsp-ivy-workspace-symbol
-    "iS" 'lsp-ivy-global-workspace-symbol
-    )
-  )
-#+END_SRC
-***** Initialisation
-#+begin_src elisp
-(use-package lsp-ivy
-  :defer t
-  :after (lsp ivy)
-  :commands (lsp-ivy-workspace-symbol
-             lsp-ivy-global-workspace-symbol)
-  :init
-  (jl/lsp-ivy-keys)
-  )
-#+end_src
+# **** lsp-ui
+# #+begin_src elisp
+# (use-package lsp-ui
+#   :defer t
+#   :commands lsp-ui-mode
+#   :custom
+#   (lsp-lens-enable 1)
+#   (lsp-ui-doc-show-with-mouse nil)
+#   (lsp-ui-doc-show-with-cursor t)
+#   )
+# #+end_src
+# **** lsp-treemacs
+# ***** Keybindings
+# #+begin_src elisp
+# (defun jl/lsp-treemacs-keys ()
+#   (jl/major-modes
+#     :keymaps lsp-mode-maps
+#     :states '(normal visual motion)
+#     :major-modes t
+#     "t" '(:ignore t :which-key "lsp-treemacs")
+#     "th" #'lsp-treemacs-call-hierarchy
+#     "te" 'lsp-treemacs-errors-list
+#     "tr" 'lsp-treemacs-references
+#     "ts" 'lsp-treemacs-symbols
+#     )
+#   )
+# #+end_src
+# ***** Initialisation
+# #+begin_src elisp
+# (use-package lsp-treemacs
+#   :defer t
+#   :commands (lsp-treemacs-syombols
+# 	     lsp-treemacs-references
+# 	     lsp-treemacs-errors-list)
+#   :init
+#   (jl/lsp-treemacs-keys)
+#   :custom
+#   (lsp-treemacs-sync-mode 1)
+#   )
+#   #+end_src
+# #+BEGIN_SRC elisp :tangle no
+# (load-file "~/emacs-packages/lsp-treemacs/lsp-treemacs-themes.el")
+# (load-file "~/emacs-packages/lsp-treemacs/lsp-treemacs.el")
+# (require 'lsp-treemacs)
+# (jl/lsp-treemacs-keys)
+# (setq lsp-treemacs-sync-mode 1)
+# (setq lsp-treemacs-theme "All-the-icons")
+# #+END_SRC
+# **** lsp-ivy
+# ***** Keybindings
+# #+BEGIN_SRC elisp
+# (defun jl/lsp-ivy-keys ()
+#   (jl/major-modes
+#     :keymaps lsp-mode-maps
+#     :states '(normal visual motion)
+#     :major-modes t
+#     "i"  '(:toggle nil :which-key "lsp-ivy")
+#     "is" 'lsp-ivy-workspace-symbol
+#     "iS" 'lsp-ivy-global-workspace-symbol
+#     )
+#   )
+# #+END_SRC
+# ***** Initialisation
+# #+begin_src elisp
+# (use-package lsp-ivy
+#   :defer t
+#   :commands (lsp-ivy-workspace-symbol
+#              lsp-ivy-global-workspace-symbol)
+#   :init
+#   (jl/lsp-ivy-keys)
+#   )
+# #+end_src
 ** Proof Assistants
 *** Agda
 **** Keybindings
@@ -2159,11 +2354,30 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 #+begin_src elisp
 (use-package agda2-mode
   ;; :load-path "/home/james/.cabal/share/x86_64-linux-ghc-8.10.5/Agda-2.6.3/emacs-mode/agda2.el"
-  :mode "\\.agda\\'"
   :defer t
   :config
-  (jl/agda-keys))
+  (jl/agda-keys)
+
+  (if (file-exists-p "~/agda/result/bin")
+      (progn (add-to-list 'exec-path "~/agda/result/bin/")
+	     (load-file (let ((coding-system-for-read 'utf-8))
+			  (shell-command-to-string "~/agda/result/bin/agda-mode locate"))))
+    (load-file (let ((coding-system-for-read 'utf-8))
+		 (shell-command-to-string "agda-mode locate")))
+    )
+  )
 #+end_src
+**** org-agda-mode
+#+BEGIN_SRC elisp :tangle no
+(use-package polymode)
+(use-package org-agda-mode
+  :straight (:host github
+		   :repo "alhassy/org-agda-mode"
+		   :branch "master"
+		   :files ("org-agda-mode.el")
+		   )
+  )
+#+END_SRC
 *** Coq
 **** Keybindings
 #+BEGIN_SRC elisp
@@ -2242,19 +2456,9 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 #+begin_src elisp
 (use-package lsp-haskell
   :defer t
-  :after (lsp haskell-mode)
   :custom
-  ;; (lsp-haskell-server-path "~/haskell-language-server/result/bin/haskell-language-server-wrapper")
   (lsp-haskell-server-path "haskell-language-server-wrapper")
-  (lsp-haskell-server-args ())
-  ;; :config
-  ;; (if (file-exists-p "~/haskell-language-server/result/bin")
-  ;;     (progn
-  ;; 	(setq lsp-haskell-server-path "~/haskell-language-server/result/bin/haskell-language-server")
-  ;; 	(add-to-list 'exec-path "~/haskell-language-server/result/bin"))
-  ;;   (setq lsp-haskell-server-path "haskell-language-server-wrapper")
-  ;;   )
-  )
+  (lsp-haskell-server-args ()))
 #+end_src
 **** Functions
 To get evil's "o" and "O" keys to work with indentation as expected, we use these two functions from [[https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026][hatashiro]].
@@ -2374,7 +2578,6 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+begin_src elisp
 (use-package haskell-mode
   :defer t
-  :mode "\\.haskell\\'"
   :hook ((haskell-mode . lsp)
 	 (haskell-mode . lsp-mode)
 	 (haskell-literate-mode . lsp)
@@ -2407,7 +2610,6 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 ***** Initialisation
 #+begin_src elisp
 (use-package hindent
-  :after haskell-mode
   :defer t
   :hook (haskell-mode . hindent-mode)
   :config
@@ -2645,7 +2847,6 @@ Not tested. Probably doesn't work.
   :hook (yaml-mode . (lambda () (variable-pitch-mode 0)))
   :defer t)
 #+END_SRC
-
 * Avy
 #+begin_src elisp
 (use-package avy
@@ -2667,7 +2868,6 @@ Not tested. Probably doesn't work.
     "jw" 'evil-avy-goto-word-or-subword-1)
   )
   #+end_src
-
 * Readers
 ** Elfeed
 *** Keybindings
@@ -2704,20 +2904,20 @@ Not tested. Probably doesn't work.
   :commands (elfeed)
   :defer t
   :custom
-  (elfeed-feeds '(;;Mathematics
-		  ("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
-		  ("https://homotopytypetheory.org/feed.xml" mathematics)
-		  ("https://terrytao.wordpress.com/feed.xml" mathematics)
-		  ("https://gowers.wordpress.com/feed.xml" mathematics)
-		  ("https://jadeedenstarmaster.wordpress.com/feed.xml" mathematics)
-		  ("https://bartoszmilewski.com/feed.xml" mathematics)
-		  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
-		  ("https://jeslie0.github.io/feed.xml" mathematics)
+  ;; (elfeed-feeds '(;;Mathematics
+  ;; 		  ("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
+  ;; 		  ("https://homotopytypetheory.org/feed.xml" mathematics)
+  ;; 		  ("https://terrytao.wordpress.com/feed.xml" mathematics)
+  ;; 		  ("https://gowers.wordpress.com/feed.xml" mathematics)
+  ;; 		  ("https://jadeedenstarmaster.wordpress.com/feed.xml" mathematics)
+  ;; 		  ("https://bartoszmilewski.com/feed.xml" mathematics)
+  ;; 		  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
+  ;; 		  ("https://jeslie0.github.io/feed.xml" mathematics)
 
-		  ;; Webcomics
-		  ("https://xkcd.com/atom.xml" webcomic)
-		  ("https://www.smbc-comics.com/comic/rss" webcomic)
-		  ))
+  ;; 		  ;; Webcomics
+  ;; 		  ("https://xkcd.com/atom.xml" webcomic)
+  ;; 		  ("https://www.smbc-comics.com/comic/rss" webcomic)
+  ;; 		  ))
   (elfeed-feeds '(("~/jeslie0.github.io/RSS/rss.xml")))
   :init
   (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
@@ -2848,7 +3048,7 @@ Not tested. Probably doesn't work.
 (use-package erc-hl-nicks
   :defer t
   :hook (erc-mode . erc-hl-nicks-mode)
-  :after erc-tls)
+  :after erc)
 #+end_src
 *** erc-image
 #+begin_src elisp :tangle no
@@ -3195,10 +3395,32 @@ there are no attachments."
   )
 #+end_src
 *** Initialisation
+#+BEGIN_SRC elisp :tangle no
+(use-package mu4e
+  :straight nil
+  :load-path "/run/current-system/sw/share/emacs/site-lisp/mu4e/"
+  :custom
+  (mu4e-maildir "~/.email")
+  (mu4e-get-mail-command "mbsync -c ~/.config/mbsync/.mbsyncrc -a")
+  (mu4e-compose-signature-auto-include t)
+  (mu4e-view-show-addresses t)
+  (mu4e-headers-include-related nil)
+  (mu4e-headers-skip-duplicates t)
+  (mu4e-headers-auto-update t)
+  (mu4e-update-interval 300)
+  (message-send-mail-function 'smtpmail-send-it)
+  (mu4e-attachment-dir  "~/Downloads/")
+  (mu4e-change-filenames-when-moving t)
+  (mu4e-compose-format-flowed t)
+  (mu4e-compose-dont-reply-to-self t)
+  (mu4e-sent-messages-behavior 'sent)
+  (mu4e-use-fancy-chars t)
+  (mu4e-display-update-status-in-modeline nil)
+
+  )
+#+END_SRC
 #+begin_src elisp
 (use-package mu4e
-  :defer t
-  :after mu4e
   :straight nil
   ;; :load-path "/run/current-system/sw/share/emacs/site-lisp/mu4e/"
   :load-path "~/MU4E"
@@ -3241,7 +3463,11 @@ there are no attachments."
   :hook (after-init . mu4e-alert-enable-mode-line-display)
   )
 #+end_src
-
+** Arxiv
+#+BEGIN_SRC elisp
+(use-package arxiv-mode
+  :straight (:host github :repo "fizban007/arxiv-mode" :branch "master" :files ("*")))
+#+END_SRC
 * LaTeX
 ** Functions
 #+begin_src elisp
@@ -3437,7 +3663,6 @@ there are no attachments."
   (auctex-latexmk-setup)
   )
 #+end_src
-
 * Bibtex
 ** Ivy-bibtex
 *** Keybindings
@@ -3453,7 +3678,6 @@ there are no attachments."
 *** Initialisation
 #+begin_src elisp
 (use-package ivy-bibtex
-  :after (ivy bibtex)
   :defer t
   :init
   (jl/ivy-bibtex-keys)
@@ -3518,7 +3742,6 @@ there are no attachments."
 *** Initialisation
 #+begin_src elisp
 (use-package org-ref
-  :after org
   :defer t
   :custom
   (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
@@ -3538,7 +3761,6 @@ there are no attachments."
   :commands (org-ref-insert-cite-link
 	     org-ref-insert-ref-link)
   :straight org-ref
-  :after (org ivy)
   :custom
   (org-ref-insert-link-function 'org-ref-insert-link-hydra/body)
   (org-ref-insert-cite-function 'org-ref-cite-insert-ivy)
@@ -3547,15 +3769,13 @@ there are no attachments."
   (org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
   )
   #+end_src
-
 * Yasnippet
 #+begin_src elisp
 (use-package yasnippet
-  :commands (ivy-yasnippet)
   :defer t
-  :config
-  (yas-global-mode 1)
   :init
+  (yas-global-mode 1)
+  :config
   (jl/SPC-keys
     "is" 'ivy-yasnippet)
   )
@@ -3575,14 +3795,12 @@ there are no attachments."
 (use-package yatemplate
   :defer t)
 #+end_src
-
 * Company mode
 ** Initialisation
 #+begin_src elisp
 (use-package company
   :defer t
-  :hook ((prog-mode text-mode) . company-mode)
-  :config
+  :init
   (global-company-mode 1)
   )
 #+end_src
@@ -3603,7 +3821,46 @@ there are no attachments."
   (add-to-list 'company-backends 'company-shell)
   )
 #+END_SRC
+* Projectile
+** Keybindings
+#+begin_src elisp
+(defun jl/projectile-keys ()
+  (jl/SPC-keys
+    ;; Project
+    "p!" 'projectile-run-shell-command-in-root
+    "p&" 'projectile-run-async-shell-command-in-root
+    "p%" 'projectile-replace-regexp
+    "pa" 'projectile-toggle-between-implementation-and-test
+    "pb" 'projectile-switch-to-buffer
+    "pc" 'projectile-compile-project
+    "pd" 'projectile-find-dir
+    "pD" 'projectile-dired
+    "pe" 'projectile-edit-dir-locals
+    "pf" 'projectile-find-file
+    "pF" 'projectile-find-file-dwim
+    "pg" 'projectile-find-tag
+    "pG" 'projectile-regenerate-tags
+    "pI" 'projectile-invalidate-cache
+    "pk" 'projectile-kill-buffers
+    "pp" 'projectile-switch-project
+    "pr" 'projectile-recentf
+    "pR" 'projectile-replace
+    "pT" 'projectile-test-project
+    "pv" 'projectile-vc))
+#+end_src
+** Initialisation
+#+begin_src elisp
+(use-package projectile
+  :diminish projectile-mode
+  :custom
+  (projectile-completion-system 'ivy)
+  :config
+  (projectile-mode)
+  (jl/projectile-keys))
 
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+#+end_src
 * Magit
 ** Keybindings
 #+begin_src elisp
@@ -3627,22 +3884,21 @@ there are no attachments."
   (define-key magit-status-mode-map (kbd "SPC") nil)
   )
 #+end_src
-
 * Flycheck
 #+begin_src elisp
 (use-package flycheck
   :defer t
-  :hook ((prog-mode text-mode) . flycheck-mode)
-  :config
-  (global-flycheck-mode t))
+  :init
+  (global-flycheck-mode t)
+  )
 #+end_src
 ** Bashate
 #+BEGIN_SRC elisp
 (use-package flycheck-bashate
   :defer t
-  :hook (sh-mode . flycheck-bashate-setup))
+  :hook (sh-mode . flycheck-bashate-setup)
+  )
 #+END_SRC
-
 * Flyspell
 ** Keybindings
 #+begin_src elisp
@@ -3741,7 +3997,8 @@ SCOPE can be:
   :custom
   (ispell-dictionary "en_GB")
   :config
-  (jl/flyspell))
+  (jl/flyspell)
+  )
 #+end_src
 ** Flyspell correct
 #+begin_src elisp
@@ -3750,13 +4007,18 @@ SCOPE can be:
   :bind (:map flyspell-mode-map ("C-;" . flyspell-correct-wrapper)))
 
 (use-package flyspell-correct-ivy
-  :after (flyspell-correct ivy)
+  :after (flyspell-correct)
   :commands (flyspell-correct-ivy)
   :custom
   (flyspell-correct-interface #'flyspell-correct-ivy)
   )
 #+end_src
-
+** Flyspell popup
+#+BEGIN_SRC elisp :tangle no
+(use-package flyspell-popup
+  :hook (flyspell-mode . flyspell-popup-auto-correct-mode)
+  )
+#+END_SRC
 * Undo Tree
 ** Keybindings
 #+BEGIN_SRC elisp
@@ -3778,7 +4040,6 @@ SCOPE can be:
 ** Initialisation
 #+begin_src elisp
 (use-package undo-tree
-  :hook ((prog-mode text-mode) . undo-tree-mode)
   :custom
   (undo-tree-visualizer-timestamps t)
   (undo-tree-visualizer-diff t)
@@ -3788,36 +4049,39 @@ SCOPE can be:
   (undo-strong-limit 12000000)
   (undo-outer-limit 120000000)
   :init
+  (global-undo-tree-mode)
   (jl/undo-tree-global-keys)
 
   :bind (:map undo-tree-visualizer-mode-map
 	      )
   :config
   (jl/undo-tree-keys)
-  (global-undo-tree-mode))
+  )
 #+end_src
-
 * Pandoc
 ** Keybindings
 #+BEGIN_SRC elisp
 (defun jl/pandoc-global-keys ()
   (jl/SPC-keys
-    "P" '(pandoc-main-hydra/body :which-key "Pandoc")))
+    "P" '(pandoc-main-hydra/body :which-key "Pandoc")
+    )
+  )
 #+END_SRC
 ** Initialisation
 #+begin_src elisp
 (use-package pandoc-mode
   :defer t
   :init
-  (jl/pandoc-global-keys))
+  (jl/pandoc-global-keys)
+  )
 #+end_src
-
 * Iedit
 ** Keybindings
 #+begin_src elisp
 (defun jl/iedit-keys ()
   (jl/SPC-keys
-    "se" 'iedit-mode))
+    "se" 'iedit-mode)
+  )
 #+end_src
 ** Initialisation
 #+begin_src elisp
@@ -3831,7 +4095,35 @@ SCOPE can be:
 (use-package wgrep
   :defer t)
 #+END_SRC
-
+* Ranger
+** Keybindings
+#+begin_src elisp :tangle no
+(defun jl/ranger-keys ()
+  (jl/SPC-keys
+    "atr" 'ranger
+    )
+  )
+#+end_src
+** Initialisation
+#+begin_src elisp :tangle no
+(use-package ranger
+  :defer t
+  :init
+  (jl/ranger-keys)
+  :custom
+  (ranger-preview-file nil)
+  (ranger-dont-show-binary t)
+  (ranger-show-hidden t)
+  (return-to-ranger t)
+  (ranger-override-dired t)
+  (ranger-override-dired-mode t)
+  )
+#+end_src
+* SQL
+#+begin_src elisp
+;; (use-package emacsql)
+;; (use-package emacsql-sqlite)
+#+end_src
 * Nix
 ** Functions
 #+BEGIN_SRC elisp
@@ -3848,8 +4140,9 @@ SCOPE can be:
 ** Direnv
 #+BEGIN_SRC elisp
 (use-package direnv
-  ;; :hook (haskell-mode . direnv-update-environment)
-  :defer 2
+  ;; :hook ((haskell-mode haskell-cabal-mode) . direnv-mode)
+  :hook (haskell-mode . direnv-update-environment)
+  :defer t
   :config
   (direnv-mode)
   :custom
@@ -3880,11 +4173,11 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package ivy-nixos-options
   :defer t
-  :commands (ivy-nixos-options)
   :straight (:host github
 		   :repo "travisbhartwell/nix-emacs"
 		   :branch "master"
-		   :files ("ivy-nixos-options.el"))
+		   :files ("ivy-nixos-options.el")
+		   )
   :init
   (jl/SPC-keys
     "fn" '(:ignore t :which-key "nix")
@@ -3901,6 +4194,14 @@ SCOPE can be:
 (use-package nixos-options
   :defer t)
 #+END_SRC
+** Company NixOS Options
+#+BEGIN_SRC elisp :tangle no
+(use-package company-nixos-options
+  :defer t
+  :config
+  (add-to-list 'company-backends 'company-nixos-options)
+  )
+#+END_SRC
 ** Nix-sandbox
 #+BEGIN_SRC elisp
 (use-package nix-sandbox
@@ -3914,7 +4215,25 @@ SCOPE can be:
    (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
   )
 #+end_src
-
+** Cabal nix sync
+#+BEGIN_SRC elisp :tangle no
+(use-package cabal-nix-sync
+  :straight (:host github
+		   :repo "jeslie0/cabal-nix-sync"
+		   :branch "main")
+  ;; :hook (haskell-cabal-mode . cabal-nix-sync-mode)
+  :defer t
+  :commands (cabal-to-nix
+	     cabal-nix-update
+	     cabal-nix-init
+	     cabal-nix-sync-mode)
+  )
+#+END_SRC
+** nix-haskell-mode
+#+BEGIN_SRC elisp :tangle no
+(use-package nix-haskell-mode
+  :hook (haskell-mode . nix-haskell-mode))
+#+END_SRC
 * Shells
 ** Term
 #+BEGIN_SRC elisp :tangle no
@@ -3935,7 +4254,6 @@ SCOPE can be:
 ** Vterm
 #+BEGIN_SRC elisp
 (use-package vterm
-  :defer t
   :straight nil
   :commands vterm
   :custom
@@ -3948,15 +4266,18 @@ SCOPE can be:
   :init
   (defalias 'eshell/v 'eshell-exec-visual)
   :config
-  (eshell-vterm-mode))
+  (eshell-vterm-mode)
+  )
 #+END_SRC
 ** Eshell
 *** Keybindings
 #+BEGIN_SRC elisp
 (defun jl/eshell-global-keys ()
   (jl/SPC-keys
-    "ase" 'eshell))
-#+END_SRC
+    "ase" 'eshell
+    )
+  )
+  #+END_SRC
 *** Initialisation
 #+BEGIN_SRC elisp
 (defun efs/configure-eshell ()
@@ -3983,7 +4304,6 @@ SCOPE can be:
 
 
 (use-package eshell
-  :commands (eshell)
   :defer t
   :hook (eshell-first-time-mode . efs/configure-eshell)
   :init
@@ -3997,21 +4317,47 @@ SCOPE can be:
 
   (eshell-git-prompt-use-theme 'powerline))
 #+END_SRC
+* Open with
+#+BEGIN_SRC elisp :tangle no
+(use-package openwith
+  :commands (find-file
+	     counsel-find-file
+	     dired
+	     ranger
+	     deer)
+  :custom
+  (openwith-associations '(("\\.pdf\\'" "zathura" (file))))
+  :config
+  (openwith-mode 1)
+  )
+#+END_SRC
+* Dired
+** Peep
+#+BEGIN_SRC elisp
+(use-package peep-dired
+  :defer t ; don't access `dired-mode-map' until `peep-dired' is loaded
+  :after dired
+  :config
+  (general-define-key
+   :keymaps dired-mode-map
+   "P" 'peep-dired
+   )
+  )
 
+#+END_SRC
 * Fun
 ** Snow
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package snow
   :defer t
   :commands snow)
 #+END_SRC
 ** Fireplace
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package fireplace
   :defer t
   :commands fireplace)
 #+END_SRC
-
 * Simple httpd
 #+BEGIN_SRC elisp
 (use-package simple-httpd
@@ -4022,7 +4368,8 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package define-word
   :defer t
-  :commands (define-word define-word-at-point))
+  :commands
+  define-word define-word-at-point)
 #+END_SRC
 * Pair Programming
 #+BEGIN_SRC elisp
