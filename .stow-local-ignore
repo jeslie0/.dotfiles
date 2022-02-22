@@ -5,6 +5,7 @@ flake.nix
 flake.lock
 
 .git
+.gitattributes
 .gitignore
 .git-crypt
 
