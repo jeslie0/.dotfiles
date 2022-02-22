@@ -656,6 +656,48 @@ If the universal prefix argument is used then kill also the window."
 (add-hook 'text-mode-hook 'visual-line-mode)
 #+END_SRC
 
+** Dashboard
+*** Functions
+#+begin_src elisp
+(defun buffer-visit-dashboard ()
+  (interactive)
+  (switch-to-buffer "*dashboard*")
+  (dashboard-refresh-buffer)
+  )
+#+end_src
+*** Initialisation
+#+begin_src elisp
+(use-package dashboard
+  :custom
+  ;; Set the title
+  (dashboard-banner-logo-title "Welcome to Emacs")
+  ;; Set the logo
+  (dashboard-startup-banner "/home/james/.emacs.d/Icons/EmacsLogo.svg")
+  (dashboard-image-banner-max-width 300)
+
+  ;; Content is not centered by default. To center, set
+  (dashboard-center-content t)
+
+  ;; To disable shortcut "jump" indicators for each section, set
+  (dashboard-show-shortcuts nil)
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-set-init-info t)
+  (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+  (dashboard-items '((recents . 5)
+		     (projects . 5)))
+
+  (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+
+  :config
+  (general-evil-define-key '(normal motion) 'dashboard-mode-map
+    "j"  'widget-forward
+    "k"  'widget-backward
+    )
+
+  (dashboard-setup-startup-hook)
+  )
+#+end_src
 * Ivy and Counsel completion framework
 #+begin_src elisp
 (use-package ivy
@@ -710,69 +752,9 @@ If the universal prefix argument is used then kill also the window."
   (ivy-prescient-mode 1)
   (prescient-persist-mode 1))
   #+end_src
-
-* Helpful
-Provides better documentation.
-#+begin_src elisp
-(use-package helpful
-  :after ivy
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command]  . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key]      . helpful-key)
-  :init
-  (defvar read-symbol-positions-list nil) ;; bug fix
-)
-#+end_src
-* Dashboard
-** Functions
-#+begin_src elisp
-(defun buffer-visit-dashboard ()
-  (interactive)
-  (switch-to-buffer "*dashboard*")
-  (dashboard-refresh-buffer)
-  )
-#+end_src
-** Initialisation
-#+begin_src elisp
-(use-package dashboard
-  :custom
-  ;; Set the title
-  (dashboard-banner-logo-title "Welcome to Emacs")
-  ;; Set the logo
-  (dashboard-startup-banner "/home/james/.emacs.d/Icons/EmacsLogo.svg")
-  (dashboard-image-banner-max-width 300)
-
-  ;; Content is not centered by default. To center, set
-  (dashboard-center-content t)
-
-  ;; To disable shortcut "jump" indicators for each section, set
-  (dashboard-show-shortcuts nil)
-  (dashboard-set-heading-icons t)
-  (dashboard-set-file-icons t)
-  (dashboard-set-init-info t)
-  (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
-  (dashboard-items '((recents . 5)
-		     (projects . 5)))
-
-  (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-
-  :config
-  (general-evil-define-key '(normal motion) 'dashboard-mode-map
-    "j"  'widget-forward
-    "k"  'widget-backward
-    )
-
-  (dashboard-setup-startup-hook)
-  )
-#+end_src
-
-* Projectile
-** Keybindings
+* Project Management
+** Projectile
+*** Keybindings
 #+begin_src elisp
 (defun jl/projectile-keys ()
   (jl/SPC-keys
@@ -798,7 +780,7 @@ Provides better documentation.
     "pT" 'projectile-test-project
     "pv" 'projectile-vc))
 #+end_src
-** Initialisation
+*** Initialisation
 #+begin_src elisp
 (use-package projectile
   :after ivy
@@ -814,890 +796,31 @@ Provides better documentation.
   :config (counsel-projectile-mode))
 #+end_src
 
-* Minor modes
-** Rainbow Delimiters
-#+begin_src elisp
-(use-package rainbow-delimiters
-  :defer t
-  :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode)
-  )
-#+end_src
-** Outshine
-#+begin_src elisp
-(use-package outshine
-  :defer t
-  :after org
-  :hook ((emacs-lisp-mode latex-mode prog-mode) . outshine-mode)
-  )
-#+end_src
-** Aggressive indent
-#+BEGIN_SRC elisp
-(use-package aggressive-indent
-  :defer t
-  :hook (prog-mode . aggressive-indent-mode)
-  :config
-  (add-to-list 'aggressive-indent-excluded-modes 'haskell-cabal-mode)
-  )
-#+END_SRC
-** Golden Ratio
-#+BEGIN_SRC elisp
-(use-package golden-ratio
-  :defer t)
-#+END_SRC
-** Highlight-indent-guides
-#+BEGIN_SRC elisp
-(use-package highlight-indent-guides
-  :defer t
-  :hook ((prog-mode LaTeX-mode). highlight-indent-guides-mode)
-  :custom
-  (highlight-indent-guides-method 'character))
-#+END_SRC
-** Page break lines
-#+BEGIN_SRC elisp
-(use-package page-break-lines
-  :defer t
-  :after dashboard)
-#+END_SRC
-** Smartparens
-#+BEGIN_SRC elisp
-(use-package smartparens
-  :hook (
-	 ;; (org-mode . smartparens-mode)
-	 (emacs-lisp-mode . smartparens-mode))
-  :defer t
-  )
-#+END_SRC
-** Save place mode
-#+begin_src elisp
-(use-package saveplace
-  :defer t
-  :hook ((prog-mode text-mode) . save-place-mode)
-  )
-#+end_src
-** Variable pitch
-#+BEGIN_SRC elisp
-(use-package variable-pitch
-  :defer t
-  :straight face-remap
-  :hook (text-mode . variable-pitch-mode))
-#+END_SRC
-** Visual line mode
-#+BEGIN_SRC elisp
-(add-hook 'text-mode-hook 'visual-line-mode)
-#+END_SRC
-
-* Pin entry
-#+begin_src elisp
-(setq epa-pinentry-mode 'loopback)
-(setq auth-sources '(password-store))
-(setq epa-file-encrypt-to '("jamesleslie@posteo.net")
-      epa-file-select-keys 1)
-(auth-source-pass-enable)
-#+end_src
-
-* Pass
-** Functions
-#+begin_src elisp
-  (defun spacemacs//pass-completing-read ()
-  "Read a password entry in the minibuffer, with completion."
-  (completing-read "Password entry: " (password-store-list)))
-
-(defun spacemacs/pass-copy-and-describe (entry)
-  "Copy the password to the clipboard, and show the multiline description for ENTRY"
-  (interactive (list (spacemacs//pass-completing-read)))
-  (password-store-copy entry)
-  (spacemacs/pass-describe entry))
-
-(defun spacemacs/pass-describe (entry)
-  "Show the multiline description for ENTRY"
-  (interactive (list (spacemacs//pass-completing-read)))
-  (let ((description (s-join "\n" (cdr (s-lines (password-store--run-show entry))))))
-    (message "%s" description)))
-#+end_src
-** Ivy-pass
-#+begin_src elisp
-(use-package ivy-pass
-  :defer t
-  :after ivy)
-#+end_src
-** Password-store
+** Magit
 *** Keybindings
 #+begin_src elisp
-(defun jl/pass-keys ()
+(defun jl/magit-keys ()
   (jl/SPC-keys
-    "atPy" 'password-store-copy
-    "atPg" 'password-store-generate
-    "atPi" 'password-store-insert
-    "atPc" 'password-store-edit
-    "atPr" 'password-store-rename
-    "atPd" 'password-store-remove
-    "atPD" 'password-store-clear
-    "atPI" 'password-store-init
-    "atPw" 'password-store-url
-    )
+    "gs" 'magit-status
+    ))
 
-  (jl/SPC-keys
-    "atP" '(:ignore t :which-key "pass")
-    )
-  )
-#+end_src
+(evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
+(evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel)
 
-*** Initialsation
-#+begin_src elisp
-(use-package password-store
-  :defer t
-  :init
-  (jl/pass-keys))
-#+end_src
-** Password-store otp
-*** Keybindings
-#+begin_src elisp
-(defun jl/pass-otp-keys ()
-  (jl/SPC-keys
-    "atPoy" 'password-store-otp-token-copy
-    "atPoY" 'password-store-otp-uri-copy
-    "atPoi" 'password-store-otp-insert
-    "atPoa" 'password-store-otp-append
-    "atPoA" 'password-store-otp-append-from-image
-    )
-
-  (jl/SPC-keys
-    "atPo" '(:ignore t :which-key "otp")
-    )
-  )
 #+end_src
 *** Initialisation
 #+begin_src elisp
-(use-package password-store-otp
+(use-package magit
   :defer t
+  :commands magit-status
   :init
-  (jl/pass-otp-keys))
-#+end_src
-** Auth source pass
-#+begin_src elisp
-(use-package auth-source-pass
-  :after auth-source
-  :defer t
+  (jl/magit-keys)
   :config
-  (auth-source-pass-enable)
+  (define-key magit-status-mode-map (kbd "SPC") nil)
   )
 #+end_src
-
-* Org mode
-** Functions
-#+begin_src elisp
-(defun org-link ()
-  (interactive)
-  (if (string= (car (org-thing-at-point)) "link")
-      (org-return)
-    (evil-ret))
-  )
-(defun org-bold ()
-  (interactive)
-  (org-emphasize ?\*)
-  )
-
-(defun org-italic ()
-  (interactive)
-  (org-emphasize ?\/)
-  )
-
-(defun org-underline ()
-  (interactive)
-  (org-emphasize ?\_)
-  )
-
-(defun org-code ()
-  (interactive)
-  (org-emphasize ?\~)
-  )
-
-(defun org-strike-through ()
-  (interactive)
-  (org-emphasize ?\+)
-  )
-
-(defun org-verbatim ()
-  (interactive)
-  (org-emphasize ?\=)
-  )
-#+end_src
-** Key bindings
-#+begin_src elisp
-(defun jl/org-mode-key-bindings ()
-  (general-define-key
-   :keymaps 'org-mode-map
-   :states '(normal visual motion)
-   "RET" 'org-open-at-point ;; Allows links to be opened with RET
-   "$"   'end-of-line       ;; Evil-org changes this behaviour. This changes it back.
-   "0"   'beginning-of-line
-   )
-
-  (jl/major-modes
-    :states '(normal visual)
-    :keymaps 'org-mode-map
-    :major-modes '(org-mode t)
-    "b" '(:ignore t :which-key "Babel")
-    "d" '(:ignore t :which-key "Dates")
-    "e" '(:ignore t :which-key "Export")
-    "f" '(:ignore t :which-key "Feeds")
-    "i" '(:ignore t :which-key "Insert")
-    "iD" '(:ignore t :which-key "Download")
-    "m" '(:ignore t :which-key "More")
-    "s" '(:ignore t :which-key "Trees/Subtrees")
-    "T" '(:ignore t :which-key "Toggles")
-    "t" '(:ignore t :which-key "Tables")
-    "td" '(:ignore t :which-key "Delete")
-    "ti" '(:ignore t :which-key "Insert")
-    "tt" '(:ignore t :which-key "Toggle")
-    "C" '(:ignore t :which-key "Clocks")
-    "x" '(:ignore t :which-key "Text")
-
-    "'" 'org-edit-special
-    "c" 'org-capture
-
-    ;; Clock
-    ;; These keybindings should match those under the "aoC" prefix (below)
-    "Cc" 'org-clock-cancel
-    "Cd" 'org-clock-display
-    "Ce" 'org-evaluate-time-range
-    "Cg" 'org-clock-goto
-    "Ci" 'org-clock-in
-    "CI" 'org-clock-in-last
-    ;; "Cj" 'spacemacs/org-clock-jump-to-current-clock
-    "Co" 'org-clock-out
-    "CR" 'org-clock-report
-    "Cr" 'org-resolve-clocks
-
-    "dd" 'org-deadline
-    "ds" 'org-schedule
-    "dt" 'org-time-stamp
-    "dT" 'org-time-stamp-inactive
-    "ee" 'org-export-dispatch
-    "fi" 'org-feed-goto-inbox
-    "fu" 'org-feed-update-all
-
-    "a" 'org-agenda
-
-    "p" 'org-priority
-
-    "Tc" 'org-toggle-checkbox
-    "Te" 'org-toggle-pretty-entities
-    "Ti" 'org-toggle-inline-images
-    "Tn" 'org-num-mode
-    "Tl" 'org-toggle-link-display
-    "Tt" 'org-show-todo-tree
-    "TT" 'org-todo
-    "TV" 'space-doc-mode
-    "Tx" 'org-latex-preview
-
-    ;; More cycling options (timestamps, headlines, items, properties)
-    "L" 'org-shiftright
-    "H" 'org-shiftleft
-    "J" 'org-shiftdown
-    "K" 'org-shiftup
-
-    ;; Change between TODO sets
-    "C-S-l" 'org-shiftcontrolright
-    "C-S-h" 'org-shiftcontrolleft
-    "C-S-j" 'org-shiftcontroldown
-    "C-S-k" 'org-shiftcontrolup
-
-    ;; Subtree editing
-    "sa" 'org-toggle-archive-tag
-    "sA" 'org-archive-subtree-default
-    "sb" 'org-tree-to-indirect-buffer
-    "sd" 'org-cut-subtree
-    "sy" 'org-copy-subtree
-    "sh" 'org-promote-subtree
-    "sj" 'org-move-subtree-down
-    "sk" 'org-move-subtree-up
-    "sl" 'org-demote-subtree
-    "sn" 'org-narrow-to-subtree
-    "sw" 'widen
-    "sr" 'org-refile
-    "ss" 'org-sparse-tree
-    "sS" 'org-sort
-
-    ;; tables
-    "ta" 'org-table-align
-    "tb" 'org-table-blank-field
-    "tc" 'org-table-convert
-    "tdc" 'org-table-delete-column
-    "tdr" 'org-table-kill-row
-    "te" 'org-table-eval-formula
-    "tE" 'org-table-export
-    "tf" 'org-table-field-info
-    "th" 'org-table-previous-field
-    "tH" 'org-table-move-column-left
-    "tic" 'org-table-insert-column
-    "tih" 'org-table-insert-hline
-    "tiH" 'org-table-hline-and-move
-    "tir" 'org-table-insert-row
-    "tI" 'org-table-import
-    "tj" 'org-table-next-row
-    "tJ" 'org-table-move-row-down
-    "tK" 'org-table-move-row-up
-    "tl" 'org-table-next-field
-    "tL" 'org-table-move-column-right
-    "tn" 'org-table-create
-    "tN" 'org-table-create-with-table.el
-    "tr" 'org-table-recalculate
-    "tR" 'org-table-recalculate-buffer-tables
-    "ts" 'org-table-sort-lines
-    "ttf" 'org-table-toggle-formula-debugger
-    "tto" 'org-table-toggle-coordinate-overlays
-    "tw" 'org-table-wrap-region
-
-    ;; Source blocks / org-babel
-    "bp"     'org-babel-previous-src-block
-    "bn"     'org-babel-next-src-block
-    "be"     'org-babel-execute-maybe
-    "bo"     'org-babel-open-src-block-result
-    "bv"     'org-babel-expand-src-block
-    "bu"     'org-babel-goto-src-block-head
-    "bg"     'org-babel-goto-named-src-block
-    "br"     'org-babel-goto-named-result
-    "bb"     'org-babel-execute-buffer
-    "bs"     'org-babel-execute-subtree
-    "bd"     'org-babel-demarcate-block
-    "bt"     'org-babel-tangle
-    "bf"     'org-babel-tangle-file
-    "bc"     'org-babel-check-src-block
-    "bj"     'org-babel-insert-header-arg
-    "bl"     'org-babel-load-in-session
-    "bi"     'org-babel-lob-ingest
-    "bI"     'org-babel-view-src-block-info
-    "bz"     'org-babel-switch-to-session
-    "bZ"     'org-babel-switch-to-session-with-code
-    "ba"     'org-babel-sha1-hash
-    "bx"     'org-babel-do-key-sequence-in-edit-buffer
-    ;; "b."     'spacemacs/org-babel-transient-state/body
-    ;; Multi-purpose keys
-    "," 'org-ctrl-c-ctrl-c
-    "*" 'org-ctrl-c-star
-    "-" 'org-ctrl-c-minus
-    "#" 'org-update-statistics-cookies
-    "RET"   'org-ctrl-c-ret
-    "M-RET" 'org-meta-return
-    ;; attachments
-    "A" 'org-attach
-    ;; insertion
-    "ib" 'org-insert-structure-template
-    "id" 'org-insert-drawer
-    "ie" 'org-set-effort
-    "if" 'org-footnote-new
-    "ih" 'org-insert-heading
-    "iH" 'org-insert-heading-after-current
-    "ii" 'org-insert-item
-    ;; "iK" 'spacemacs/insert-keybinding-org
-    "il" 'org-insert-link
-    "in" 'org-add-note
-    "ip" 'org-set-property
-    "is" 'org-insert-subheading
-    "it" 'org-set-tags-command
-    ;; region manipulation
-    "xb" 'org-bold
-    "xc" 'org-code
-    "xi" 'org-italic
-    "xo" 'org-open-at-point
-    ;; "xr" (spacemacs|org-emphasize spacemacs/org-clear ? )
-    "xs" 'org-strike-through
-    "xu" 'org-underline
-    "xv" 'org-verbatim
-
-    )
-  )
-#+end_src
-#+begin_src elisp
-  ;; Add global evil-leader mappings. Used to access org-agenda
-  ;; functionalities – and a few others commands – from any other mode.
-(defun jl/org-mode-global-keys ()
-  (jl/SPC-keys
-   "ao" '(:ignore t :which-key "org")
-   "aoC" '(:ignore t :which-key "clocks")
-   "aof" '(:ignore t :which-key "feeds")
-
-   "ao#" 'org-agenda-list-stuck-projects
-   "aoa" 'org-agenda-list
-   "aoo" 'org-agenda
-   "aoc" 'org-capture
-   "aoe" 'org-store-agenda-views
-   "aofi" 'org-feed-goto-inbox
-   "aofu" 'org-feed-update-all
-
-   ;; Clock
-   ;; These keybindings should match those under the "mC" prefix (above)
-   "aoCc" 'org-clock-cancel
-   "aoCg" 'org-clock-goto
-   "aoCi" 'org-clock-in
-   "aoCI" 'org-clock-in-last
-   ;; "aoCj" 'spacemacs/org-clock-jump-to-current-clock
-   "aoCo" 'org-clock-out
-   "aoCr" 'org-resolve-clocks
-
-   "aol" 'org-store-link
-   "aom" 'org-tags-view
-   "aos" 'org-search-view
-   "aot" 'org-todo-list
-   ;; SPC C- capture/colors
-   "Cc" 'org-capture
-   )
-  )
-
-(defun jl/org-mode-Cc-keys ()
-  (jl/C-c-keys
-    "a" 'org-agenda
-    "c" 'org-capture
-    "l" 'org-store-link
-    )
-  )
-
-(jl/org-mode-global-keys)
-#+end_src
-** Font configuration
-#+begin_src elisp
-(defun jl/org-font-setup ()
-  (dolist (face '((org-document-title . 1.5)
-		  (org-level-1 . 1.2)
-		  (org-level-2 . 1.1)
-		  (org-level-3 . 1.05)
-		  (org-level-4 . 1.0)
-		  (org-level-5 . 1.1)
-		  (org-level-6 . 1.1)
-		  (org-level-7 . 1.1)
-		  (org-level-8 . 1.1))
-		)
-    (set-face-attribute (car face) nil :font jl/text-font :weight 'regular :height (cdr face))
-    (set-face-attribute 'org-link nil :weight 'regular)
-    )
-
-  ;; (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-  ;; (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch :font jl/prog-font)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :font jl/prog-font)
-  )
-  #+end_src
-** Org Initialisation
-#+begin_src elisp
-(use-package org
-  :defer 10
-  :hook (org-mode . jl/org-font-setup)
-  :init
-  (jl/org-mode-Cc-keys)
-  :config
-  (jl/org-mode-key-bindings)
-  (jl/org-font-setup)
-  (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
-  :custom
-  (org-ellipsis " ▼")
-  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
-  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
-  (org-startup-indented t)
-  (org-hide-emphasis-markers nil)
-  (org-src-tab-acts-natively t)
-  (org-pretty-entities nil)
-  (org-startup-folded t)
-  (org-hide-block-startup t)
-  (org-edit-src-content-indentation 0)
-  (org-startup-with-latex-preview t)
-  (org-enable-reveal-js-support t)
-  (org-protocol-default-template-key "w")
-  (org-image-actual-width nil)
-  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
-  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-  ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
-  ;;                     ;; "~/Documents/Org/GTD/inbox.org"
-  ;;                     ;; "~/Documents/Org/GTD/gtd.org"
-  ;;                     ;; "~/Documents/Org/GTD/tickler.org"
-  ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
-  ;;                     ))
-  (org-export-backends '(ascii beamer html icalendar latex md odt))
-  ;; Latex in Org
-  (org-preview-latex-default-process 'dvisvgm)
-  (org-highlight-latex-and-related '(latex script entities))
-  (org-format-latex-options '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-					  ("begin" "$1" "$" "$$" "\\(" "\\[")))
-  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
-  ;; Org capture
-  (org-capture-templates
-   '(("t" "Todo [inbox]" entry
-      (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
-      "* TODO %i%?")
-
-     ("T" "Tickler" entry
-      (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
-      "* %i%? \n %U")
-     ("n" "Notes" entry
-      (file "~/Documents/Org/Notes/notes.org")
-      "* %?")
-     ("r" "Research Notes" entry
-      (file "~/Documents/Org/Research/notes.org")
-      "* %u \n %?")
-     ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
-      "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
-     ))
-  ;; GTD in org
-  (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
-                        ("~/Documents/Org/GTD/someday.org" :level . 1)
-                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
-  )
-#+end_src
-** Org Roam
+** Treemacs
 *** Keybindings
-#+begin_src elisp
-(defun jl/org-roam-global-keys ()
-  (jl/SPC-keys
-    "aor" '(:ignore t :which-key "org-roam")
-    "aord" '(:ignore t :which-key "dailies")
-    "aort" '(:ignore t :which-key "tags")
-
-    "aordy" 'org-roam-dailies-goto-yesterday
-    "aordt" 'org-roam-dailies-goto-today
-    "aordT" 'org-roam-dailies-goto-tomorrow
-    "aordd" 'org-roam-dailies-goto-date
-    "aorf" 'org-roam-node-find
-    "aorn" 'org-roam-node-find
-    "aorg" 'org-roam-ui-open
-    "aori" 'org-roam-node-insert
-    "aorl" 'org-roam-buffer-toggle
-    "aorta" 'org-roam-tag-add
-    "aortr" 'org-roam-tag-remove
-    "aora" 'org-roam-alias-add
-    "aorI" 'org-id-get-create
-    )
-  )
-
-(defun jl/org-roam-key-bindings ()
-  (jl/major-modes
-    :states '(normal visual motion)
-    :keymaps 'org-mode-map
-    :major-modes t
-
-    "r" '(:ignore t :which-key "org-roam")
-    "rd" '(:ignore t :which-key "dailies")
-    "rt" '(:ignore t :which-key "tags")
-    "rdy" 'org-roam-dailies-goto-yesterday
-    "rdt" 'org-roam-dailies-goto-today
-    "rdT" 'org-roam-dailies-goto-tomorrow
-    "rdd" 'org-roam-dailies-goto-date
-    "rf" 'org-roam-node-find
-    "rn" 'org-roam-node-find
-    "rg" 'org-roam-ui-open
-    "ri" 'org-roam-node-insert
-    "rl" 'org-roam-buffer-toggle
-    "rta" 'org-roam-tag-add
-    "rtr" 'org-roam-tag-remove
-    "ra" 'org-roam-alias-add
-    "rI" 'org-id-get-create
-    )
-  )
-
-#+end_src
-# *** Org Roam UI
-# **** Initialisation
-# #+begin_src elisp
-# (use-package org-roam-ui
-#   :defer t
-#   :commands (org-roam-ui-mode
-# 	     org-roam-ui-open)
-#   :after org-roam
-#   )
-#   #+end_src
-*** Templates
-#+BEGIN_SRC elisp
-(defun jl/org-roam-templates ()
-  (setq org-roam-capture-templates
-	'(("q" "quick note" plain
-	   "%?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-	   :unnarrowed t)
-
-	  ("e" "encrypted note" plain
-	   "%?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}\n")
-	   :unnarrowed t)
-
-	  ("m" "mathematics note" plain
-	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros} \\usepacakge{math-environments}\n\n* %?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-	   :unnarrowed t)
-
-	  ("f" "film note" plain
-	   "%?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: :films:\n[[id:352cef44-05f6-494c-8f65-c04241335eb0][Films]]\n* ")
-	   :unnarrowed t)
-	  )))
-
-(defun jl/org-roam-daily-templates ()
-  (setq org-roam-dailies-capture-templates
-	'(("d" "default" entry
-	   "* %?"
-	   :target (file+head "%<%Y-%m-%d>.org"
-			      "#+title: %<%Y-%m-%d>\n#+filetags: :Daily:\n [[id:24a82cf2-bc51-4b01-81f7-53968e483ee2][Daily Journal]]\n* [/] Daily Todos\n1. [ ]\n2. [ ]\n3. [ ]\n* Daily Tasks\n* Morning Thoughts\n* Evening Reflections")))))
-#+END_SRC
-*** Initialisation
-#+begin_src elisp
-(use-package org-roam
-  :defer t
-  :after org
-  :custom
-  (org-roam-v2-ack t)
-  (org-roam-graph-viewer #'browse-url-firefox)
-  (org-roam-directory "/home/james/Documents/Roam/")
-  :init
-  (jl/org-roam-daily-templates)
-  (jl/org-roam-global-keys)
-  (jl/org-roam-templates)
-  :config
-  (org-roam-db-autosync-mode)
-  (jl/org-roam-key-bindings)
-  )
-#+end_src
-*** Org Roam BibTeX
-#+begin_src elisp
-(use-package org-roam-bibtex
-  :after (org-roam)
-  :defer t
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  )
-#+end_src
-*** Org Roam Protocol
-#+begin_src elisp
-(use-package org-roam-protocol
-  :defer t
-  :straight org-roam)
-#+end_src
-** Org mode minor modes
-#+begin_src elisp :tangle no
-(defun jl/org-mode-setup ()
-  (visual-line-mode 1)
-  (variable-pitch-mode 1)
-  (smartparens-mode 1)
-  (org-fragtog-mode 1)
-  (rainbow-delimiters-mode 1)
-  )
-  #+end_src
-#+begin_src elisp
-(use-package org-superstar
-  :defer t
-  :after org
-  :hook (org-mode . org-superstar-mode)
-  )
-
-(defun jl/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-	visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :defer t
-  :hook (org-mode . jl/org-mode-visual-fill))
-
-(use-package org-fragtog
-  :defer t
-  :after org
-  :hook (org-mode . org-fragtog-mode)
-  )
-#+end_src
-** Org Babel
-Calling org-babel languages in the following form saves a lot on startup time.
-*** Shell
-#+BEGIN_SRC elisp
-(use-package ob-shell
-  :after org
-  :defer t
-  :straight org-contrib
-  :commands
-  (org-babel-execute:sh
-   org-babel-expand-body:sh
-
-   org-babel-execute:bash
-   org-babel-expand-body:bash)
-  )
-#+END_SRC
-*** Python
-#+BEGIN_SRC elisp
-(use-package ob-python
-  :after org
-  :defer t
-  :straight org-contrib
-  :commands
-  (org-babel-execute:python
-   org-babel-expand-body:python
-   )
-  )
-#+END_SRC
-*** Emacs Lisp
-#+BEGIN_SRC elisp
-(use-package ob-emacs-lisp
-  :after org
-  :defer t
-  :straight org-contrib
-  :commands
-  (org-babel-execute:emacs-lisp
-   org-babel-expand-body:emacs-lisp
-
-
-  org-babel-execute:elisp
-   org-babel-expand-body:elisp
-   )
-  )
-#+END_SRC
-*** JS
-#+BEGIN_SRC elisp
-(use-package ob-js
-  :after org
-  :defer t
-  :straight org-contrib
-  :commands
-  (org-babel-execute:js
-   org-babel-expand-body:js
-   )
-  )
-#+END_SRC
-*** LaTeX
-#+BEGIN_SRC elisp
-(use-package ob-latex
-  :after org
-  :defer t
-  :straight org-contrib
-  :commands
-  (org-babel-execute:latex
-   org-babel-expand-body:latex
-   )
-  )
-#+END_SRC
-*** Haskell
-#+BEGIN_SRC elisp
-(use-package ob-haskell
-  :after org
-  :defer t
-  :straight org-contrib
-  :commands
-  (org-babel-execute:haskell
-   org-babel-expand-body:haskell
-   )
-  )
-#+END_SRC
-*** C
-#+BEGIN_SRC elisp
-(use-package ob-C
-  :after org
-  :defer t
-  :straight org-contrib
-  :commands
-  (org-babel-execute:C
-   org-babel-expand-body:C
-   )
-  )
-#+END_SRC
-** Evil Org
-#+begin_src elisp
-(use-package evil-org
-  :defer t
-  :after org
-  :hook (org-mode . evil-org-mode)
-  :config
-  )
-(use-package evil-org-agenda
-  :defer t
-  :after evil-org
-  :straight evil-org
-  :config
-  (evil-org-agenda-set-keys)
-  )
-#+end_src
-** Org CalDav
-*** Keybindings
-#+begin_src elisp :tangle no
-(defun jl/org-caldav-keybindings ()
-  (jl/C-c-keys
-   :keymaps 'org-agenda-mode-map
-   "S" 'org-caldav-sync)
-  )
-#+end_src
-*** Initialisation
-#+begin_src elisp :tangle no
-(use-package org-caldav
-  :custom
-  (org-caldav-url "https://posteo.de:8443/calendars/jamesleslie")
-  (org-caldav-calendar-id "default")
-  (org-caldav-inbox "~/Documents/Calendar/Agenda.org")
-  (org-caldav-files '("~/Documents/Calendar/Appointments.org"))
-  (org-icalendar-timezone "America/Toronto")
-  (org-caldav-delete-org-entries 'always)
-  (org-caldav-delete-calendar-entries 'never)
-  :init
-  (jl/org-caldav-keybindings)
-  )
-
-#+end_src
-** Org Present
-#+BEGIN_SRC elisp
-(use-package org-present
-  :defer t
-  :after org
-  :straight (:host github
-		   :repo "rlister/org-present"
-		   :branch "master"
-		   )
-  )
-#+END_SRC
-** Org Capture
-#+begin_src elisp :tangle no
-(with-eval-after-load 'org-capture
-  (defun org-capture-start ()
-    "Make sure that the keybindings are available for org capture."
-    (jl/C-c-keys
-      :keymaps 'org-capture-mode-map
-      "a" 'org-capture-kill
-      "c" 'org-capture-finalize
-      "k" 'org-capture-kill
-      "r" 'org-capture-refile)
-    ;; Evil bindins seem not to be applied until at least one
-    ;; Evil state is executed
-    (evil-normal-state))
-  ;; Must be done everytime we run org-capture otherwise it will
-  ;; be ignored until insert mode is entered.
-  (add-hook 'org-capture-mode-hook 'org-capture-start))
-#+end_src
-** Org Source blocks
-#+begin_src elisp
-(evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
-(evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
-(evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
-#+end_src
-** Table of Contents
-#+BEGIN_SRC elisp
-(use-package toc-org
-  :defer t
-  :after org
-  :hook (org-mode . toc-org-mode)
-  )
-  #+END_SRC
-** Org Protocol
-#+begin_src elisp
-(use-package org-protocol
-  :defer 2
-  :straight org)
-#+end_src
-** Publish
-#+begin_src elisp
-(use-package ox-publish
-  :defer t
-  :after org
-  :straight org)
-#+end_src
-
-* Treemacs
-** Keybindings
 #+begin_src elisp
 (defun jl/treemacs-keys ()
   (jl/SPC-keys
@@ -1706,7 +829,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
     )
   )
 #+end_src
-** Initialisation
+*** Initialisation
 #+begin_src elisp
 (use-package treemacs
   :defer t
@@ -1783,44 +906,228 @@ Calling org-babel languages in the following form saves a lot on startup time.
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
         #+END_SRC
-** Treemacs evil
+*** Treemacs evil
 #+BEGIN_SRC elisp
 (use-package treemacs-evil
   :defer t
   :after (treemacs evil))
 #+END_SRC
-** Treemacs projectile
+*** Treemacs projectile
 #+BEGIN_SRC elisp
 (use-package treemacs-projectile
   :defer t
   :after (treemacs projectile))
 #+END_SRC
-** Treemacs icons dired
+*** Treemacs icons dired
 #+BEGIN_SRC elisp
 (use-package treemacs-icons-dired
   :defer t
   :after (treemacs dired)
   :config (treemacs-icons-dired-mode))
 #+END_SRC
-** Treemacs magit
+*** Treemacs magit
 #+BEGIN_SRC elisp
 (use-package treemacs-magit
   :defer t
   :after (treemacs magit))
 #+END_SRC
-** Treemacs persp
+*** Treemacs persp
 #+BEGIN_SRC elisp
 (use-package treemacs-perspective ;;treemacs-perspective if you use perspective.el vs. persp-mode
   :defer t
   :after (treemacs perspective) ;;or perspective vs. persp-mode
   :config (treemacs-set-scope-type 'Perspectives))
   #+end_src
-** Treemacs all-the-icons
+*** Treemacs all-the-icons
 #+begin_src elisp
 (use-package treemacs-all-the-icons
   :after (treemacs all-the-icons)
   :hook ((treemacs-mode dired-mode) . (lambda ()
 					(treemacs-load-theme 'all-the-icons))))
+#+end_src
+** Helpful
+Provides better documentation.
+#+begin_src elisp
+(use-package helpful
+  :after ivy
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command]  . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key]      . helpful-key)
+  :init
+  (defvar read-symbol-positions-list nil) ;; bug fix
+)
+#+end_src
+* Minor modes
+** Rainbow Delimiters
+#+begin_src elisp
+(use-package rainbow-delimiters
+  :defer t
+  :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode)
+  )
+#+end_src
+** Outshine
+#+begin_src elisp
+(use-package outshine
+  :defer t
+  :after org
+  :hook ((emacs-lisp-mode latex-mode prog-mode) . outshine-mode)
+  )
+#+end_src
+** Aggressive indent
+#+BEGIN_SRC elisp
+(use-package aggressive-indent
+  :defer t
+  :hook (prog-mode . aggressive-indent-mode)
+  :config
+  (add-to-list 'aggressive-indent-excluded-modes 'haskell-cabal-mode)
+  )
+#+END_SRC
+** Golden Ratio
+#+BEGIN_SRC elisp
+(use-package golden-ratio
+  :defer t)
+#+END_SRC
+** Highlight-indent-guides
+#+BEGIN_SRC elisp
+(use-package highlight-indent-guides
+  :defer t
+  :hook ((prog-mode LaTeX-mode). highlight-indent-guides-mode)
+  :custom
+  (highlight-indent-guides-method 'character))
+#+END_SRC
+** Page break lines
+#+BEGIN_SRC elisp
+(use-package page-break-lines
+  :defer t
+  :after dashboard)
+#+END_SRC
+** Smartparens
+#+BEGIN_SRC elisp
+(use-package smartparens
+  :hook (
+	 ;; (org-mode . smartparens-mode)
+	 (emacs-lisp-mode . smartparens-mode))
+  :defer t
+  )
+#+END_SRC
+** Save place mode
+#+begin_src elisp
+(use-package saveplace
+  :defer t
+  :hook ((prog-mode text-mode) . save-place-mode)
+  )
+#+end_src
+** Variable pitch
+#+BEGIN_SRC elisp
+(use-package variable-pitch
+  :defer t
+  :straight face-remap
+  :hook (text-mode . variable-pitch-mode))
+#+END_SRC
+** Visual line mode
+#+BEGIN_SRC elisp
+(add-hook 'text-mode-hook 'visual-line-mode)
+#+END_SRC
+* Passwords
+** Pin entry
+#+begin_src elisp
+(setq epa-pinentry-mode 'loopback)
+(setq auth-sources '(password-store))
+(setq epa-file-encrypt-to '("jamesleslie@posteo.net")
+      epa-file-select-keys 1)
+(auth-source-pass-enable)
+#+end_src
+** Pass
+*** Functions
+#+begin_src elisp
+  (defun spacemacs//pass-completing-read ()
+  "Read a password entry in the minibuffer, with completion."
+  (completing-read "Password entry: " (password-store-list)))
+
+(defun spacemacs/pass-copy-and-describe (entry)
+  "Copy the password to the clipboard, and show the multiline description for ENTRY"
+  (interactive (list (spacemacs//pass-completing-read)))
+  (password-store-copy entry)
+  (spacemacs/pass-describe entry))
+
+(defun spacemacs/pass-describe (entry)
+  "Show the multiline description for ENTRY"
+  (interactive (list (spacemacs//pass-completing-read)))
+  (let ((description (s-join "\n" (cdr (s-lines (password-store--run-show entry))))))
+    (message "%s" description)))
+#+end_src
+*** Ivy-pass
+#+begin_src elisp
+(use-package ivy-pass
+  :defer t
+  :after ivy)
+#+end_src
+*** Password-store
+**** Keybindings
+#+begin_src elisp
+(defun jl/pass-keys ()
+  (jl/SPC-keys
+    "atPy" 'password-store-copy
+    "atPg" 'password-store-generate
+    "atPi" 'password-store-insert
+    "atPc" 'password-store-edit
+    "atPr" 'password-store-rename
+    "atPd" 'password-store-remove
+    "atPD" 'password-store-clear
+    "atPI" 'password-store-init
+    "atPw" 'password-store-url
+    )
+
+  (jl/SPC-keys
+    "atP" '(:ignore t :which-key "pass")
+    )
+  )
+#+end_src
+
+**** Initialsation
+#+begin_src elisp
+(use-package password-store
+  :defer t
+  :init
+  (jl/pass-keys))
+#+end_src
+*** Password-store otp
+**** Keybindings
+#+begin_src elisp
+(defun jl/pass-otp-keys ()
+  (jl/SPC-keys
+    "atPoy" 'password-store-otp-token-copy
+    "atPoY" 'password-store-otp-uri-copy
+    "atPoi" 'password-store-otp-insert
+    "atPoa" 'password-store-otp-append
+    "atPoA" 'password-store-otp-append-from-image
+    )
+
+  (jl/SPC-keys
+    "atPo" '(:ignore t :which-key "otp")
+    )
+  )
+#+end_src
+**** Initialisation
+#+begin_src elisp
+(use-package password-store-otp
+  :defer t
+  :init
+  (jl/pass-otp-keys))
+#+end_src
+*** Auth source pass
+#+begin_src elisp
+(use-package auth-source-pass
+  :after auth-source
+  :defer t
+  :config
+  (auth-source-pass-enable)
+  )
 #+end_src
 
 * Languages
@@ -2606,6 +1913,1107 @@ Not tested. Probably doesn't work.
     "i!" 'insert-shebang)
   )
 #+END_SRC
+*** Nix
+**** Functions
+#+BEGIN_SRC elisp
+(defun find-nixos-configuration ()
+  "Edit the `dotfile', in the current window."
+  (interactive)
+  (find-file-existing "/etc/nixos/configuration.nix"))
+
+(defun find-homemanager-configuration ()
+  "Edit the `dotfile', in the current window."
+  (interactive)
+  (find-file-existing "~/.config/nixpkgs/home.nix"))
+#+END_SRC
+**** Direnv
+#+BEGIN_SRC elisp
+(use-package direnv
+  ;; :hook (haskell-mode . direnv-update-environment)
+  :defer 2
+  :config
+  (direnv-mode)
+  :custom
+  (direnv-always-show-summary nil)
+  )
+#+END_SRC
+**** Nix-mode
+***** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/nix-keys ()
+  (jl/major-modes
+    :keymaps 'nix-mode-map
+    :states '(normal visual motion)
+    :major-modes t
+    "=" '(nix-format-buffer)
+    )
+  )
+#+END_SRC
+***** Initialisation
+#+begin_src elisp
+(use-package nix-mode
+  :defer t
+  :config
+  (jl/nix-keys)
+  :mode "\\.nix\\'")
+#+END_SRC
+**** Ivy nixos options
+#+BEGIN_SRC elisp
+(use-package ivy-nixos-options
+  :defer t
+  :commands (ivy-nixos-options)
+  :straight (:host github
+		   :repo "travisbhartwell/nix-emacs"
+		   :branch "master"
+		   :files ("ivy-nixos-options.el"))
+  :init
+  (jl/SPC-keys
+    "fn" '(:ignore t :which-key "nix")
+    "fnc" 'find-nixos-configuration
+    "fnh" 'find-homemanager-configuration
+    "h>" 'ivy-nixos-options
+    )
+  :custom
+  (ivy-nixos-options-default 1)
+  )
+#+END_SRC
+**** NixOS options
+#+BEGIN_SRC elisp
+(use-package nixos-options
+  :defer t)
+#+END_SRC
+**** Nix-sandbox
+#+BEGIN_SRC elisp
+(use-package nix-sandbox
+  :defer t
+  :custom
+  (haskell-process-wrapper-function
+   (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
+  (flycheck-command-wrapper-function
+   (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command)))
+  (flycheck-executable-find
+   (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
+  )
+#+end_src
+** Text
+*** Org mode
+**** Functions
+#+begin_src elisp
+(defun org-link ()
+  (interactive)
+  (if (string= (car (org-thing-at-point)) "link")
+      (org-return)
+    (evil-ret))
+  )
+(defun org-bold ()
+  (interactive)
+  (org-emphasize ?\*)
+  )
+
+(defun org-italic ()
+  (interactive)
+  (org-emphasize ?\/)
+  )
+
+(defun org-underline ()
+  (interactive)
+  (org-emphasize ?\_)
+  )
+
+(defun org-code ()
+  (interactive)
+  (org-emphasize ?\~)
+  )
+
+(defun org-strike-through ()
+  (interactive)
+  (org-emphasize ?\+)
+  )
+
+(defun org-verbatim ()
+  (interactive)
+  (org-emphasize ?\=)
+  )
+#+end_src
+**** Key bindings
+#+begin_src elisp
+(defun jl/org-mode-key-bindings ()
+  (general-define-key
+   :keymaps 'org-mode-map
+   :states '(normal visual motion)
+   "RET" 'org-open-at-point ;; Allows links to be opened with RET
+   "$"   'end-of-line       ;; Evil-org changes this behaviour. This changes it back.
+   "0"   'beginning-of-line
+   )
+
+  (jl/major-modes
+    :states '(normal visual)
+    :keymaps 'org-mode-map
+    :major-modes '(org-mode t)
+    "b" '(:ignore t :which-key "Babel")
+    "d" '(:ignore t :which-key "Dates")
+    "e" '(:ignore t :which-key "Export")
+    "f" '(:ignore t :which-key "Feeds")
+    "i" '(:ignore t :which-key "Insert")
+    "iD" '(:ignore t :which-key "Download")
+    "m" '(:ignore t :which-key "More")
+    "s" '(:ignore t :which-key "Trees/Subtrees")
+    "T" '(:ignore t :which-key "Toggles")
+    "t" '(:ignore t :which-key "Tables")
+    "td" '(:ignore t :which-key "Delete")
+    "ti" '(:ignore t :which-key "Insert")
+    "tt" '(:ignore t :which-key "Toggle")
+    "C" '(:ignore t :which-key "Clocks")
+    "x" '(:ignore t :which-key "Text")
+
+    "'" 'org-edit-special
+    "c" 'org-capture
+
+    ;; Clock
+    ;; These keybindings should match those under the "aoC" prefix (below)
+    "Cc" 'org-clock-cancel
+    "Cd" 'org-clock-display
+    "Ce" 'org-evaluate-time-range
+    "Cg" 'org-clock-goto
+    "Ci" 'org-clock-in
+    "CI" 'org-clock-in-last
+    ;; "Cj" 'spacemacs/org-clock-jump-to-current-clock
+    "Co" 'org-clock-out
+    "CR" 'org-clock-report
+    "Cr" 'org-resolve-clocks
+
+    "dd" 'org-deadline
+    "ds" 'org-schedule
+    "dt" 'org-time-stamp
+    "dT" 'org-time-stamp-inactive
+    "ee" 'org-export-dispatch
+    "fi" 'org-feed-goto-inbox
+    "fu" 'org-feed-update-all
+
+    "a" 'org-agenda
+
+    "p" 'org-priority
+
+    "Tc" 'org-toggle-checkbox
+    "Te" 'org-toggle-pretty-entities
+    "Ti" 'org-toggle-inline-images
+    "Tn" 'org-num-mode
+    "Tl" 'org-toggle-link-display
+    "Tt" 'org-show-todo-tree
+    "TT" 'org-todo
+    "TV" 'space-doc-mode
+    "Tx" 'org-latex-preview
+
+    ;; More cycling options (timestamps, headlines, items, properties)
+    "L" 'org-shiftright
+    "H" 'org-shiftleft
+    "J" 'org-shiftdown
+    "K" 'org-shiftup
+
+    ;; Change between TODO sets
+    "C-S-l" 'org-shiftcontrolright
+    "C-S-h" 'org-shiftcontrolleft
+    "C-S-j" 'org-shiftcontroldown
+    "C-S-k" 'org-shiftcontrolup
+
+    ;; Subtree editing
+    "sa" 'org-toggle-archive-tag
+    "sA" 'org-archive-subtree-default
+    "sb" 'org-tree-to-indirect-buffer
+    "sd" 'org-cut-subtree
+    "sy" 'org-copy-subtree
+    "sh" 'org-promote-subtree
+    "sj" 'org-move-subtree-down
+    "sk" 'org-move-subtree-up
+    "sl" 'org-demote-subtree
+    "sn" 'org-narrow-to-subtree
+    "sw" 'widen
+    "sr" 'org-refile
+    "ss" 'org-sparse-tree
+    "sS" 'org-sort
+
+    ;; tables
+    "ta" 'org-table-align
+    "tb" 'org-table-blank-field
+    "tc" 'org-table-convert
+    "tdc" 'org-table-delete-column
+    "tdr" 'org-table-kill-row
+    "te" 'org-table-eval-formula
+    "tE" 'org-table-export
+    "tf" 'org-table-field-info
+    "th" 'org-table-previous-field
+    "tH" 'org-table-move-column-left
+    "tic" 'org-table-insert-column
+    "tih" 'org-table-insert-hline
+    "tiH" 'org-table-hline-and-move
+    "tir" 'org-table-insert-row
+    "tI" 'org-table-import
+    "tj" 'org-table-next-row
+    "tJ" 'org-table-move-row-down
+    "tK" 'org-table-move-row-up
+    "tl" 'org-table-next-field
+    "tL" 'org-table-move-column-right
+    "tn" 'org-table-create
+    "tN" 'org-table-create-with-table.el
+    "tr" 'org-table-recalculate
+    "tR" 'org-table-recalculate-buffer-tables
+    "ts" 'org-table-sort-lines
+    "ttf" 'org-table-toggle-formula-debugger
+    "tto" 'org-table-toggle-coordinate-overlays
+    "tw" 'org-table-wrap-region
+
+    ;; Source blocks / org-babel
+    "bp"     'org-babel-previous-src-block
+    "bn"     'org-babel-next-src-block
+    "be"     'org-babel-execute-maybe
+    "bo"     'org-babel-open-src-block-result
+    "bv"     'org-babel-expand-src-block
+    "bu"     'org-babel-goto-src-block-head
+    "bg"     'org-babel-goto-named-src-block
+    "br"     'org-babel-goto-named-result
+    "bb"     'org-babel-execute-buffer
+    "bs"     'org-babel-execute-subtree
+    "bd"     'org-babel-demarcate-block
+    "bt"     'org-babel-tangle
+    "bf"     'org-babel-tangle-file
+    "bc"     'org-babel-check-src-block
+    "bj"     'org-babel-insert-header-arg
+    "bl"     'org-babel-load-in-session
+    "bi"     'org-babel-lob-ingest
+    "bI"     'org-babel-view-src-block-info
+    "bz"     'org-babel-switch-to-session
+    "bZ"     'org-babel-switch-to-session-with-code
+    "ba"     'org-babel-sha1-hash
+    "bx"     'org-babel-do-key-sequence-in-edit-buffer
+    ;; "b."     'spacemacs/org-babel-transient-state/body
+    ;; Multi-purpose keys
+    "," 'org-ctrl-c-ctrl-c
+    "*" 'org-ctrl-c-star
+    "-" 'org-ctrl-c-minus
+    "#" 'org-update-statistics-cookies
+    "RET"   'org-ctrl-c-ret
+    "M-RET" 'org-meta-return
+    ;; attachments
+    "A" 'org-attach
+    ;; insertion
+    "ib" 'org-insert-structure-template
+    "id" 'org-insert-drawer
+    "ie" 'org-set-effort
+    "if" 'org-footnote-new
+    "ih" 'org-insert-heading
+    "iH" 'org-insert-heading-after-current
+    "ii" 'org-insert-item
+    ;; "iK" 'spacemacs/insert-keybinding-org
+    "il" 'org-insert-link
+    "in" 'org-add-note
+    "ip" 'org-set-property
+    "is" 'org-insert-subheading
+    "it" 'org-set-tags-command
+    ;; region manipulation
+    "xb" 'org-bold
+    "xc" 'org-code
+    "xi" 'org-italic
+    "xo" 'org-open-at-point
+    ;; "xr" (spacemacs|org-emphasize spacemacs/org-clear ? )
+    "xs" 'org-strike-through
+    "xu" 'org-underline
+    "xv" 'org-verbatim
+
+    )
+  )
+#+end_src
+#+begin_src elisp
+  ;; Add global evil-leader mappings. Used to access org-agenda
+  ;; functionalities – and a few others commands – from any other mode.
+(defun jl/org-mode-global-keys ()
+  (jl/SPC-keys
+   "ao" '(:ignore t :which-key "org")
+   "aoC" '(:ignore t :which-key "clocks")
+   "aof" '(:ignore t :which-key "feeds")
+
+   "ao#" 'org-agenda-list-stuck-projects
+   "aoa" 'org-agenda-list
+   "aoo" 'org-agenda
+   "aoc" 'org-capture
+   "aoe" 'org-store-agenda-views
+   "aofi" 'org-feed-goto-inbox
+   "aofu" 'org-feed-update-all
+
+   ;; Clock
+   ;; These keybindings should match those under the "mC" prefix (above)
+   "aoCc" 'org-clock-cancel
+   "aoCg" 'org-clock-goto
+   "aoCi" 'org-clock-in
+   "aoCI" 'org-clock-in-last
+   ;; "aoCj" 'spacemacs/org-clock-jump-to-current-clock
+   "aoCo" 'org-clock-out
+   "aoCr" 'org-resolve-clocks
+
+   "aol" 'org-store-link
+   "aom" 'org-tags-view
+   "aos" 'org-search-view
+   "aot" 'org-todo-list
+   ;; SPC C- capture/colors
+   "Cc" 'org-capture
+   )
+  )
+
+(defun jl/org-mode-Cc-keys ()
+  (jl/C-c-keys
+    "a" 'org-agenda
+    "c" 'org-capture
+    "l" 'org-store-link
+    )
+  )
+
+(jl/org-mode-global-keys)
+#+end_src
+**** Font configuration
+#+begin_src elisp
+(defun jl/org-font-setup ()
+  (dolist (face '((org-document-title . 1.5)
+		  (org-level-1 . 1.2)
+		  (org-level-2 . 1.1)
+		  (org-level-3 . 1.05)
+		  (org-level-4 . 1.0)
+		  (org-level-5 . 1.1)
+		  (org-level-6 . 1.1)
+		  (org-level-7 . 1.1)
+		  (org-level-8 . 1.1))
+		)
+    (set-face-attribute (car face) nil :font jl/text-font :weight 'regular :height (cdr face))
+    (set-face-attribute 'org-link nil :weight 'regular)
+    )
+
+  ;; (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  ;; (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch :font jl/prog-font)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :font jl/prog-font)
+  )
+  #+end_src
+**** Org Initialisation
+#+begin_src elisp
+(use-package org
+  :defer 10
+  :hook (org-mode . jl/org-font-setup)
+  :init
+  (jl/org-mode-Cc-keys)
+  :config
+  (jl/org-mode-key-bindings)
+  (jl/org-font-setup)
+  (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
+  :custom
+  (org-ellipsis " ▼")
+  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
+  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
+  (org-startup-indented t)
+  (org-hide-emphasis-markers nil)
+  (org-src-tab-acts-natively t)
+  (org-pretty-entities nil)
+  (org-startup-folded t)
+  (org-hide-block-startup t)
+  (org-edit-src-content-indentation 0)
+  (org-startup-with-latex-preview t)
+  (org-enable-reveal-js-support t)
+  (org-protocol-default-template-key "w")
+  (org-image-actual-width nil)
+  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
+  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
+  ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
+  ;;                     ;; "~/Documents/Org/GTD/inbox.org"
+  ;;                     ;; "~/Documents/Org/GTD/gtd.org"
+  ;;                     ;; "~/Documents/Org/GTD/tickler.org"
+  ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
+  ;;                     ))
+  (org-export-backends '(ascii beamer html icalendar latex md odt))
+  ;; Latex in Org
+  (org-preview-latex-default-process 'dvisvgm)
+  (org-highlight-latex-and-related '(latex script entities))
+  (org-format-latex-options '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+					  ("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
+  ;; Org capture
+  (org-capture-templates
+   '(("t" "Todo [inbox]" entry
+      (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
+      "* TODO %i%?")
+
+     ("T" "Tickler" entry
+      (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
+      "* %i%? \n %U")
+     ("n" "Notes" entry
+      (file "~/Documents/Org/Notes/notes.org")
+      "* %?")
+     ("r" "Research Notes" entry
+      (file "~/Documents/Org/Research/notes.org")
+      "* %u \n %?")
+     ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
+      "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
+     ))
+  ;; GTD in org
+  (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
+                        ("~/Documents/Org/GTD/someday.org" :level . 1)
+                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
+  )
+#+end_src
+**** Org Roam
+***** Keybindings
+#+begin_src elisp
+(defun jl/org-roam-global-keys ()
+  (jl/SPC-keys
+    "aor" '(:ignore t :which-key "org-roam")
+    "aord" '(:ignore t :which-key "dailies")
+    "aort" '(:ignore t :which-key "tags")
+
+    "aordy" 'org-roam-dailies-goto-yesterday
+    "aordt" 'org-roam-dailies-goto-today
+    "aordT" 'org-roam-dailies-goto-tomorrow
+    "aordd" 'org-roam-dailies-goto-date
+    "aorf" 'org-roam-node-find
+    "aorn" 'org-roam-node-find
+    "aorg" 'org-roam-ui-open
+    "aori" 'org-roam-node-insert
+    "aorl" 'org-roam-buffer-toggle
+    "aorta" 'org-roam-tag-add
+    "aortr" 'org-roam-tag-remove
+    "aora" 'org-roam-alias-add
+    "aorI" 'org-id-get-create
+    )
+  )
+
+(defun jl/org-roam-key-bindings ()
+  (jl/major-modes
+    :states '(normal visual motion)
+    :keymaps 'org-mode-map
+    :major-modes t
+
+    "r" '(:ignore t :which-key "org-roam")
+    "rd" '(:ignore t :which-key "dailies")
+    "rt" '(:ignore t :which-key "tags")
+    "rdy" 'org-roam-dailies-goto-yesterday
+    "rdt" 'org-roam-dailies-goto-today
+    "rdT" 'org-roam-dailies-goto-tomorrow
+    "rdd" 'org-roam-dailies-goto-date
+    "rf" 'org-roam-node-find
+    "rn" 'org-roam-node-find
+    "rg" 'org-roam-ui-open
+    "ri" 'org-roam-node-insert
+    "rl" 'org-roam-buffer-toggle
+    "rta" 'org-roam-tag-add
+    "rtr" 'org-roam-tag-remove
+    "ra" 'org-roam-alias-add
+    "rI" 'org-id-get-create
+    )
+  )
+
+#+end_src
+# *** Org Roam UI
+# **** Initialisation
+# #+begin_src elisp
+# (use-package org-roam-ui
+#   :defer t
+#   :commands (org-roam-ui-mode
+# 	     org-roam-ui-open)
+#   :after org-roam
+#   )
+#   #+end_src
+***** Templates
+#+BEGIN_SRC elisp
+(defun jl/org-roam-templates ()
+  (setq org-roam-capture-templates
+	'(("q" "quick note" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	   :unnarrowed t)
+
+	  ("e" "encrypted note" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}\n")
+	   :unnarrowed t)
+
+	  ("m" "mathematics note" plain
+	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros} \\usepacakge{math-environments}\n\n* %?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	   :unnarrowed t)
+
+	  ("f" "film note" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: :films:\n[[id:352cef44-05f6-494c-8f65-c04241335eb0][Films]]\n* ")
+	   :unnarrowed t)
+	  )))
+
+(defun jl/org-roam-daily-templates ()
+  (setq org-roam-dailies-capture-templates
+	'(("d" "default" entry
+	   "* %?"
+	   :target (file+head "%<%Y-%m-%d>.org"
+			      "#+title: %<%Y-%m-%d>\n#+filetags: :Daily:\n [[id:24a82cf2-bc51-4b01-81f7-53968e483ee2][Daily Journal]]\n* [/] Daily Todos\n1. [ ]\n2. [ ]\n3. [ ]\n* Daily Tasks\n* Morning Thoughts\n* Evening Reflections")))))
+#+END_SRC
+***** Initialisation
+#+begin_src elisp
+(use-package org-roam
+  :defer t
+  :after org
+  :custom
+  (org-roam-v2-ack t)
+  (org-roam-graph-viewer #'browse-url-firefox)
+  (org-roam-directory "/home/james/Documents/Roam/")
+  :init
+  (jl/org-roam-daily-templates)
+  (jl/org-roam-global-keys)
+  (jl/org-roam-templates)
+  :config
+  (org-roam-db-autosync-mode)
+  (jl/org-roam-key-bindings)
+  )
+#+end_src
+***** Org Roam BibTeX
+#+begin_src elisp
+(use-package org-roam-bibtex
+  :after (org-roam)
+  :defer t
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  )
+#+end_src
+***** Org Roam Protocol
+#+begin_src elisp
+(use-package org-roam-protocol
+  :defer t
+  :straight org-roam)
+#+end_src
+**** Org mode minor modes
+#+begin_src elisp :tangle no
+(defun jl/org-mode-setup ()
+  (visual-line-mode 1)
+  (variable-pitch-mode 1)
+  (smartparens-mode 1)
+  (org-fragtog-mode 1)
+  (rainbow-delimiters-mode 1)
+  )
+  #+end_src
+#+begin_src elisp
+(use-package org-superstar
+  :defer t
+  :after org
+  :hook (org-mode . org-superstar-mode)
+  )
+
+(defun jl/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+	visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :defer t
+  :hook (org-mode . jl/org-mode-visual-fill))
+
+(use-package org-fragtog
+  :defer t
+  :after org
+  :hook (org-mode . org-fragtog-mode)
+  )
+#+end_src
+**** Org Babel
+Calling org-babel languages in the following form saves a lot on startup time.
+***** Shell
+#+BEGIN_SRC elisp
+(use-package ob-shell
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:sh
+   org-babel-expand-body:sh
+
+   org-babel-execute:bash
+   org-babel-expand-body:bash)
+  )
+#+END_SRC
+***** Python
+#+BEGIN_SRC elisp
+(use-package ob-python
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:python
+   org-babel-expand-body:python
+   )
+  )
+#+END_SRC
+***** Emacs Lisp
+#+BEGIN_SRC elisp
+(use-package ob-emacs-lisp
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:emacs-lisp
+   org-babel-expand-body:emacs-lisp
+
+
+  org-babel-execute:elisp
+   org-babel-expand-body:elisp
+   )
+  )
+#+END_SRC
+***** JS
+#+BEGIN_SRC elisp
+(use-package ob-js
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:js
+   org-babel-expand-body:js
+   )
+  )
+#+END_SRC
+***** LaTeX
+#+BEGIN_SRC elisp
+(use-package ob-latex
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:latex
+   org-babel-expand-body:latex
+   )
+  )
+#+END_SRC
+***** Haskell
+#+BEGIN_SRC elisp
+(use-package ob-haskell
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:haskell
+   org-babel-expand-body:haskell
+   )
+  )
+#+END_SRC
+***** C
+#+BEGIN_SRC elisp
+(use-package ob-C
+  :after org
+  :defer t
+  :straight org-contrib
+  :commands
+  (org-babel-execute:C
+   org-babel-expand-body:C
+   )
+  )
+#+END_SRC
+**** Evil Org
+#+begin_src elisp
+(use-package evil-org
+  :defer t
+  :after org
+  :hook (org-mode . evil-org-mode)
+  :config
+  )
+(use-package evil-org-agenda
+  :defer t
+  :after evil-org
+  :straight evil-org
+  :config
+  (evil-org-agenda-set-keys)
+  )
+#+end_src
+**** Org CalDav
+***** Keybindings
+#+begin_src elisp :tangle no
+(defun jl/org-caldav-keybindings ()
+  (jl/C-c-keys
+   :keymaps 'org-agenda-mode-map
+   "S" 'org-caldav-sync)
+  )
+#+end_src
+***** Initialisation
+#+begin_src elisp :tangle no
+(use-package org-caldav
+  :custom
+  (org-caldav-url "https://posteo.de:8443/calendars/jamesleslie")
+  (org-caldav-calendar-id "default")
+  (org-caldav-inbox "~/Documents/Calendar/Agenda.org")
+  (org-caldav-files '("~/Documents/Calendar/Appointments.org"))
+  (org-icalendar-timezone "America/Toronto")
+  (org-caldav-delete-org-entries 'always)
+  (org-caldav-delete-calendar-entries 'never)
+  :init
+  (jl/org-caldav-keybindings)
+  )
+
+#+end_src
+**** Org Present
+#+BEGIN_SRC elisp
+(use-package org-present
+  :defer t
+  :after org
+  :straight (:host github
+		   :repo "rlister/org-present"
+		   :branch "master"
+		   )
+  )
+#+END_SRC
+**** Org Capture
+#+begin_src elisp :tangle no
+(with-eval-after-load 'org-capture
+  (defun org-capture-start ()
+    "Make sure that the keybindings are available for org capture."
+    (jl/C-c-keys
+      :keymaps 'org-capture-mode-map
+      "a" 'org-capture-kill
+      "c" 'org-capture-finalize
+      "k" 'org-capture-kill
+      "r" 'org-capture-refile)
+    ;; Evil bindins seem not to be applied until at least one
+    ;; Evil state is executed
+    (evil-normal-state))
+  ;; Must be done everytime we run org-capture otherwise it will
+  ;; be ignored until insert mode is entered.
+  (add-hook 'org-capture-mode-hook 'org-capture-start))
+#+end_src
+**** Org Source blocks
+#+begin_src elisp
+(evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
+(evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
+(evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
+#+end_src
+**** Table of Contents
+#+BEGIN_SRC elisp
+(use-package toc-org
+  :defer t
+  :after org
+  :hook (org-mode . toc-org-mode)
+  )
+  #+END_SRC
+**** Org Protocol
+#+begin_src elisp
+(use-package org-protocol
+  :defer 2
+  :straight org)
+#+end_src
+**** Publish
+#+begin_src elisp
+(use-package ox-publish
+  :defer t
+  :after org
+  :straight org)
+#+end_src
+*** LaTeX
+**** Functions
+#+begin_src elisp
+(defun latex/build ()
+  (interactive)
+  (progn
+    (let ((TeX-save-query nil))
+      (TeX-save-document (TeX-master-file)))
+    (TeX-command latex-build-command 'TeX-master-file -1)))
+;; (setq build-proc (TeX-command latex-build-command 'TeX-master-
+
+(defun latex/auto-fill-mode ()
+  "Toggle auto-fill-mode using the custom auto-fill function."
+  (interactive)
+  (auto-fill-mode)
+  (setq auto-fill-function 'latex//autofill))
+
+;; Rebindings for TeX-font
+(defun latex/font-bold () (interactive) (TeX-font nil ?\C-b))
+(defun latex/font-medium () (interactive) (TeX-font nil ?\C-m))
+(defun latex/font-code () (interactive) (TeX-font nil ?\C-t))
+(defun latex/font-emphasis () (interactive) (TeX-font nil ?\C-e))
+(defun latex/font-italic () (interactive) (TeX-font nil ?\C-i))
+(defun latex/font-clear () (interactive) (TeX-font nil ?\C-d))
+(defun latex/font-calligraphic () (interactive) (TeX-font nil ?\C-a))
+(defun latex/font-small-caps () (interactive) (TeX-font nil ?\C-c))
+(defun latex/font-sans-serif () (interactive) (TeX-font nil ?\C-f))
+(defun latex/font-normal () (interactive) (TeX-font nil ?\C-n))
+(defun latex/font-serif () (interactive) (TeX-font nil ?\C-r))
+(defun latex/font-oblique () (interactive) (TeX-font nil ?\C-s))
+(defun latex/font-upright () (interactive) (TeX-font nil ?\C-u))
+#+end_src
+**** Keybindings
+#+begin_src elisp
+(defun jl/auctex-keys ()
+  (jl/major-modes
+    :keymaps 'latex-mode-map
+    :states '(normal visual motion)
+    :major-modes t
+    "xf" '(:ignore t :which-key "fonts")
+    "f" '(:ignore t :which-key "fill")
+    "h" '(:ignore t :which-key "help")
+    "x" '(:ignore t :which-key "text/fonts")
+    "z" '(:ignore t :which-key "fold")
+    "i" '(:ignore t :which-key "insert")
+    "p" '(:ignore t :which-key "preview")
+    "r" '(:ignore t :which-key "reftex")
+    )
+
+  (jl/major-modes
+    :keymaps 'LaTeX-mode-map
+    :states '(normal visual motion)
+    :major-modes t
+    "\\"  'TeX-insert-macro                            ;; C-c C-m
+    "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
+    "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
+    ";"   'comment-or-uncomment-region                 ;; C-c ; or C-c :
+    ;; TeX-command-run-all runs compile and open the viewer
+    "k"   'TeX-kill-job                                ;; C-c C-k
+    "l"   'TeX-recenter-output-buffer                  ;; C-c C-l
+    "m"   'TeX-insert-macro                            ;; C-c C-m
+    "n"   'TeX-next-error                              ;; C-c `
+    "N"   'TeX-previous-error                          ;; M-g p
+    "v"   'TeX-view                                    ;; C-c C-v
+    ;; TeX-doc is a very slow function
+    "hd"  'TeX-doc
+    "xb"  'latex/font-bold
+    "xc"  'latex/font-code
+    "xe"  'latex/font-emphasis
+    "xi"  'latex/font-italic
+    "xr"  'latex/font-clear
+    "xo"  'latex/font-oblique
+    "xfc" 'latex/font-small-caps
+    "xff" 'latex/font-sans-serif
+    "xfr" 'latex/font-serif
+
+    "a"   'TeX-command-run-all                         ;; C-c C-a
+    "b"   'latex/build
+
+    "z=" 'TeX-fold-math
+    "zb" 'TeX-fold-buffer
+    "zB" 'TeX-fold-clearout-buffer
+    "ze" 'TeX-fold-env
+    "zI" 'TeX-fold-clearout-item
+    "zm" 'TeX-fold-macro
+    "zp" 'TeX-fold-paragraph
+    "zP" 'TeX-fold-clearout-paragraph
+    "zr" 'TeX-fold-region
+    "zR" 'TeX-fold-clearout-region
+    "zz" 'TeX-fold-dwim
+
+    "*"   'LaTeX-mark-section      ;; C-c *
+    "."   'LaTeX-mark-environment  ;; C-c .
+    "ii"   'LaTeX-insert-item       ;; C-c C-j
+    "s"   'LaTeX-section           ;; C-c C-s
+    "fe"  'LaTeX-fill-environment  ;; C-c C-q C-e
+    "fp"  'LaTeX-fill-paragraph    ;; C-c C-q C-p
+    "fr"  'LaTeX-fill-region       ;; C-c C-q C-r
+    "fs"  'LaTeX-fill-section      ;; C-c C-q C-s
+    "pb"  'preview-buffer
+    "pc"  'preview-clearout
+    "pd"  'preview-document
+    "pe"  'preview-environment
+    "pf"  'preview-cache-preamble
+    "pp"  'preview-at-point
+    "pr"  'preview-region
+    "ps"  'preview-section
+    "xB"  'latex/font-medium
+    "xr"  'latex/font-clear
+    "xfa" 'latex/font-calligraphic
+    "xfn" 'latex/font-normal
+    "xfu" 'latex/font-upright
+
+    "a"   'TeX-command-run-all
+    "iC"   'org-ref-insert-cite-key
+    "ic"   'LaTeX-close-environment
+    "ie"   'LaTeX-environment
+
+    "rc" 'reftex-citation
+    "rg" 'reftex-grep-document
+    "ri" 'reftex-index-selection-or-word
+    "rI" 'reftex-display-index
+    "rl" 'reftex-label
+    "rp" 'reftex-index-phrase-selection-or-word
+    "rr" 'reftex-reference
+    "rs" 'reftex-search-document
+    "rt" 'reftex-toc
+    "rT" 'reftex-toc-recenter
+    "rv" 'reftex-view-crossref
+    )
+  )
+#+end_src
+**** Initialisation
+#+begin_src elisp
+(use-package tex
+  :defer t
+  :hook ((LaTeX-mode . outline-minor-mode)
+	 (LaTeX-mode . visual-line-mode)
+	 (LaTeX-mode . TeX-fold-mode)
+	 (LaTeX-mode . LaTeX-math-mode)
+	 (LaTeX-mode . TeX-source-correlate-mode)
+	 (LaTeX-mode . TeX-PDF-mode))
+  :custom
+  (font-latex-math-environments (quote ("display" "displaymath" "equation" "eqnarray" "gather" "math" "multline" "align" "alignat" "xalignat" "xxalignat" "flalign" "tikzcd")))
+  (reftex-plug-into-auctex t)
+  (reftex-label-alist
+   '(("theorem" ?h "thm:" "~\\ref{%s}" t   ("theorem" "th.") -3)
+     ("proof"   ?g "pf:"  "~\\ref{%s}" t   ("proof" "pf.") -3)
+     ("lemma"   ?l "lem:" "~\\ref{%s}" nil ("lemma"   "le.") -2)
+     ("proposition" ?p "prp:" "~\\ref{%s}" t   ("proposition" "pr.") -3)
+     ("corollary" ?c "cor:" "~\\ref{%s}" t   ("corollary" "co.") -3)
+     ("example" ?a "ex:" "~\\ref{%s}" t   ("example" "ex.") -3)
+     ("tcolorbox" ?b  "tcb:" "~\\ref{%s}" t   ("tcolorbox" "cb.") -3)
+     ("tikzcd" ?j "cd:" "~\\ref{%s}" t  ("tikzcd" "cd.") -3)
+     ("definition" ?d "def:" "~\\ref{%s}" t   ("definition" "de.") -3))
+   )
+  (TeX-view-program-selection '((output-pdf "Zathura")))
+  (TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
+  :straight auctex
+  :init
+  (jl/auctex-keys)
+  :config
+  ;; Folding environments
+  (defun latex-fold-env-all ()
+    (interactive)
+    (let ((env (read-from-minibuffer "Fold Environment: ")))
+      (save-excursion
+	(goto-char (point-min))
+	(while (search-forward (format "begin{%s}" env) nil t)
+	  (TeX-fold-env)))))
+
+  ;;(add-hook 'LaTeX-mode-hook
+  (lambda ()
+    (LaTeX-add-environments
+     '("theorem")
+     '("proof")
+     '("lemma")
+     '("proposition")
+     '("corollary")
+     '("example")
+     '("tcolorbox")
+     '("tikzcd")
+     '("definition")
+     '("align*"))
+    )
+  )
+
+#+end_src
+#+begin_src elisp
+(use-package auctex-latexmk
+  :defer t
+  :config
+  (auctex-latexmk-setup)
+  )
+#+end_src
+
+*** Bibtex
+**** Ivy-bibtex
+***** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/ivy-bibtex-keys ()
+  (jl/major-modes
+    :keymaps 'bibtex-mode-map
+    :states 'normal
+    "m" 'ivy-bibtex
+    )
+  )
+#+END_SRC
+***** Initialisation
+#+begin_src elisp
+(use-package ivy-bibtex
+  :after (ivy bibtex)
+  :defer t
+  :init
+  (jl/ivy-bibtex-keys)
+  )
+  #+end_src
+**** Org Ref
+***** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/org-ref-keys ()
+  (evil-define-key 'normal bibtex-mode-map
+    (kbd "C-j") 'org-ref-bibtex-next-entry
+    (kbd "C-k") 'org-ref-bibtex-previous-entry
+    "gj" 'org-ref-bibtex-next-entry
+    "gk" 'org-ref-bibtex-previous-entry)
+
+  (jl/major-modes
+    :keymaps 'bibtex-mode-map
+    :states 'normal
+    :major-modes t
+    "l" '(:ignore t :which-key "lookup")
+    )
+  (jl/major-modes
+    :keymaps 'bibtex-mode-map
+    :states 'normal
+    :major-modes t
+    ;; Navigation
+    "j" 'org-ref-bibtex-next-entry
+    "k" 'org-ref-bibtex-previous-entry
+
+    ;; Open
+    "b" 'org-ref-open-in-browser
+    "n" 'org-ref-open-bibtex-notes
+    "p" 'org-ref-open-bibtex-pdf
+
+    ;; Misc
+    "h" 'org-ref-bibtex-hydra/body
+    "i" 'org-ref-bibtex-hydra/org-ref-bibtex-new-entry/body-and-exit
+    "s" 'org-ref-sort-bibtex-entry
+
+    ;; Lookup utilities
+    "la" 'arxiv-add-bibtex-entry
+    "lA" 'arxiv-get-pdf-add-bibtex-entry
+    "ld" 'doi-utils-add-bibtex-entry-from-doi
+    "li" 'isbn-to-bibtex
+    "lp" 'pubmed-insert-bibtex-from-pmid)
+
+
+  (jl/major-modes
+    :keymaps 'latex-mode-map
+    :states 'normal
+    "ic" 'org-ref-insert-link)
+
+  (jl/major-modes
+    :keymaps 'org-mode-map
+    :states '(normal visual motion)
+    :major-modes t
+    "ir" 'org-ref-insert-ref-link
+    "ic" 'org-ref-insert-cite-link
+    )
+  )
+  #+END_SRC
+***** Initialisation
+#+begin_src elisp
+(use-package org-ref
+  :after org
+  :defer t
+  :custom
+  (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
+  (bibtex-completion-library-path "~/Documents/PDF/")
+  (org-latex-prefer-user-labels t)
+  :init
+  (jl/org-ref-keys)
+  )
+
+(use-package org-ref-arxiv
+  :straight org-ref
+  :defer t)
+  #+end_src
+**** Org Ref Ivy
+#+begin_src elisp
+(use-package org-ref-ivy
+  :commands (org-ref-insert-cite-link
+	     org-ref-insert-ref-link)
+  :straight org-ref
+  :after (org ivy)
+  :custom
+  (org-ref-insert-link-function 'org-ref-insert-link-hydra/body)
+  (org-ref-insert-cite-function 'org-ref-cite-insert-ivy)
+  (org-ref-insert-label-function 'org-ref-insert-label-link)
+  (org-ref-insert-ref-function 'org-ref-insert-ref-link)
+  (org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
+  )
+  #+end_src
+
 ** Other
 *** Yaml
 #+BEGIN_SRC elisp
@@ -2613,28 +3021,6 @@ Not tested. Probably doesn't work.
   :hook (yaml-mode . (lambda () (variable-pitch-mode 0)))
   :defer t)
 #+END_SRC
-
-* Avy
-#+begin_src elisp
-(use-package avy
-  :defer t
-  :custom
-  (avy-background t)
-  :commands (avy-pop-mark
-	     evil-avy-goto-char-timer
-	     evil-avy-goto-line
-	     evil-avy-goto-word-or-subword-1)
-  :init
-  (general-define-key
-   :states '(normal visual motion)
-   "f" 'evil-avy-goto-char-timer)
-  (jl/SPC-keys
-    "jb" 'avy-pop-mark
-    "jj" 'evil-avy-goto-char-timer
-    "jl" 'evil-avy-goto-line
-    "jw" 'evil-avy-goto-word-or-subword-1)
-  )
-  #+end_src
 
 * Readers
 ** Elfeed
@@ -3210,313 +3596,30 @@ there are no attachments."
   )
 #+end_src
 
-* LaTeX
-** Functions
+* Avy
 #+begin_src elisp
-(defun latex/build ()
-  (interactive)
-  (progn
-    (let ((TeX-save-query nil))
-      (TeX-save-document (TeX-master-file)))
-    (TeX-command latex-build-command 'TeX-master-file -1)))
-;; (setq build-proc (TeX-command latex-build-command 'TeX-master-
-
-(defun latex/auto-fill-mode ()
-  "Toggle auto-fill-mode using the custom auto-fill function."
-  (interactive)
-  (auto-fill-mode)
-  (setq auto-fill-function 'latex//autofill))
-
-;; Rebindings for TeX-font
-(defun latex/font-bold () (interactive) (TeX-font nil ?\C-b))
-(defun latex/font-medium () (interactive) (TeX-font nil ?\C-m))
-(defun latex/font-code () (interactive) (TeX-font nil ?\C-t))
-(defun latex/font-emphasis () (interactive) (TeX-font nil ?\C-e))
-(defun latex/font-italic () (interactive) (TeX-font nil ?\C-i))
-(defun latex/font-clear () (interactive) (TeX-font nil ?\C-d))
-(defun latex/font-calligraphic () (interactive) (TeX-font nil ?\C-a))
-(defun latex/font-small-caps () (interactive) (TeX-font nil ?\C-c))
-(defun latex/font-sans-serif () (interactive) (TeX-font nil ?\C-f))
-(defun latex/font-normal () (interactive) (TeX-font nil ?\C-n))
-(defun latex/font-serif () (interactive) (TeX-font nil ?\C-r))
-(defun latex/font-oblique () (interactive) (TeX-font nil ?\C-s))
-(defun latex/font-upright () (interactive) (TeX-font nil ?\C-u))
-#+end_src
-** Keybindings
-#+begin_src elisp
-(defun jl/auctex-keys ()
-  (jl/major-modes
-    :keymaps 'latex-mode-map
-    :states '(normal visual motion)
-    :major-modes t
-    "xf" '(:ignore t :which-key "fonts")
-    "f" '(:ignore t :which-key "fill")
-    "h" '(:ignore t :which-key "help")
-    "x" '(:ignore t :which-key "text/fonts")
-    "z" '(:ignore t :which-key "fold")
-    "i" '(:ignore t :which-key "insert")
-    "p" '(:ignore t :which-key "preview")
-    "r" '(:ignore t :which-key "reftex")
-    )
-
-  (jl/major-modes
-    :keymaps 'LaTeX-mode-map
-    :states '(normal visual motion)
-    :major-modes t
-    "\\"  'TeX-insert-macro                            ;; C-c C-m
-    "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
-    "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
-    ";"   'comment-or-uncomment-region                 ;; C-c ; or C-c :
-    ;; TeX-command-run-all runs compile and open the viewer
-    "k"   'TeX-kill-job                                ;; C-c C-k
-    "l"   'TeX-recenter-output-buffer                  ;; C-c C-l
-    "m"   'TeX-insert-macro                            ;; C-c C-m
-    "n"   'TeX-next-error                              ;; C-c `
-    "N"   'TeX-previous-error                          ;; M-g p
-    "v"   'TeX-view                                    ;; C-c C-v
-    ;; TeX-doc is a very slow function
-    "hd"  'TeX-doc
-    "xb"  'latex/font-bold
-    "xc"  'latex/font-code
-    "xe"  'latex/font-emphasis
-    "xi"  'latex/font-italic
-    "xr"  'latex/font-clear
-    "xo"  'latex/font-oblique
-    "xfc" 'latex/font-small-caps
-    "xff" 'latex/font-sans-serif
-    "xfr" 'latex/font-serif
-
-    "a"   'TeX-command-run-all                         ;; C-c C-a
-    "b"   'latex/build
-
-    "z=" 'TeX-fold-math
-    "zb" 'TeX-fold-buffer
-    "zB" 'TeX-fold-clearout-buffer
-    "ze" 'TeX-fold-env
-    "zI" 'TeX-fold-clearout-item
-    "zm" 'TeX-fold-macro
-    "zp" 'TeX-fold-paragraph
-    "zP" 'TeX-fold-clearout-paragraph
-    "zr" 'TeX-fold-region
-    "zR" 'TeX-fold-clearout-region
-    "zz" 'TeX-fold-dwim
-
-    "*"   'LaTeX-mark-section      ;; C-c *
-    "."   'LaTeX-mark-environment  ;; C-c .
-    "ii"   'LaTeX-insert-item       ;; C-c C-j
-    "s"   'LaTeX-section           ;; C-c C-s
-    "fe"  'LaTeX-fill-environment  ;; C-c C-q C-e
-    "fp"  'LaTeX-fill-paragraph    ;; C-c C-q C-p
-    "fr"  'LaTeX-fill-region       ;; C-c C-q C-r
-    "fs"  'LaTeX-fill-section      ;; C-c C-q C-s
-    "pb"  'preview-buffer
-    "pc"  'preview-clearout
-    "pd"  'preview-document
-    "pe"  'preview-environment
-    "pf"  'preview-cache-preamble
-    "pp"  'preview-at-point
-    "pr"  'preview-region
-    "ps"  'preview-section
-    "xB"  'latex/font-medium
-    "xr"  'latex/font-clear
-    "xfa" 'latex/font-calligraphic
-    "xfn" 'latex/font-normal
-    "xfu" 'latex/font-upright
-
-    "a"   'TeX-command-run-all
-    "iC"   'org-ref-insert-cite-key
-    "ic"   'LaTeX-close-environment
-    "ie"   'LaTeX-environment
-
-    "rc" 'reftex-citation
-    "rg" 'reftex-grep-document
-    "ri" 'reftex-index-selection-or-word
-    "rI" 'reftex-display-index
-    "rl" 'reftex-label
-    "rp" 'reftex-index-phrase-selection-or-word
-    "rr" 'reftex-reference
-    "rs" 'reftex-search-document
-    "rt" 'reftex-toc
-    "rT" 'reftex-toc-recenter
-    "rv" 'reftex-view-crossref
-    )
-  )
-#+end_src
-** Initialisation
-#+begin_src elisp
-(use-package tex
-  :defer t
-  :hook ((LaTeX-mode . outline-minor-mode)
-	 (LaTeX-mode . visual-line-mode)
-	 (LaTeX-mode . TeX-fold-mode)
-	 (LaTeX-mode . LaTeX-math-mode)
-	 (LaTeX-mode . TeX-source-correlate-mode)
-	 (LaTeX-mode . TeX-PDF-mode))
-  :custom
-  (font-latex-math-environments (quote ("display" "displaymath" "equation" "eqnarray" "gather" "math" "multline" "align" "alignat" "xalignat" "xxalignat" "flalign" "tikzcd")))
-  (reftex-plug-into-auctex t)
-  (reftex-label-alist
-   '(("theorem" ?h "thm:" "~\\ref{%s}" t   ("theorem" "th.") -3)
-     ("proof"   ?g "pf:"  "~\\ref{%s}" t   ("proof" "pf.") -3)
-     ("lemma"   ?l "lem:" "~\\ref{%s}" nil ("lemma"   "le.") -2)
-     ("proposition" ?p "prp:" "~\\ref{%s}" t   ("proposition" "pr.") -3)
-     ("corollary" ?c "cor:" "~\\ref{%s}" t   ("corollary" "co.") -3)
-     ("example" ?a "ex:" "~\\ref{%s}" t   ("example" "ex.") -3)
-     ("tcolorbox" ?b  "tcb:" "~\\ref{%s}" t   ("tcolorbox" "cb.") -3)
-     ("tikzcd" ?j "cd:" "~\\ref{%s}" t  ("tikzcd" "cd.") -3)
-     ("definition" ?d "def:" "~\\ref{%s}" t   ("definition" "de.") -3))
-   )
-  (TeX-view-program-selection '((output-pdf "Zathura")))
-  (TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
-  :straight auctex
-  :init
-  (jl/auctex-keys)
-  :config
-  ;; Folding environments
-  (defun latex-fold-env-all ()
-    (interactive)
-    (let ((env (read-from-minibuffer "Fold Environment: ")))
-      (save-excursion
-	(goto-char (point-min))
-	(while (search-forward (format "begin{%s}" env) nil t)
-	  (TeX-fold-env)))))
-
-  ;;(add-hook 'LaTeX-mode-hook
-  (lambda ()
-    (LaTeX-add-environments
-     '("theorem")
-     '("proof")
-     '("lemma")
-     '("proposition")
-     '("corollary")
-     '("example")
-     '("tcolorbox")
-     '("tikzcd")
-     '("definition")
-     '("align*"))
-    )
-  )
-
-#+end_src
-#+begin_src elisp
-(use-package auctex-latexmk
-  :defer t
-  :config
-  (auctex-latexmk-setup)
-  )
-#+end_src
-
-* Bibtex
-** Ivy-bibtex
-*** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/ivy-bibtex-keys ()
-  (jl/major-modes
-    :keymaps 'bibtex-mode-map
-    :states 'normal
-    "m" 'ivy-bibtex
-    )
-  )
-#+END_SRC
-*** Initialisation
-#+begin_src elisp
-(use-package ivy-bibtex
-  :after (ivy bibtex)
-  :defer t
-  :init
-  (jl/ivy-bibtex-keys)
-  )
-  #+end_src
-** Org Ref
-*** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/org-ref-keys ()
-  (evil-define-key 'normal bibtex-mode-map
-    (kbd "C-j") 'org-ref-bibtex-next-entry
-    (kbd "C-k") 'org-ref-bibtex-previous-entry
-    "gj" 'org-ref-bibtex-next-entry
-    "gk" 'org-ref-bibtex-previous-entry)
-
-  (jl/major-modes
-    :keymaps 'bibtex-mode-map
-    :states 'normal
-    :major-modes t
-    "l" '(:ignore t :which-key "lookup")
-    )
-  (jl/major-modes
-    :keymaps 'bibtex-mode-map
-    :states 'normal
-    :major-modes t
-    ;; Navigation
-    "j" 'org-ref-bibtex-next-entry
-    "k" 'org-ref-bibtex-previous-entry
-
-    ;; Open
-    "b" 'org-ref-open-in-browser
-    "n" 'org-ref-open-bibtex-notes
-    "p" 'org-ref-open-bibtex-pdf
-
-    ;; Misc
-    "h" 'org-ref-bibtex-hydra/body
-    "i" 'org-ref-bibtex-hydra/org-ref-bibtex-new-entry/body-and-exit
-    "s" 'org-ref-sort-bibtex-entry
-
-    ;; Lookup utilities
-    "la" 'arxiv-add-bibtex-entry
-    "lA" 'arxiv-get-pdf-add-bibtex-entry
-    "ld" 'doi-utils-add-bibtex-entry-from-doi
-    "li" 'isbn-to-bibtex
-    "lp" 'pubmed-insert-bibtex-from-pmid)
-
-
-  (jl/major-modes
-    :keymaps 'latex-mode-map
-    :states 'normal
-    "ic" 'org-ref-insert-link)
-
-  (jl/major-modes
-    :keymaps 'org-mode-map
-    :states '(normal visual motion)
-    :major-modes t
-    "ir" 'org-ref-insert-ref-link
-    "ic" 'org-ref-insert-cite-link
-    )
-  )
-  #+END_SRC
-*** Initialisation
-#+begin_src elisp
-(use-package org-ref
-  :after org
+(use-package avy
   :defer t
   :custom
-  (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
-  (bibtex-completion-library-path "~/Documents/PDF/")
-  (org-latex-prefer-user-labels t)
+  (avy-background t)
+  :commands (avy-pop-mark
+	     evil-avy-goto-char-timer
+	     evil-avy-goto-line
+	     evil-avy-goto-word-or-subword-1)
   :init
-  (jl/org-ref-keys)
-  )
-
-(use-package org-ref-arxiv
-  :straight org-ref
-  :defer t)
-  #+end_src
-** Org Ref Ivy
-#+begin_src elisp
-(use-package org-ref-ivy
-  :commands (org-ref-insert-cite-link
-	     org-ref-insert-ref-link)
-  :straight org-ref
-  :after (org ivy)
-  :custom
-  (org-ref-insert-link-function 'org-ref-insert-link-hydra/body)
-  (org-ref-insert-cite-function 'org-ref-cite-insert-ivy)
-  (org-ref-insert-label-function 'org-ref-insert-label-link)
-  (org-ref-insert-ref-function 'org-ref-insert-ref-link)
-  (org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
+  (general-define-key
+   :states '(normal visual motion)
+   "f" 'evil-avy-goto-char-timer)
+  (jl/SPC-keys
+    "jb" 'avy-pop-mark
+    "jj" 'evil-avy-goto-char-timer
+    "jl" 'evil-avy-goto-line
+    "jw" 'evil-avy-goto-word-or-subword-1)
   )
   #+end_src
 
-* Yasnippet
+* Auto-complete  and Spelling
+** Yasnippet
 #+begin_src elisp
 (use-package yasnippet
   :commands (ivy-yasnippet)
@@ -3544,8 +3647,8 @@ there are no attachments."
   :defer t)
 #+end_src
 
-* Company mode
-** Initialisation
+** Company mode
+*** Initialisation
 #+begin_src elisp
 (use-package company
   :defer t
@@ -3554,7 +3657,7 @@ there are no attachments."
   (global-company-mode 1)
   )
 #+end_src
-** Prescient company
+*** Prescient company
 #+BEGIN_SRC elisp
 (use-package company-prescient
   :after company
@@ -3562,7 +3665,7 @@ there are no attachments."
   (company-prescient-mode 1)
   )
 #+END_SRC
-** Company-shell
+*** Company-shell
 #+BEGIN_SRC elisp
 (use-package company-shell
   :defer t
@@ -3572,31 +3675,7 @@ there are no attachments."
   )
 #+END_SRC
 
-* Magit
-** Keybindings
-#+begin_src elisp
-(defun jl/magit-keys ()
-  (jl/SPC-keys
-    "gs" 'magit-status
-    ))
-
-(evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
-(evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel)
-
-#+end_src
-** Initialisation
-#+begin_src elisp
-(use-package magit
-  :defer t
-  :commands magit-status
-  :init
-  (jl/magit-keys)
-  :config
-  (define-key magit-status-mode-map (kbd "SPC") nil)
-  )
-#+end_src
-
-* Flycheck
+** Flycheck
 #+begin_src elisp
 (use-package flycheck
   :defer t
@@ -3604,15 +3683,15 @@ there are no attachments."
   :config
   (global-flycheck-mode t))
 #+end_src
-** Bashate
+*** Bashate
 #+BEGIN_SRC elisp
 (use-package flycheck-bashate
   :defer t
   :hook (sh-mode . flycheck-bashate-setup))
 #+END_SRC
 
-* Flyspell
-** Keybindings
+** Flyspell
+*** Keybindings
 #+begin_src elisp
 (defun jl/flyspell ()
   (jl/SPC-keys
@@ -3630,7 +3709,7 @@ there are no attachments."
     )
   )
 #+end_src
-** Functions
+*** Functions
 #+begin_src elisp
 (defun spell-checking/add-flyspell-hook (hook)
   "Add `flyspell-mode' to the given HOOK, if
@@ -3699,7 +3778,7 @@ SCOPE can be:
         (setq poss (ispell-parse-output (car ispell-filter))))
     (or (eq poss t) (stringp poss))))
 #+end_src
-** Initialisation
+*** Initialisation
 #+begin_src elisp
 (use-package flyspell
   :defer t
@@ -3711,7 +3790,7 @@ SCOPE can be:
   :config
   (jl/flyspell))
 #+end_src
-** Flyspell correct
+*** Flyspell correct
 #+begin_src elisp
 (use-package flyspell-correct
   :after flyspell
@@ -3724,9 +3803,9 @@ SCOPE can be:
   (flyspell-correct-interface #'flyspell-correct-ivy)
   )
 #+end_src
-
-* Undo Tree
-** Keybindings
+* Tools
+** Undo Tree
+*** Keybindings
 #+BEGIN_SRC elisp
 (defun jl/undo-tree-keys ()
   (general-evil-define-key '(normal motion) 'undo-tree-visualizer-mode-map
@@ -3743,7 +3822,7 @@ SCOPE can be:
     )
   )
 #+END_SRC
-** Initialisation
+*** Initialisation
 #+begin_src elisp
 (use-package undo-tree
   :hook ((prog-mode text-mode) . undo-tree-mode)
@@ -3765,14 +3844,14 @@ SCOPE can be:
   (global-undo-tree-mode))
 #+end_src
 
-* Pandoc
-** Keybindings
+** Pandoc
+*** Keybindings
 #+BEGIN_SRC elisp
 (defun jl/pandoc-global-keys ()
   (jl/SPC-keys
     "P" '(pandoc-main-hydra/body :which-key "Pandoc")))
 #+END_SRC
-** Initialisation
+*** Initialisation
 #+begin_src elisp
 (use-package pandoc-mode
   :defer t
@@ -3780,109 +3859,43 @@ SCOPE can be:
   (jl/pandoc-global-keys))
 #+end_src
 
-* Iedit
-** Keybindings
+** Iedit
+*** Keybindings
 #+begin_src elisp
 (defun jl/iedit-keys ()
   (jl/SPC-keys
     "se" 'iedit-mode))
 #+end_src
-** Initialisation
+*** Initialisation
 #+begin_src elisp
 (use-package evil-iedit-state
   :defer t
   :init
   (jl/iedit-keys))
 #+end_src
-** wgrep
+*** wgrep
 #+BEGIN_SRC elisp
 (use-package wgrep
   :defer t)
 #+END_SRC
 
-* Nix
-** Functions
+** Simple httpd
 #+BEGIN_SRC elisp
-(defun find-nixos-configuration ()
-  "Edit the `dotfile', in the current window."
-  (interactive)
-  (find-file-existing "/etc/nixos/configuration.nix"))
-
-(defun find-homemanager-configuration ()
-  "Edit the `dotfile', in the current window."
-  (interactive)
-  (find-file-existing "~/.config/nixpkgs/home.nix"))
-#+END_SRC
-** Direnv
-#+BEGIN_SRC elisp
-(use-package direnv
-  ;; :hook (haskell-mode . direnv-update-environment)
-  :defer 2
-  :config
-  (direnv-mode)
-  :custom
-  (direnv-always-show-summary nil)
-  )
-#+END_SRC
-** Nix-mode
-*** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/nix-keys ()
-  (jl/major-modes
-    :keymaps 'nix-mode-map
-    :states '(normal visual motion)
-    :major-modes t
-    "=" '(nix-format-buffer)
-    )
-  )
-#+END_SRC
-*** Initialisation
-#+begin_src elisp
-(use-package nix-mode
+(use-package simple-httpd
   :defer t
-  :config
-  (jl/nix-keys)
-  :mode "\\.nix\\'")
+  :commands httpd-serve-directory)
 #+END_SRC
-** Ivy nixos options
+** Define word
 #+BEGIN_SRC elisp
-(use-package ivy-nixos-options
+(use-package define-word
   :defer t
-  :commands (ivy-nixos-options)
-  :straight (:host github
-		   :repo "travisbhartwell/nix-emacs"
-		   :branch "master"
-		   :files ("ivy-nixos-options.el"))
-  :init
-  (jl/SPC-keys
-    "fn" '(:ignore t :which-key "nix")
-    "fnc" 'find-nixos-configuration
-    "fnh" 'find-homemanager-configuration
-    "h>" 'ivy-nixos-options
-    )
-  :custom
-  (ivy-nixos-options-default 1)
-  )
+  :commands (define-word define-word-at-point))
 #+END_SRC
-** NixOS options
+** Pair Programming
 #+BEGIN_SRC elisp
-(use-package nixos-options
+(use-package floobits
   :defer t)
 #+END_SRC
-** Nix-sandbox
-#+BEGIN_SRC elisp
-(use-package nix-sandbox
-  :defer t
-  :custom
-  (haskell-process-wrapper-function
-   (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
-  (flycheck-command-wrapper-function
-   (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command)))
-  (flycheck-executable-find
-   (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
-  )
-#+end_src
-
 * Shells
 ** Term
 #+BEGIN_SRC elisp :tangle no
@@ -3980,20 +3993,3 @@ SCOPE can be:
   :commands fireplace)
 #+END_SRC
 
-* Simple httpd
-#+BEGIN_SRC elisp
-(use-package simple-httpd
-  :defer t
-  :commands httpd-serve-directory)
-#+END_SRC
-* Define word
-#+BEGIN_SRC elisp
-(use-package define-word
-  :defer t
-  :commands (define-word define-word-at-point))
-#+END_SRC
-* Pair Programming
-#+BEGIN_SRC elisp
-(use-package floobits
-  :defer t)
-#+END_SRC
