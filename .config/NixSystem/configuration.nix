@@ -190,14 +190,13 @@ environment.systemPackages = with pkgs;
     # Haskell
     nix-prefetch-git
     cabal2nix
-    cabal-install
+    # cabal-install
     haskellPackages.apply-refact
     haskellPackages.hlint
     haskellPackages.stylish-haskell
     haskellPackages.hasktags
     haskellPackages.hoogle
     haskellPackages.hindent
-    # haskellPackages.zlib
     # zlib # Remove and put into a nix shell
 
     playerctl
