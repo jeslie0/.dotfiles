@@ -1134,7 +1134,7 @@ Provides better documentation.
 *** LSP
 We need to define a list of major mode maps to use =lsp-mode= in.
 #+BEGIN_SRC elisp
-(setq lsp-mode-maps '(haskell-mode-map))
+(setq lsp-mode-maps '(haskell-mode-map python-mode-map))
 #+END_SRC
 **** Keybindings
 #+begin_src elisp :tangle no
@@ -1275,7 +1275,7 @@ We need to define a list of major mode maps to use =lsp-mode= in.
   :commands (lsp lsp-deferred)
   :config
   (jl/lsp-keys)
-  (advice-add 'lsp :before #'direnv-update-environment)
+  ;; (advice-add 'lsp :before #'direnv-update-environment)
   :custom
   (lsp-modeline-code-actions-enable nil)
   (lsp-idle-delay 0.500)
@@ -1523,7 +1523,8 @@ We need to define a list of major mode maps to use =lsp-mode= in.
   (proof-three-window-mode-policy 'hybrid)
   )
 #+END_SRC
-** Programming
+** Programming Languages
+For most programming languages, the development tools will be installed through a nix flake.
 *** Haskell
 **** lsp-haskell
 #+begin_src elisp
@@ -1925,17 +1926,6 @@ Not tested. Probably doesn't work.
   (interactive)
   (find-file-existing "~/.config/nixpkgs/home.nix"))
 #+END_SRC
-**** Direnv
-#+BEGIN_SRC elisp
-(use-package direnv
-  ;; :hook (haskell-mode . direnv-update-environment)
-  :defer 2
-  :config
-  (direnv-mode)
-  :custom
-  (direnv-always-show-summary nil)
-  )
-#+END_SRC
 **** Nix-mode
 ***** Keybindings
 #+BEGIN_SRC elisp
@@ -1994,6 +1984,29 @@ Not tested. Probably doesn't work.
    (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
   )
 #+end_src
+*** TODO Java
+*** TODO C
+*** TODO Python
+**** Python LSP
+#+BEGIN_SRC elisp
+(defun lspython ()
+  "Updates the lsp-python-ms-executable variable and runs lsp."
+  (interactive)
+  (setq lsp-python-ms-executable (executable-find "python-language-server"))
+  (lsp-deferred))
+#+END_SRC
+
+#+BEGIN_SRC elisp
+(use-package lsp-python-ms
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-python-ms)))
+  :defer t)
+#+END_SRC
+**** python-mode
+#+BEGIN_SRC elisp
+(use-package python-mode
+  :defer t)
+#+END_SRC
 ** Text
 *** Org mode
 **** Functions
@@ -2437,13 +2450,13 @@ Not tested. Probably doesn't work.
 	   :unnarrowed t)
 
 	  ("m" "mathematics note" plain
-	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros} \\usepacakge{math-environments}\n\n* %?"
+	   "#+LATEX_HEADER: \\input{org-math-packages.tex} \\usepackage{math-macros} \\usepackage{math-environments}\n\n* %?"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
 	   :unnarrowed t)
 
 	  ("f" "film note" plain
 	   "%?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: :films:\n[[id:352cef44-05f6-494c-8f65-c04241335eb0][Films]]\n* ")
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+filetags: :films:\n[[id:352cef44-05f6-494c-8f65-c04241335eb0][Films]]\n* %?")
 	   :unnarrowed t)
 	  )))
 
@@ -4023,3 +4036,14 @@ SCOPE can be:
   :commands fireplace)
 #+END_SRC
 
+* Direnv
+#+BEGIN_SRC elisp
+(use-package direnv
+  ;; :hook (haskell-mode . direnv-update-environment)
+  :defer 2
+  :config
+  (direnv-mode)
+  :custom
+  (direnv-always-show-summary nil)
+  )
+#+END_SRC

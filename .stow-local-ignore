@@ -9,6 +9,8 @@ flake.lock
 .gitignore
 .git-crypt
 
+JLpublic.key
+
 ReadMe.org
 
 result
