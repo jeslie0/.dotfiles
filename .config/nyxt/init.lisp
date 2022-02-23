@@ -13,6 +13,7 @@
 	 "space b b" 'switch-buffer
 	 "space b p" 'switch-buffer-previous
 	 "space b n" 'switch-buffer-next
+         "space b N" 'make-buffer-focus
 	 "space b d" 'delete-current-buffer
 	 "space b C-d" 'delete-buffer
 	 "space b D" 'delete-other-buffers
