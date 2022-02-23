@@ -1,5 +1,6 @@
 [user]
 name = James Leslie
 email = jamesleslie@posteo.net
+signingkey = 86AC9FE03B59F914725208DECF6607D8EB302630
 [commit]
 gpgsign = true

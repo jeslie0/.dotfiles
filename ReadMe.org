@@ -2664,7 +2664,7 @@ programs.sway = {
 *** EmacsPgtkGcc
 We use the pure GTK, GCC compiled version of Emacs. To change the version used, this section and the corresponding flake input needs to be changed. As we want vterm enabled and we use emacsclient primarily, we add it to the service packages.
 #+begin_src nix
-services.emacs.package = with pkgs; ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
+services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
 services.emacs.enable = true;
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
 ];
@@ -2815,7 +2815,7 @@ environment.systemPackages = with pkgs;
     mkvtoolnix
     sbcl
 
-    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
+    ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
   ];
 
 programs.light.enable = true;
@@ -2836,7 +2836,6 @@ systemd.services.keychron = {
   wantedBy = [ "multi-user.target" ];
 };
 #+end_src
-
 *** Miscellaneous
 #+begin_src nix
 # Enable CUPS to print documents.
@@ -2951,6 +2950,7 @@ system.stateVersion = "21.05"; # Did you read the comment?
 [user]
 name = James Leslie
 email = jamesleslie@posteo.net
+signingkey = 86AC9FE03B59F914725208DECF6607D8EB302630
 [commit]
 gpgsign = true
 #+end_src
@@ -2987,6 +2987,8 @@ flake.lock
 .gitattributes
 .gitignore
 .git-crypt
+
+JLpublic.key
 
 ReadMe.org
 

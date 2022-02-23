@@ -87,7 +87,7 @@ programs.sway = {
   ];
 };
 
-services.emacs.package = with pkgs; ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
+services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
 services.emacs.enable = true;
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
 ];
@@ -222,7 +222,7 @@ environment.systemPackages = with pkgs;
     mkvtoolnix
     sbcl
 
-    ((emacsPackagesNgGen emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
+    ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
   ];
 
 programs.light.enable = true;

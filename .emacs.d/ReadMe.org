@@ -60,6 +60,7 @@
 (setq default-directory "/home/james/Documents/")
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
 (setq read-process-output-max (* 1024 1024))
+(setq-default indent-tabs-mode nil)
 #+end_src
 * Package managers
 ** Straight.el
@@ -1034,11 +1035,11 @@ Provides better documentation.
 (add-hook 'text-mode-hook 'visual-line-mode)
 #+END_SRC
 * Passwords
-** Pin entry
+** Pin entry and GPG key
 #+begin_src elisp
 (setq epa-pinentry-mode 'loopback)
 (setq auth-sources '(password-store))
-(setq epa-file-encrypt-to '("jamesleslie@posteo.net")
+(setq epa-file-encrypt-to '("86AC9FE03B59F914725208DECF6607D8EB302630")
       epa-file-select-keys 1)
 (auth-source-pass-enable)
 #+end_src
@@ -1126,10 +1127,8 @@ Provides better documentation.
   :after auth-source
   :defer t
   :config
-  (auth-source-pass-enable)
-  )
+  (auth-source-pass-enable))
 #+end_src
-
 * Languages
 ** Tools
 *** LSP
@@ -2297,7 +2296,7 @@ Not tested. Probably doesn't work.
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :font jl/prog-font)
   )
   #+end_src
-**** Org Initialisation
+**** Initialisation
 #+begin_src elisp
 (use-package org
   :defer 10
@@ -2434,7 +2433,7 @@ Not tested. Probably doesn't work.
 
 	  ("e" "encrypted note" plain
 	   "%?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}\n")
+	   :if-new (file+head "./encrypted/%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}\n")
 	   :unnarrowed t)
 
 	  ("m" "mathematics note" plain
@@ -2900,10 +2899,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package auctex-latexmk
   :defer t
   :config
-  (auctex-latexmk-setup)
-  )
+  (auctex-latexmk-setup))
 #+end_src
-
 *** Bibtex
 **** Ivy-bibtex
 ***** Keybindings
@@ -3362,12 +3359,10 @@ Calling org-babel languages in the following form saves a lot on startup time.
 
 (defun jl/mu4e-global-keys ()
   (jl/C-c-keys
-    "e" 'mu4e
-    )
+    "e" 'mu4e)
+
   (jl/SPC-keys
-    "ae" 'mu4e
-    )
-  )
+    "ae" 'mu4e))
 #+end_src
 *** Mail shortcuts
 #+begin_src elisp
@@ -3508,10 +3503,8 @@ there are no attachments."
   ;; customize the reply-quote-string
   (setq message-citation-line-format "On %a, %d %b, %Y at %R %f wrote:\n")
   ;; choose to use the formatted string
-  (setq message-citation-line-function 'message-insert-formatted-citation-line)
-  )
+  (setq message-citation-line-function 'message-insert-formatted-citation-line))
 #+end_src
-
 *** Mu4e thread folding
 #+begin_src elisp
 (straight-use-package '(mu4e-thread-folding :host github
@@ -3537,29 +3530,28 @@ there are no attachments."
   (define-key mu4e-headers-mode-map (kbd "<left>")    'mu4e-headers-fold-at-point)
   (define-key mu4e-headers-mode-map (kbd "<S-left>")  'mu4e-headers-fold-all)
   (define-key mu4e-headers-mode-map (kbd "<right>")   'mu4e-headers-unfold-at-point)
-  (define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all)
-  )
+  (define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all))
 #+end_src
 *** Mu4e PGP
 #+begin_src elisp
 (defun jl/mu4e-pgp ()
   (setq mml-secure-openpgp-sign-with-sender t) ;; Sign all outgoing emails
-  (setq mml-secure-openpgp-signers '("7BC253447F901C3EBD46AB5EDDFB27273B2BFBB6")) ;; Sign emails with this key
-  (add-hook 'mu4e-compose-mode-hook 'mml-secure-message-sign)
-  )
+  (setq mml-secure-openpgp-signers '("86AC9FE03B59F914725208DECF6607D8EB302630"
+                                     ;; "7BC253447F901C3EBD46AB5EDDFB27273B2BFBB6" ;; Old key
+                                     )) ;; Sign emails with this key
+  (add-hook 'mu4e-compose-mode-hook 'mml-secure-message-sign))
 #+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package mu4e
-  :defer t
-  :after mu4e
+  :defer 1
+  ;; :after mu4e
   :straight nil
   ;; :load-path "/run/current-system/sw/share/emacs/site-lisp/mu4e/"
-  :load-path "~/MU4E"
+  ;; :load-path "~/MU4E"
   ;; :hook ((mu4e-compose-mode . visual-fill-column-mode)
   ;; 	 (mu4e-compose-mode . variable-pitch-mode)
-  ;; 	 (mu4e-view-mode . visual-fill-column-mode)
-  ;; 	 )
+  ;; 	 (mu4e-view-mode . visual-fill-column-mode))
   :init
   (jl/mu4e-global-keys)
   :config
@@ -3586,8 +3578,7 @@ there are no attachments."
   (mu4e-compose-dont-reply-to-self t)
   (mu4e-sent-messages-behavior 'sent)
   (mu4e-use-fancy-chars t)
-  (mu4e-display-update-status-in-modeline nil)
-  )
+  (mu4e-display-update-status-in-modeline nil))
   #+end_src
 *** mu4e-alert
 #+begin_src elisp :tangle no
@@ -3595,7 +3586,26 @@ there are no attachments."
   :hook (after-init . mu4e-alert-enable-mode-line-display)
   )
 #+end_src
+*** org-mime
+#+BEGIN_SRC elisp
+(use-package org-mime
+  :defer t
+  :after mu4e
+  :commands (org-mime-edit-mail-in-org-mode
+             org-mime-htmlize
+             org-mime-org-buffer-htmlize
+             org-mime-subtree-htmlize)
+  :init
+  (jl/major-modes
+    :keymaps 'mu4e-compose-mode-map
+    :states '(normal insert visual)
+    :major-modes t
+    "h" '(:ignore t :which-key "html")
+    "ho" 'org-mime-edit-mail-in-org-mode
+    "hh" 'org-mime-htmlize)
+  )
 
+#+END_SRC
 * Avy
 #+begin_src elisp
 (use-package avy
@@ -3618,18 +3628,18 @@ there are no attachments."
   )
   #+end_src
 
-* Auto-complete  and Spelling
+* Auto-complete  and spelling
 ** Yasnippet
 #+begin_src elisp
 (use-package yasnippet
   :commands (ivy-yasnippet)
+  :hook ((prog-mode text-mode) . yas-minor-mode)
   :defer t
   :config
   (yas-global-mode 1)
   :init
   (jl/SPC-keys
-    "is" 'ivy-yasnippet)
-  )
+    "is" 'ivy-yasnippet))
 
 (use-package yasnippet-snippets
   :defer t
@@ -3641,7 +3651,7 @@ there are no attachments."
   )
 (use-package haskell-snippets
   :defer t
-  :after haskell-mode)
+  :after yasnippets)
 
 (use-package yatemplate
   :defer t)
@@ -3895,6 +3905,26 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package floobits
   :defer t)
+#+END_SRC
+** edit-server
+#+BEGIN_SRC elisp
+(use-package edit-server
+  :commands edit-server-start
+  :init (if after-init-time
+              (edit-server-start)
+            (add-hook 'after-init-hook
+                      #'(lambda() (edit-server-start))))
+  ;; :config (setq edit-server-new-frame-alist
+  ;;               '((name . "Edit with Emacs FRAME")
+  ;;                 (top . 200)
+  ;;                 (left . 200)
+  ;;                 (width . 80)
+  ;;                 (height . 25)
+  ;;                 (minibuffer . t)
+  ;;                 (menu-bar-lines . t)
+  ;;                 (window-system . x)))
+)
+
 #+END_SRC
 * Shells
 ** Term
