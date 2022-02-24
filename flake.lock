@@ -156,17 +156,22 @@
     "myfonts": {
       "inputs": {
         "flake-utils": "flake-utils_3",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
-        "lastModified": 1645734827,
-        "narHash": "sha256-MEiP+0qq8oAzIL1TXiMrfCxuH3I7EkyUJ73MvN4W58M=",
-        "type": "git",
-        "url": "file:///home/james/Documents/Nix/myfonts"
+        "lastModified": 1645739462,
+        "narHash": "sha256-nLygGM1bpXXOpp6tA/tc6rP132fRq1Nxaas/d2jBBQ8=",
+        "owner": "jeslie0",
+        "repo": "my-fonts-flake",
+        "rev": "21ef8183ca9d4c00410536103ee1f5fc4ea21673",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/james/Documents/Nix/myfonts"
+        "owner": "jeslie0",
+        "repo": "my-fonts-flake",
+        "type": "github"
       }
     },
     "nixpkgs": {
@@ -184,22 +189,6 @@
       }
     },
     "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1645433236,
-        "narHash": "sha256-4va4MvJ076XyPp5h8sm5eMQvCrJ6yZAbBmyw95dGyw4=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "7f9b6e2babf232412682c09e57ed666d8f84ac2d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_3": {
       "locked": {
         "lastModified": 1644525281,
         "narHash": "sha256-D3VuWLdnLmAXIkooWAtbTGSQI9Fc1lkvAr94wTxhnTU=",
@@ -256,7 +245,7 @@
         "emacs-overlay": "emacs-overlay",
         "home-manager": "home-manager",
         "myfonts": "myfonts",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_2",
         "nur": "nur",
         "passbemenuGitHub": "passbemenuGitHub",
         "swaybgchangerGitHub": "swaybgchangerGitHub"
