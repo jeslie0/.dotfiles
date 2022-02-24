@@ -179,6 +179,7 @@ environment.systemPackages = with pkgs;
     sqlite
     stow
     texlive.combined.scheme-full
+    texlab
     zathura
     neofetch
     zulip-term

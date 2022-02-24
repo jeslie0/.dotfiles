@@ -5,9 +5,19 @@
 [[file:Icons/EmacsLogo.svg]]
 * early-init.el
 #+BEGIN_SRC elisp :tangle ./early-init.el
-;; -*- lexical-binding: t; -*-
+;;; early-init.el -*- lexical-binding: t; -*-
+
+;; We use straight.el for packages, hence we don't want to initialise
+;; package.el.
 (setq package-enable-at-startup nil)
-;;; speedup blub
+
+;; This makes newer versions of files be prioritised over older
+;; ones. Makes newer non-compiled files be used rather than older
+;; compiled ones.
+(setq load-prefer-newer t)
+
+
+;; speedup blub - Taken from Reddit somewhere
 (let ((default-gc-threshold gc-cons-threshold)
       (default-gc-percentage gc-cons-percentage))
   (setq gc-cons-threshold most-positive-fixnum
@@ -17,12 +27,10 @@
               (setq gc-cons-percentage default-gc-percentage
                     gc-cons-threshold default-gc-threshold))))
 
-(setq load-prefer-newer t)
 
 
 ;;; UI Stuff
 (setq inhibit-startup-message t) ;; Disables the startup message
-
 (scroll-bar-mode -1)   ; Disables visible scroll bar
 (tool-bar-mode -1)     ; Disable the toolbar
 (tooltip-mode -1)      ; Disable tooltips
@@ -31,6 +39,9 @@
 (blink-cursor-mode -1) ; Makes cursor not blink
 (column-number-mode 1) ;; Adds column numbering to the modeline
 (electric-indent-mode -1)
+
+;; Make the initial buffer load faster by setting it to fundamental-mode
+(setq initial-major-mode 'fundamental-mode)
 
 
 (defvar jl/prog-font
@@ -50,10 +61,18 @@
 (set-face-attribute 'mode-line-active nil :inherit nil)
 
 (setq frame-inhibit-implied-resize t)
+
+(define-advice load-file (:override (file) silence)
+  (load file nil 'nomessage))
+
+(set-language-environment "UTF-8")
+
+;; set-language-enviornment sets default-input-method, which is unwanted
+(setq default-input-method nil)
 #+END_SRC
 * Lexical-binding
 #+begin_src elisp
-;; -*- lexical-binding: t; -*-
+;;; init.el -*- lexical-binding: t; -*-
 #+end_src
 * Misc
 #+begin_src elisp
@@ -61,6 +80,7 @@
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
 (setq read-process-output-max (* 1024 1024))
 (setq-default indent-tabs-mode nil)
+;; (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 #+end_src
 * Package managers
 ** Straight.el
@@ -975,18 +995,17 @@ Provides better documentation.
 #+begin_src elisp
 (use-package outshine
   :defer t
-  :after org
-  :hook ((emacs-lisp-mode latex-mode prog-mode) . outshine-mode)
-  )
+  :hook ((prog-mode LaTeX-mode) . outshine-mode))
 #+end_src
 ** Aggressive indent
 #+BEGIN_SRC elisp
 (use-package aggressive-indent
   :defer t
-  :hook (prog-mode . aggressive-indent-mode)
+  :init
+  (global-aggressive-indent-mode 1)
   :config
   (add-to-list 'aggressive-indent-excluded-modes 'haskell-cabal-mode)
-  )
+  (add-to-list 'aggressive-indent-excluded-modes 'haskell-mode))
 #+END_SRC
 ** Golden Ratio
 #+BEGIN_SRC elisp
@@ -1344,12 +1363,12 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 (use-package lsp-treemacs
   :defer t
   :after (lsp treemacs)
-  :commands (lsp-treemacs-syombols
-	     lsp-treemacs-references
-	     lsp-treemacs-errors-list)
+  :commands (lsp-treemacs-symbols
+             lsp-treemacs-references
+             lsp-treemacs-errors-list)
   :init
   (jl/lsp-treemacs-keys)
-  :custom
+  :config
   (lsp-treemacs-sync-mode 1)
   )
   #+end_src
@@ -1990,11 +2009,9 @@ We actually install the language server through Emacs, so we don't need to worry
 #+BEGIN_SRC elisp
 (use-package lsp-java
   :defer t
-  :after java-mode
-  :custom
-  (lsp-java-server-install-dir "~/emacs-packages/java-language-server/")
   :hook (java-mode . (lambda ()
-                       (require 'lsp-java))))
+                       (require 'lsp-java)
+                       (setq lsp-java-server-install-dir "~/emacs-packages/java-language-server/"))))
 #+END_SRC
 *** TODO C
 *** Python
@@ -2041,7 +2058,6 @@ We need a function to find the lsp server when it's installed through a nix shel
   :defer t
   :hook (python-mode . blacken-mode))
 #+END_SRC
-
 ** Text
 *** Org mode
 **** Functions
@@ -2347,7 +2363,7 @@ We need a function to find the lsp server when it's installed through a nix shel
 **** Initialisation
 #+begin_src elisp
 (use-package org
-  :defer 10
+  :defer t
   :hook (org-mode . jl/org-font-setup)
   :init
   (jl/org-mode-Cc-keys)
@@ -2743,7 +2759,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
   )
   #+END_SRC
 **** Org Protocol
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package org-protocol
   :defer 2
   :straight org)
@@ -2896,8 +2912,10 @@ Calling org-babel languages in the following form saves a lot on startup time.
 	 (LaTeX-mode . TeX-fold-mode)
 	 (LaTeX-mode . LaTeX-math-mode)
 	 (LaTeX-mode . TeX-source-correlate-mode)
-	 (LaTeX-mode . TeX-PDF-mode))
+	 (LaTeX-mode . TeX-PDF-mode)
+         (LaTeX-mode . (lambda () (variable-pitch-mode nil))))
   :custom
+  (TeX-engine 'luatex)
   (font-latex-math-environments (quote ("display" "displaymath" "equation" "eqnarray" "gather" "math" "multline" "align" "alignat" "xalignat" "xxalignat" "flalign" "tikzcd")))
   (reftex-plug-into-auctex t)
   (reftex-label-alist
@@ -2949,6 +2967,12 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :config
   (auctex-latexmk-setup))
 #+end_src
+**** lsp-latex
+#+BEGIN_SRC  elisp
+(use-package lsp-latex
+  :defer t
+  :hook ((tex-mode latex-mode bibtex-mode) . lsp))
+#+END_SRC
 *** Bibtex
 **** Ivy-bibtex
 ***** Keybindings
@@ -3058,15 +3082,13 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
   )
   #+end_src
-
-** Other
+*** Other
 *** Yaml
 #+BEGIN_SRC elisp
 (use-package yaml-mode
   :hook (yaml-mode . (lambda () (variable-pitch-mode 0)))
   :defer t)
 #+END_SRC
-
 * Readers
 ** Elfeed
 *** Keybindings
@@ -3555,11 +3577,10 @@ there are no attachments."
 #+end_src
 *** Mu4e thread folding
 #+begin_src elisp
-(straight-use-package '(mu4e-thread-folding :host github
-					    :repo "rougier/mu4e-thread-folding"
-					    :branch "master"))
-
 (use-package mu4e-thread-folding
+  :defer t
+  :after mu4e
+  :straight (:host github :repo "rougier/mu4e-thread-folding" :branch "master" :files ("*.el"))
   :hook (mu4e-headers-mode . mu4e-thread-folding-mode)
   :custom
   (mu4e-headers-found-hook '(mu4e-headers-mark-threads mu4e-headers-fold-all))
@@ -3583,7 +3604,7 @@ there are no attachments."
 *** Mu4e PGP
 #+begin_src elisp
 (defun jl/mu4e-pgp ()
-  (setq mml-secure-openpgp-sign-with-sender t) ;; Sign all outgoing emails
+  ;; (setq mml-secure-openpgp-sign-with-sender t) ;; Sign all outgoing emails
   (setq mml-secure-openpgp-signers '("86AC9FE03B59F914725208DECF6607D8EB302630"
                                      ;; "7BC253447F901C3EBD46AB5EDDFB27273B2BFBB6" ;; Old key
                                      )) ;; Sign emails with this key
@@ -3592,8 +3613,8 @@ there are no attachments."
 *** Initialisation
 #+begin_src elisp
 (use-package mu4e
-  :defer 1
-  ;; :after mu4e
+  :defer t
+  :commands mu4e
   :straight nil
   ;; :load-path "/run/current-system/sw/share/emacs/site-lisp/mu4e/"
   ;; :load-path "~/MU4E"
@@ -3638,7 +3659,6 @@ there are no attachments."
 #+BEGIN_SRC elisp
 (use-package org-mime
   :defer t
-  :after mu4e
   :commands (org-mime-edit-mail-in-org-mode
              org-mime-htmlize
              org-mime-org-buffer-htmlize
@@ -3646,13 +3666,11 @@ there are no attachments."
   :init
   (jl/major-modes
     :keymaps 'mu4e-compose-mode-map
-    :states '(normal insert visual)
+    :states '(normal operator visual)
     :major-modes t
     "h" '(:ignore t :which-key "html")
     "ho" 'org-mime-edit-mail-in-org-mode
-    "hh" 'org-mime-htmlize)
-  )
-
+    "hh" 'org-mime-htmlize))
 #+END_SRC
 * Avy
 #+begin_src elisp
@@ -4074,11 +4092,9 @@ SCOPE can be:
 * Direnv
 #+BEGIN_SRC elisp
 (use-package direnv
-  ;; :hook (haskell-mode . direnv-update-environment)
   :defer 2
   :config
   (direnv-mode)
   :custom
-  (direnv-always-show-summary nil)
-  )
+  (direnv-always-show-summary nil))
 #+END_SRC
