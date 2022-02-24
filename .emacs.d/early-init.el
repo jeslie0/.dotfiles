@@ -50,7 +50,7 @@
 ;; Set the fixed pitch face
 (set-face-attribute 'fixed-pitch nil :font jl/prog-font :height 110)
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font jl/text-font :height 120 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font jl/text-font :height 130)
 
 (set-face-attribute 'cursor nil :background "DarkGoldenrod2")
 (set-face-attribute 'mode-line-active nil :inherit nil)

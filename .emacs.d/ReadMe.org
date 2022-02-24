@@ -57,7 +57,7 @@
 ;; Set the fixed pitch face
 (set-face-attribute 'fixed-pitch nil :font jl/prog-font :height 110)
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font jl/text-font :height 120 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font jl/text-font :height 130)
 
 (set-face-attribute 'cursor nil :background "DarkGoldenrod2")
 (set-face-attribute 'mode-line-active nil :inherit nil)
@@ -669,8 +669,7 @@ If the universal prefix argument is used then kill also the window."
   :bind (("C-x k" . persp-kill-buffer*))
   :config
   (jl/persp-keys)
-  (persp-mode)
-  )
+  (persp-mode))
 #+end_src
 ** Fillings
 #+BEGIN_SRC elisp
@@ -723,7 +722,6 @@ If the universal prefix argument is used then kill also the window."
 * Ivy and Counsel completion framework
 #+begin_src elisp
 (use-package ivy
-  ;; :defer 0.5
   :diminish ;; Hides minor mode from mode-line minor mode list
   :bind (("C-s" . swiper)
          :map ivy-minibuffer-map
@@ -745,13 +743,12 @@ If the universal prefix argument is used then kill also the window."
   )
 
 (use-package counsel
-  ;; :after ivy
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-ibuffer)
          ("C-x C-f" . counsel-find-file)
          :map minibuffer-local-map
          ("C-f" . 'counsel-minibuffer-history))
-  :config
+  :init
   (counsel-mode 1))
 
 (use-package ivy-rich
@@ -2477,16 +2474,6 @@ We need a function to find the lsp server when it's installed through a nix shel
   )
 
 #+end_src
-# *** Org Roam UI
-# **** Initialisation
-# #+begin_src elisp
-# (use-package org-roam-ui
-#   :defer t
-#   :commands (org-roam-ui-mode
-# 	     org-roam-ui-open)
-#   :after org-roam
-#   )
-#   #+end_src
 ***** Templates
 #+BEGIN_SRC elisp
 (defun jl/org-roam-templates ()
@@ -2523,20 +2510,33 @@ We need a function to find the lsp server when it's installed through a nix shel
 #+begin_src elisp
 (use-package org-roam
   :defer t
-  :after org
+  :commands (org-roam-node-find
+             org-roam-dailies-goto-date
+             org-roam-dailies-goto-today
+             org-roam-dailies-goto-tomorrow
+             org-roam-dailies-goto-yesterday)
   :custom
   (org-roam-v2-ack t)
   (org-roam-graph-viewer #'browse-url-firefox)
   (org-roam-directory "/home/james/Documents/Roam/")
   :init
-  (jl/org-roam-daily-templates)
   (jl/org-roam-global-keys)
-  (jl/org-roam-templates)
   :config
+  (jl/org-roam-daily-templates)
+  (jl/org-roam-templates)
   (org-roam-db-autosync-mode)
   (jl/org-roam-key-bindings)
   )
 #+end_src
+***** Org Roam UI
+****** Initialisation
+#+begin_src elisp
+(use-package org-roam-ui
+  :defer t
+  :commands (org-roam-ui-mode
+	     org-roam-ui-open)
+  :after org-roam)
+  #+end_src
 ***** Org Roam BibTeX
 #+begin_src elisp
 (use-package org-roam-bibtex
@@ -2974,7 +2974,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :defer t
   :hook ((tex-mode latex-mode bibtex-mode) . lsp))
 #+END_SRC
-*** Bibtex
+*** BibTex
 **** Ivy-bibtex
 ***** Keybindings
 #+BEGIN_SRC elisp
@@ -3083,7 +3083,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (org-ref-cite-onclick-function (lambda (_) (org-ref-citation-hydra/body)))
   )
   #+end_src
-*** Other
+** Other
 *** Yaml
 #+BEGIN_SRC elisp
 (use-package yaml-mode
