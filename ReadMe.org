@@ -2837,11 +2837,15 @@ systemd.services.keychron = {
   wantedBy = [ "multi-user.target" ];
 };
 #+end_src
+*** Printers
+Enable CUPS to print documents.
+#+BEGIN_SRC nix
+services.printing.enable = true;
+services.printing.drivers = [ pkgs.gutenprint ];
+services.avahi.enable = true;
+#+END_SRC
 *** Miscellaneous
 #+begin_src nix
-# Enable CUPS to print documents.
-# services.printing.enable = true;
-
 # Enable sound.
 # sound.enable = true;
 # hardware.pulseaudio.enable = true;
