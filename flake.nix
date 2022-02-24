@@ -20,6 +20,8 @@
     bemenuFocusGitHub.url = "github:jeslie0/bemenuFocus";
     bemenuFocusGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
+    myfonts.url = "/home/james/Documents/Nix/myfonts";
+
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
     emacs-overlay.url = "github:nix-community/emacs-overlay/da2f552d133497abd434006e0cae996c0a282394";
     emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";

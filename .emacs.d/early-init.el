@@ -43,7 +43,7 @@
   "Source Code Pro")
 
 (defvar jl/text-font
-  "Cantarell")
+  "Gill Sans")
 
 
 (set-face-attribute 'default nil :font jl/prog-font :height 110)

@@ -9,7 +9,7 @@ flake.lock
 .gitignore
 .git-crypt
 
-JLpublic.key
+public_key.asc
 
 ReadMe.org
 

@@ -103,6 +103,7 @@ fonts.fonts = with pkgs; [ cantarell-fonts
                            source-code-pro
                            terminus_font
                            ubuntu_font_family
+                           (self.inputs.myfonts.defaultPackage.${system})
                          ];
 
 # Firefox screensharing
