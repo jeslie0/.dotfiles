@@ -1134,7 +1134,7 @@ Provides better documentation.
 *** LSP
 We need to define a list of major mode maps to use =lsp-mode= in.
 #+BEGIN_SRC elisp
-(setq lsp-mode-maps '(haskell-mode-map python-mode-map))
+(setq lsp-mode-maps '(haskell-mode-map python-mode-map java-mode-map))
 #+END_SRC
 **** Keybindings
 #+begin_src elisp :tangle no
@@ -1985,17 +1985,21 @@ Not tested. Probably doesn't work.
   )
 #+end_src
 *** TODO Java
-*** TODO C
-*** TODO Python
-**** Python LSP
+**** lsp-java
+We actually install the language server through Emacs, so we don't need to worry about that - only where we store it.
 #+BEGIN_SRC elisp
-(defun lspython ()
-  "Updates the lsp-python-ms-executable variable and runs lsp."
-  (interactive)
-  (setq lsp-python-ms-executable (executable-find "python-language-server"))
-  (lsp-deferred))
+(use-package lsp-java
+  :defer t
+  :after java-mode
+  :custom
+  (lsp-java-server-install-dir "~/emacs-packages/java-language-server/")
+  :hook (java-mode . (lambda ()
+                       (require 'lsp-java))))
 #+END_SRC
-
+*** TODO C
+*** Python
+**** Python LSP
+We need a function to find the lsp server when it's installed through a nix shell.
 #+BEGIN_SRC elisp
 (use-package lsp-python-ms
   :hook (python-mode . (lambda ()
@@ -2005,8 +2009,39 @@ Not tested. Probably doesn't work.
 **** python-mode
 #+BEGIN_SRC elisp
 (use-package python-mode
-  :defer t)
+  :custom
+  (python-shell-interpreter "ipython")
+  (python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
+  :defer t
+  :config
+  (defun lspython ()
+    "Updates the lsp-python-ms-executable variable and runs lsp."
+    (interactive)
+    (setq lsp-python-ms-executable (executable-find "python-language-server"))
+    (lsp-deferred)))
 #+END_SRC
+**** ipython-shell-send
+#+BEGIN_SRC elisp
+(use-package ipython-shell-send
+  :defer t
+  :hook (python-mode . (lambda ()
+                         (jl/major-modes
+                           :keymaps 'python-mode-map
+                           :states '(normal insert visual)
+                           :major-modes t
+                           "'" 'run-python
+                           "sb" 'ipython-shell-send-buffer
+                           "sr" 'ipython-shell-send-region
+                           "sd" 'ipython-shell-send-defun
+                           ))))
+#+END_SRC
+**** Blacken
+#+BEGIN_SRC elisp
+(use-package blacken
+  :defer t
+  :hook (python-mode . blacken-mode))
+#+END_SRC
+
 ** Text
 *** Org mode
 **** Functions
