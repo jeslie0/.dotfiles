@@ -22,7 +22,7 @@
 
 
 
-;;; UI Stuff
+;;; Basic UI Stuff
 (setq inhibit-startup-message t) ;; Disables the startup message
 (scroll-bar-mode -1)   ; Disables visible scroll bar
 (tool-bar-mode -1)     ; Disable the toolbar
@@ -33,10 +33,12 @@
 (column-number-mode 1) ;; Adds column numbering to the modeline
 (electric-indent-mode -1)
 
+
+
 ;; Make the initial buffer load faster by setting it to fundamental-mode
 (setq initial-major-mode 'fundamental-mode)
 
-
+;; Set the fonts
 (defvar jl/prog-font
   "Source Code Pro")
 
@@ -59,6 +61,5 @@
   (load file nil 'nomessage))
 
 (set-language-environment "UTF-8")
-
 ;; set-language-enviornment sets default-input-method, which is unwanted
 (setq default-input-method nil)
