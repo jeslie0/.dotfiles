@@ -4,7 +4,7 @@
 # --
 (jl/major-modes
     :keymaps '$1
-    :states '(normal insert visual)
+    :states '(normal visual operator)
     :major-modes t
     $0
     )

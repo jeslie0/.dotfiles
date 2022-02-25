@@ -223,7 +223,6 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
           (set-visited-file-name new-name t t)))))))
 
 #+END_SRC
-
 ** General
 #+begin_src elisp
 (use-package general
@@ -333,7 +332,6 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   "/" 'counsel-rg
   )
 #+end_src
-
 ** Misc
 #+begin_src elisp
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -344,33 +342,44 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
  "u" 'undo-tree-undo
  )
 #+end_src
-
 ** Hydra
+We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buffers.
 #+begin_src elisp
 (use-package hydra
   :defer t)
+#+end_src
+*** Text Scaling
+#+begin_src elisp
+(defhydra hydra-text-scale (:hint nil) ;;(:timeout 4) ;; -- I don't want a timeout
+  "
+^Increase^    ^Decrease^    ^Reset
+^^^^^------------------------------
+[_+_]         [_-_]         [_0_]
+[_k_]         [_j_]         ^
+"
+  ("k" text-scale-increase)
+  ("+" text-scale-increase)
 
-(defhydra hydra-text-scale () ;;(:timeout 4) ;; -- I don't want a timeout
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
+  ("j" text-scale-decrease)
+  ("-" text-scale-decrease)
+
+  ("0" (text-scale-adjust 0))
   ("f" nil "finished" :exit t))
-
+#+end_src
+*** Pasting
+#+begin_src elisp
 (defhydra jl/pasting-hydra ()
   "Pasting Transient State"
   ("C-j" evil-paste-pop)
   ("C-k" evil-paste-pop-next)
   ("p" evil-paste-after)
-  ("P" evil-paste-before)
-  )
+  ("P" evil-paste-before))
 
 (general-define-key
  :states 'normal
- "p"  'jl/pasting-hydra/evil-paste-after
-  )
+ "p"  'jl/pasting-hydra/evil-paste-after)
 
 #+end_src
-
 ** Evil mode
 *** Evil
 #+begin_src elisp
@@ -423,9 +432,8 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   (setq-default evil-escape-delay 0.2)
   )
 #+END_SRC
-
 ** Which-key
-Adds the popup for key commands with mulitple key presses
+Adds the popup for key commands with mulitple key presses.
 #+begin_src elisp
 (use-package which-key
   :after evil
@@ -443,7 +451,6 @@ Adds the popup for key commands with mulitple key presses
   (which-key-allow-multiple-replacements t)
   )
 #+end_src
-
 * UI configuration
 ** Warnings
 #+begin_src elisp
@@ -1399,11 +1406,15 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 *** Agda
 **** Keybindings
 #+begin_src elisp
-(defhydra jl/agda-goal-navigation ()
-  "Goal Navigation Transient State"
-  ("f" agda2-next-goal "next")
-  ("b" agda2-previous-goal "previous")
-  ("q" nil "quit":exit t))
+(defhydra jl/agda-goal-navigation (:hint nil)
+  "
+^Next Goal^    ^Previous Goal
+^^^--------------------------
+[_f_]          [_p_]
+"
+  ("f" agda2-next-goal)
+  ("b" agda2-previous-goal)
+  ("q" nil "quit" :exit t))
 
 (defun agda2-next-goal-transient ()
   (interactive)
@@ -1419,9 +1430,12 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 
 (defun jl/agda-keys ()
   (jl/major-modes
-    :states 'normal
+    :states '(normal visual operator)
     :keymaps 'agda2-mode-map
-    "g"   '"Go To"
+    "g"   '(:ignore t :which-key "goto")
+    "n"   '(:ignore t :which-key "normalise")
+    "x"   '(:ignore t :which-key "options")
+
     "?"   'agda2-show-goals
     "."   'agda2-goal-and-context-and-inferred
     ","   'agda2-goal-and-context
@@ -1435,6 +1449,7 @@ We need to define a list of major mode maps to use =lsp-mode= in.
     "d"   'agda2-infer-type-maybe-toplevel
     "e"   'agda2-show-context
     "f"   'agda2-next-goal-transient
+
     "gG"  'agda2-go-back
     "h"   'agda2-helper-function-type
     "l"   'agda2-load
@@ -1443,9 +1458,12 @@ We need to define a list of major mode maps to use =lsp-mode= in.
     "r"   'agda2-refine
     "s"   'agda2-solve-maybe-all
     "t"   'agda2-goal-type
+
     "un"  'agda2-compute-normalised
     "uN"  'agda2-compute-normalised-toplevel
+
     "w"   'agda2-why-in-scope-maybe-toplevel
+
     "xa"  'agda2-abort
     "xc"  'agda2-compile
     "xd"  'agda2-remove-annotations
@@ -1455,9 +1473,8 @@ We need to define a list of major mode maps to use =lsp-mode= in.
     "xr"  'agda2-restart
     "xs"  'agda2-set-program-version
     "x;"  'agda2-comment-dwim-rest-of-buffer
-    "z"   'agda2-search-about-toplevel
-    )
-  )
+
+    "z"   'agda2-search-about-toplevel))
 #+end_src
 **** Initialisation
 #+begin_src elisp
@@ -1585,7 +1602,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 (defun jl/haskell-keys ()
   (jl/major-modes
     :keymaps 'haskell-mode-map
-    :states '(normal insert visual)
+    :states '(normal visual operator)
     :major-modes t
     "g" '(:ignore t :which-key "navigation")
     "s" '(:ignore t :which-key "repl")
@@ -1596,8 +1613,8 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     )
 
   (jl/major-modes
-    :states '(normal visual)
     :keymaps 'haskell-mode-map
+    :states '(normal visual operator)
     :major-modes t
     "'" 'haskell-interactive-switch
     "S" 'haskell-mode-stylish-buffer
@@ -1685,7 +1702,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+begin_src elisp
 (defun jl/hindent ()
   (jl/major-modes
-    :states 'normal
+    :states '(normal visual operator)
     :keymaps 'haskell-mode-map
     :major-modes t
     "f" '(:ignore nil :which-key "format")
@@ -1761,7 +1778,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   :config
   (jl/major-modes
     :keymaps 'edebug-eval-mode-map
-    :states '(normal insert visual)
+    :states '(normal visual operator)
     :major-modes t
     "g" '(:ignore t :which-key "goto")
     "e" '(:ignore t :which-key "eval")
@@ -1783,7 +1800,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 (defun jl/clisp-major-keys ()
   (jl/major-modes
     :keymaps 'lisp-mode-map
-    :states '(normal insert visual)
+    :states '(normal visual operator)
     :major-modes t
     "h" '(:ignore t :which-key "help")
     "e" '(:ignore t :which-key "eval")
@@ -1868,7 +1885,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 (defun jl/shell-keys ()
   (jl/major-modes
     :keymaps 'sh-mode-map
-    :states '(normal insert visual)
+    :states '(normal visual operator)
     :major-modes t
     "i" '(:ignore t :which-key "insert")
     "g" '(:ignore t :which-key "goto")
@@ -1911,7 +1928,7 @@ Requires shfmt installed on system.
   :config
   (jl/major-modes
     :keymaps 'sh-mode-map
-    :states '(normal insert visual)
+    :states '(normal visual operator)
     :major-modes t
     "=" 'shfmt-buffer)
   )
@@ -1925,7 +1942,7 @@ Not tested. Probably doesn't work.
   :config
   (jl/major-modes
     :keymaps 'sh-mode-map
-    :states '(normal insert visual)
+    :states '(normal visual operator)
     :major-modes t
     "i!" 'insert-shebang)
   )
@@ -2042,7 +2059,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   :hook (python-mode . (lambda ()
                          (jl/major-modes
                            :keymaps 'python-mode-map
-                           :states '(normal insert visual)
+                           :states '(normal visual operator)
                            :major-modes t
                            "'" 'run-python
                            "sb" 'ipython-shell-send-buffer
@@ -3222,9 +3239,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+begin_src elisp
 (defun jl/erc-keys-global ()
   (jl/SPC-keys
-    "ari" 'erc-tls
-    )
-  )
+    "ari" 'erc-tls))
 
 (defun jl/erc-keys ()
   (general-define-key
@@ -3232,9 +3247,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
    :keymaps 'erc-mode-map
    "C-j" 'erc-next-command
    "C-k" 'erc-previous-command
-   "C-l" 'erc-clear-input-ring
-   )
-  )
+   "C-l" 'erc-clear-input-ring))
 #+end_src
 *** Initialisation
 #+begin_src elisp
