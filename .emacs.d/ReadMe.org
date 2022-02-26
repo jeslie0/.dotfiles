@@ -57,7 +57,7 @@
 ;; Set the fixed pitch face
 (set-face-attribute 'fixed-pitch nil :font jl/prog-font :height 110)
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font jl/text-font :height 130)
+(set-face-attribute 'variable-pitch nil :family jl/text-font :height 140)
 
 (set-face-attribute 'cursor nil :background "DarkGoldenrod2")
 (set-face-attribute 'mode-line-active nil :inherit nil)
@@ -988,6 +988,16 @@ Provides better documentation.
   (defvar read-symbol-positions-list nil) ;; bug fix
 )
 #+end_src
+** eldoc
+#+BEGIN_SRC elisp
+(use-package eldoc
+  :defer t
+  :commands (eldoc)
+  :custom
+  (eldoc-echo-area-prefer-doc-buffer t)
+  (eldoc-idle-delay 0.5)
+  (eldoc-echo-area-use-multiline-p nil))
+#+END_SRC
 * Minor modes
 ** Rainbow Delimiters
 #+begin_src elisp
@@ -1230,9 +1240,8 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 #+begin_src elisp
 (defun jl/lsp-keys ()
   (jl/major-modes
-    :keymaps lsp-mode-maps
+    :keymaps 'lsp-mode-map
     :states '(normal visual motion)
-    :major-modes t
     "=" '(:ignore t :which-key "format")
     "==" #'lsp-format-buffer
     "=r" #'lsp-format-region
@@ -1402,6 +1411,45 @@ We need to define a list of major mode maps to use =lsp-mode= in.
   (jl/lsp-ivy-keys)
   )
 #+end_src
+*** Eglot
+**** Keybindings
+These keys work, but require a toggle of evil state before being usable.
+#+BEGIN_SRC elisp
+(defun jl/eglot-keys ()
+  (jl/major-modes
+    :keymaps 'eglot-mode-map
+    :states '(normal visual operator)
+    "="   '(:ignore t :which-key "eglot")
+    "=S"  '(:ignore t :which-key "server")
+    "=B"  '(:ignore t :which-key "buffers")
+
+    "=Se" 'eglot
+    "=Sr" 'eglot-reconnect
+    "=Ss" 'eglot-shutdown
+    "=SS" 'eglot-shutdown-all
+    "=Sc" 'eglot-signal-didChangeConfiguration
+
+    "=r"  'eglot-rename
+    "=f"  'eglot-format
+    "=a"  'eglot-code-actions
+    "=D"  'eldoc
+    "=g"  'xref-find-definitions
+
+    "=Be" 'eglot-events-buffer
+    "=Bs" 'eglot-stderr-buffer))
+#+END_SRC
+**** Initialisation
+#+BEGIN_SRC elisp
+(use-package eglot
+  :defer t
+  :commands (eglot)
+  :custom
+  (eglot-confirm-server-initiated-edits nil)
+  :config
+  (add-to-list 'eglot-server-programs '(LaTeX-mode . ("texlab" "")))
+  (add-to-list 'eglot-server-programs '(python-mode . ("python-language-server" "")))
+  (jl/eglot-keys))
+#+END_SRC
 ** Proof Assistants
 *** Agda
 **** Keybindings
@@ -1410,7 +1458,7 @@ We need to define a list of major mode maps to use =lsp-mode= in.
   "
 ^Next Goal^    ^Previous Goal
 ^^^--------------------------
-[_f_]          [_p_]
+[_f_]          [_b_]
 "
   ("f" agda2-next-goal)
   ("b" agda2-previous-goal)
@@ -1561,9 +1609,13 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 For most programming languages, the development tools will be installed through a nix flake.
 *** Haskell
 **** lsp-haskell
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package lsp-haskell
   :defer t
+  :hook ((haskell-mode . lsp)
+	 (haskell-mode . lsp-mode)
+	 (haskell-literate-mode . lsp)
+	 (haskell-mode . lsp-mode))
   :custom
   (lsp-haskell-server-path "haskell-language-server-wrapper")
   (lsp-haskell-server-args ()))
@@ -1686,11 +1738,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
 #+begin_src elisp
 (use-package haskell-mode
   :defer t
-  :hook ((haskell-mode . lsp)
-	 (haskell-mode . lsp-mode)
-	 (haskell-literate-mode . lsp)
-	 (haskell-mode . lsp-mode)
-	 (haskell-mode . auto-fill-mode))
+  :hook ((haskell-mode . auto-fill-mode))
   :init
   (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
@@ -2375,16 +2423,33 @@ We need a function to find the lsp server when it's installed through a nix shel
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :font jl/prog-font)
   )
   #+end_src
+**** Latex previews
+#+BEGIN_SRC elisp
+(defun jl/org-luasvg ()
+  "Sets up luasvg as a way to render latex fragments"
+  (setq luasvg '(luasvg :programs ("lualatex" "dvisvgm")
+                        :description "dvi > svg"
+                        :message "you need to install lualatex and dvisvgm."
+                        :image-input-type "dvi"
+                        :image-output-type "svg"
+                        :image-size-adjust (1.0 . 1.0)
+                        :latex-compiler ("lualatex --interaction=nonstopmode --shell-escape --output-format=dvi --output-directory=%o %f")
+                        :image-converter ("dvisvgm %f -n -b min -c %S -o %O")))
+
+  (add-to-list 'org-preview-latex-process-alist luasvg))
+
+#+END_SRC
 **** Initialisation
 #+begin_src elisp
 (use-package org
   :defer t
-  :hook (org-mode . jl/org-font-setup)
+  :hook ((org-mode . jl/org-font-setup))
   :init
   (jl/org-mode-Cc-keys)
   :config
   (jl/org-mode-key-bindings)
   (jl/org-font-setup)
+  (jl/org-luasvg)
   (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
   :custom
   (org-ellipsis " ▼")
@@ -2403,6 +2468,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   (org-image-actual-width nil)
   (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
   (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
+  ;; (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
   ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
   ;;                     ;; "~/Documents/Org/GTD/inbox.org"
   ;;                     ;; "~/Documents/Org/GTD/gtd.org"
@@ -2411,10 +2477,10 @@ We need a function to find the lsp server when it's installed through a nix shel
   ;;                     ))
   (org-export-backends '(ascii beamer html icalendar latex md odt))
   ;; Latex in Org
-  (org-preview-latex-default-process 'dvisvgm)
+  (org-preview-latex-default-process 'luasvg)
+  (org-latex-compiler "lualatex")
   (org-highlight-latex-and-related '(latex script entities))
-  (org-format-latex-options '(:foreground default :background default :scale 0.5 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
-					  ("begin" "$1" "$" "$$" "\\(" "\\[")))
+  (org-format-latex-options '(:background "Transparent"))
   (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
   ;; Org capture
   (org-capture-templates
@@ -2986,10 +3052,9 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (auctex-latexmk-setup))
 #+end_src
 **** lsp-latex
-#+BEGIN_SRC  elisp
+#+BEGIN_SRC elisp
 (use-package lsp-latex
-  :defer t
-  :hook ((tex-mode latex-mode bibtex-mode) . lsp))
+  :defer t)
 #+END_SRC
 *** BibTex
 **** Ivy-bibtex
@@ -3687,6 +3752,20 @@ there are no attachments."
     "hh" 'org-mime-htmlize))
 #+END_SRC
 * Avy
+** Functions
+#+BEGIN_SRC elisp
+(defun avy-goto-url ()
+  "Use avy to go to an URL in the buffer."
+  (interactive)
+  (avy-jump "https?://"))
+(defun avy-open-url ()
+  "Use avy to select an URL in the buffer and open it."
+  (interactive)
+  (save-excursion
+    (avy-goto-url)
+    (browse-url-at-point)))
+#+END_SRC
+** Initialisation
 #+begin_src elisp
 (use-package avy
   :defer t
@@ -3695,7 +3774,9 @@ there are no attachments."
   :commands (avy-pop-mark
 	     evil-avy-goto-char-timer
 	     evil-avy-goto-line
-	     evil-avy-goto-word-or-subword-1)
+	     evil-avy-goto-word-or-subword-1
+             avy-goto-url
+             avy-open-url)
   :init
   (general-define-key
    :states '(normal visual motion)
@@ -3704,11 +3785,12 @@ there are no attachments."
     "jb" 'avy-pop-mark
     "jj" 'evil-avy-goto-char-timer
     "jl" 'evil-avy-goto-line
-    "jw" 'evil-avy-goto-word-or-subword-1)
-  )
+    "jw" 'evil-avy-goto-word-or-subword-1
+    "ju" 'avy-goto-url
+    "jU" 'avy-open-url))
   #+end_src
 
-* Auto-complete  and spelling
+* Auto-complete and spelling
 ** Yasnippet
 #+begin_src elisp
 (use-package yasnippet

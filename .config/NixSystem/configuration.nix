@@ -117,11 +117,11 @@ xdg.portal = {
 environment = {
   sessionVariables = {
     QT_SCALE_FACTOR="1";
-    QT_QPA_PLATFORM="wayland";
-    XDG_SESSION_TYPE="wayland";
-    GDK_BACKEND="wayland";
+    # QT_QPA_PLATFORM="wayland";
+    # XDG_SESSION_TYPE="wayland";
+    # GDK_BACKEND="wayland";
     MOZ_ENABLE_WAYLAND = "1";
-    XDG_CURRENT_DESKTOP = "sway";
+    # XDG_CURRENT_DESKTOP = "sway";
     WEBKIT_FORCE_SANDBOX= "0";
   };
   variables = {
@@ -177,6 +177,7 @@ environment.systemPackages = with pkgs;
     magic-wormhole
     pavucontrol
     signal-desktop
+    gurk-rs
     sqlite
     stow
     texlive.combined.scheme-full

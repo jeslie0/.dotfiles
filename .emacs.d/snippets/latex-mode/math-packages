@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: My Math Pacakges
+# key: <math-packages
+# --
+\usepackage{math-macros}
+\usepackage{math-environments}

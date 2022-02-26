@@ -12,8 +12,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Roam/20220223110002-analysis_of_algorithms.org")
- (front-context-string . "#+LATEX_HEADER: ")
- (rear-context-string . "s of Algorithms\n")
- (position . 100))
+ (filename . "~/Documents/Roam/20220225213612-test.org")
+ (front-context-string)
+ (rear-context-string . "\n#+title:  test\n")
+ (position . 83))
 )
