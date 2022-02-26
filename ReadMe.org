@@ -2791,13 +2791,11 @@ environment.systemPackages = with pkgs;
     nix-prefetch-git
     cabal2nix
     # cabal-install
-    haskellPackages.apply-refact
-    haskellPackages.hlint
-    haskellPackages.stylish-haskell
-    haskellPackages.hasktags
-    haskellPackages.hoogle
-    haskellPackages.hindent
-    # zlib # Remove and put into a nix shell
+    # haskellPackages.apply-refact
+    # haskellPackages.hlint
+    # haskellPackages.stylish-haskell
+    # haskellPackages.hasktags
+    # haskellPackages.hindent
 
     playerctl
     wlroots

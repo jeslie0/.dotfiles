@@ -1,2 +1,3 @@
 .config/spotify-tui/client.yml filter=git-crypt diff=git-crypt
 .config/spotify-tui/.spotify_token_cache.json filter=git-crypt diff=git-crypt
+.config/gurk/gurk.toml filter=git-crypt diff=git-crypt

@@ -2447,6 +2447,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   :init
   (jl/org-mode-Cc-keys)
   :config
+  (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
   (jl/org-mode-key-bindings)
   (jl/org-font-setup)
   (jl/org-luasvg)
@@ -2480,7 +2481,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   (org-preview-latex-default-process 'luasvg)
   (org-latex-compiler "lualatex")
   (org-highlight-latex-and-related '(latex script entities))
-  (org-format-latex-options '(:background "Transparent"))
+  ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
   (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
   ;; Org capture
   (org-capture-templates
@@ -3299,7 +3300,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (set-face-attribute 'elpher-gemini-heading3 nil :inherit 'org-level-2)
   )
 #+end_src
-** ERC
+** erc
 *** Keybindings
 #+begin_src elisp
 (defun jl/erc-keys-global ()
@@ -3325,7 +3326,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (erc-server "irc.libera.chat")
   (erc-nick "KanFibration")
   (erc-port "6697")
-  (erc-prompt-for-password nil)
+  ;; (erc-prompt-for-password nil)
   (erc-user-full-name "James Leslie")
   (erc-track-shorten-start 8)
   (erc-autojoin-channels-alist '(("irc.libera.chat"
@@ -3340,6 +3341,14 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (erc-auto-query 'bury)
   :init
   (jl/erc-keys-global)
+  (setq erc-autojoin-channels-alist '(("irc.libera.chat"
+				  ;; "#systemcrafters"
+				  ;; "#emacs"
+				  ;; "##math"
+				  ;; "#categorytheory"
+				  ;; "#haskell"
+				  ;; "#nyxt"
+				  "#nixos")))
   :config
   (jl/erc-keys))
 #+end_src
@@ -3359,6 +3368,24 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (erc-image-inline-rescale 400)
   :after erc)
 #+end_src
+** ement.el
+#+BEGIN_SRC elisp
+(use-package plz
+  :defer t
+ :straight (:host github :repo "alphapapa/plz.el" :branch "master" :files ("*.el")))
+
+(use-package ement
+  :defer t
+  :straight (:host github :repo "alphapapa/ement.el" :branch "master" :files ("*.el"))
+  :commands (ement-connect)
+  :init
+  (jl/SPC-keys
+    :modes '(normal visual operator)
+    "arm" 'ement-connect))
+#+END_SRC
+
+#+RESULTS:
+
 ** EWW
 *** Keybindings
 #+begin_src elisp
@@ -3751,6 +3778,10 @@ there are no attachments."
     "ho" 'org-mime-edit-mail-in-org-mode
     "hh" 'org-mime-htmlize))
 #+END_SRC
+** Signal
+#+BEGIN_SRC elisp
+
+#+END_SRC
 * Avy
 ** Functions
 #+BEGIN_SRC elisp
@@ -4090,20 +4121,23 @@ SCOPE can be:
 #+END_SRC
 * Shells
 ** Term
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package term
-  :config
-  (setq explicit-shell-file-name "bash") ;; Change this to zsh, etc
+  :commands (term)
+  :defer t
+  :custom
+  (explicit-shell-file-name "bash") ;; Change this to zsh, etc
   ;;(setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific args
 
   ;; Match the default Bash shell prompt.  Update this if you have a custom prompt
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+  (term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 #+END_SRC
 *** eterm 256colours
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package eterm-256color
-  :hook (term-mode . eterm-256color-mode)
-  )
+  :defer t
+  :after term
+  :hook (term-mode . eterm-256color-mode))
 #+END_SRC
 ** Vterm
 #+BEGIN_SRC elisp
@@ -4151,8 +4185,7 @@ SCOPE can be:
    eshell-scroll-to-bottom-on-input t))
 
 (use-package eshell-git-prompt
-  :defer t
-  :after eshell)
+  :defer t)
 
 
 (use-package eshell
@@ -4170,7 +4203,6 @@ SCOPE can be:
 
   (eshell-git-prompt-use-theme 'powerline))
 #+END_SRC
-
 * Fun
 ** Snow
 #+BEGIN_SRC elisp :tangle no
