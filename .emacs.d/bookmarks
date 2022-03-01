@@ -12,8 +12,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Roam/20220225213612-test.org")
+ (filename . "~/Documents/Roam/20220228131838-cv.org")
  (front-context-string)
- (rear-context-string . "\n#+title:  test\n")
- (position . 83))
+ (rear-context-string . "ND:\n#+title: CV\n")
+ (position . 80))
 )

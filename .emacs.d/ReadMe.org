@@ -821,7 +821,6 @@ If the universal prefix argument is used then kill also the window."
   :after (projectile counsel)
   :config (counsel-projectile-mode))
 #+end_src
-
 ** Magit
 *** Keybindings
 #+begin_src elisp
@@ -2856,6 +2855,31 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :after org
   :straight org)
 #+end_src
+**** org-cv
+#+BEGIN_SRC elisp :tangle no
+(use-package ox-altacv
+  :after org
+  :straight (:host github :repo "Titan-C/org-cv" :branch "master" :files ("ox-altacv.el" "org-cv-utils.el"))
+  :config
+  (defun make-cv ()
+    "Makes a CV from the org file"
+    (interactive)
+    (org-export-to-file 'altacv "mycv.tex")
+    (org-latex-compile "mycv.tex"))
+
+  (jl/major-modes
+    :keymaps 'org-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "ec" 'make-cv))
+#+END_SRC
+**** ox-extra
+#+BEGIN_SRC elisp
+(use-package ox-extra
+  :after org
+  :config
+  (ox-extras-activate '(latex-header-blocks ignore-headlines)))
+#+END_SRC
 *** LaTeX
 **** Functions
 #+begin_src elisp
@@ -3722,11 +3746,10 @@ there are no attachments."
   :defer t
   :commands mu4e
   :straight nil
-  ;; :load-path "/run/current-system/sw/share/emacs/site-lisp/mu4e/"
-  ;; :load-path "~/MU4E"
-  ;; :hook ((mu4e-compose-mode . visual-fill-column-mode)
-  ;; 	 (mu4e-compose-mode . variable-pitch-mode)
-  ;; 	 (mu4e-view-mode . visual-fill-column-mode))
+  :hook ((mu4e-compose-mode . visual-fill-column-mode)
+	 (mu4e-compose-mode . variable-pitch-mode)
+	 (mu4e-view-mode . visual-fill-column-mode)
+         (message-mode . mu4e-compose-mode))
   :init
   (jl/mu4e-global-keys)
   :config
@@ -4218,11 +4241,17 @@ SCOPE can be:
 #+END_SRC
 
 * Direnv
-#+BEGIN_SRC elisp
+** direnv
+#+BEGIN_SRC elisp :tangle no
 (use-package direnv
   :defer 2
   :config
   (direnv-mode)
   :custom
   (direnv-always-show-summary nil))
+#+END_SRC
+** envrc
+#+BEGIN_SRC elisp
+(use-package envrc
+  :defer 2)
 #+END_SRC

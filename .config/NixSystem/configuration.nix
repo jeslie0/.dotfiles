@@ -177,7 +177,6 @@ environment.systemPackages = with pkgs;
     magic-wormhole
     pavucontrol
     signal-desktop
-    gurk-rs
     sqlite
     stow
     texlive.combined.scheme-full
@@ -224,6 +223,7 @@ environment.systemPackages = with pkgs;
     sbcl
 
     ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
+    (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
   ];
 
 programs.light.enable = true;
