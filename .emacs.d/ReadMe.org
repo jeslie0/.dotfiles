@@ -307,12 +307,10 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
   "C-v" '(:ignore t :which-key "Rectangles")
   "m" '(:ignore t :which-key "major mode")
 
-  "SPC" '(counsel-M-x :which-key "M-x")
 
   "!" 'eshell
   "fc" 'copy-file
   "fd" 'delete-file-and-buffer
-  "ff" '(counsel-find-file :which-key "find file")
   "fed" '(find-emacs-dotfile :which-key "Open init file")
   "fnd" '(find-system-dotfile :which-key "Open dotfiles")
   "fE" '(sudo-edit :which-key "Edit with sudo...")
@@ -323,13 +321,11 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 
 
   "ts" '(hydra-text-scale/body :which-key "scale text")
-  "tt" '(counsel-load-theme :which-key "choose theme")
 
   "w-" 'split-window-below
   "w/" 'split-window-right
   "wd" 'delete-window
 
-  "/" 'counsel-rg
   )
 #+end_src
 ** Misc
@@ -621,8 +617,6 @@ If the universal prefix argument is used then kill also the window."
         (kill-buffer-and-window)
       (kill-buffer)))
   )
-
-
 (defun toggle-centered-buffer ()
   "Toggle visual centering of the current buffer."
   (interactive)
@@ -652,8 +646,6 @@ If the universal prefix argument is used then kill also the window."
     "b'" 'persp-switch-by-number
     "ba" 'persp-add-buffer
     "bA" 'persp-set-buffer
-    "bb" '(persp-counsel-switch-buffer :which-key "show local buffers")
-    "bB" '(counsel-ibuffer :which-key "show all buffers") ;; DON'T USE THIS, USE C-u SPC b b
     "bD" 'persp-remove-buffer
     "bd" '(jl/kill-this-buffer :which-key: "kill-this-buffer")
     "bi" 'persp-import
@@ -726,8 +718,9 @@ If the universal prefix argument is used then kill also the window."
   (dashboard-setup-startup-hook)
   )
 #+end_src
-* Ivy and Counsel completion framework
-#+begin_src elisp
+* Completion frameworks
+** Ivy and Counsel
+#+begin_src elisp :tangle no
 (use-package ivy
   :diminish ;; Hides minor mode from mode-line minor mode list
   :bind (("C-s" . swiper)
@@ -756,7 +749,14 @@ If the universal prefix argument is used then kill also the window."
          :map minibuffer-local-map
          ("C-f" . 'counsel-minibuffer-history))
   :init
-  (counsel-mode 1))
+  (counsel-mode 1)
+  (jl/SPC-keys
+  "SPC" '(counsel-M-x :which-key "M-x")
+  "ff" '(counsel-find-file :which-key "find file")
+  "tt" '(counsel-load-theme :which-key "choose theme")
+  "bb" '(persp-counsel-switch-buffer :which-key "show local buffers")
+  "bB" '(counsel-ibuffer :which-key "show all buffers") ;; DON'T USE THIS, USE C-u SPC b b
+  "/" 'counsel-rg))
 
 (use-package ivy-rich
   :after (ivy counsel)
@@ -778,6 +778,106 @@ If the universal prefix argument is used then kill also the window."
   (ivy-prescient-mode 1)
   (prescient-persist-mode 1))
   #+end_src
+** Vertico
+*** Functions
+#+BEGIN_SRC elisp
+(defun minibuffer-backward-kill (arg)
+  "When minibuffer is completing a file name delete up to parent
+folder, otherwise delete a character backward"
+  (interactive "p")
+  (if minibuffer-completing-file-name
+      ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+      (if (string-match-p "/." (minibuffer-contents))
+          (zap-up-to-char (- arg) ?/)
+        (delete-minibuffer-contents))
+      (delete-backward-char arg)))
+#+END_SRC
+*** Initialisation
+#+BEGIN_SRC elisp
+(use-package vertico
+  :defer t
+  :bind (:map vertico-map
+              ("C-j" . vertico-next)
+              ("C-k" . vertico-previous)
+              ("C-g" . vertico-exit)
+              :map minibuffer-local-map
+              ("<backspace>" . minibuffer-backward-kill)
+              ("S-<backspace>"  . backward-delete-char))
+  :custom
+  (vertico-cycle t)
+  :init
+  (vertico-mode))
+#+END_SRC
+*** Marginalia
+#+BEGIN_SRC elisp
+(use-package marginalia
+  :after vertico
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :init
+  (marginalia-mode))
+#+END_SRC
+*** Consult
+#+BEGIN_SRC elisp
+(use-package consult
+  :commands (execute-extended-command
+             consult-imenu
+             find-file
+             consult-theme
+             persp-switch-to-buffer*
+             consult-ripgrep
+             consult-line)
+  :bind (("C-s" . consult-line))
+  :init
+  (jl/SPC-keys
+    "SPC" '(execute-extended-command :which-key "M-x")
+    "C-s" 'consult-imenu
+    "C-RET" 'consult-minor-mode-menu
+    "ff" '(find-file :which-key "find file")
+    "tt" '(consult-theme :which-key "choose theme")
+    "bb" 'persp-switch-to-buffer*
+    "/"  'consult-ripgrep)
+  (jl/major-modes
+    :keymaps 'org-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "C-s" 'consult-org-heading))
+#+END_SRC
+*** Orderless
+Allows for partial searching in vertico.
+#+BEGIN_SRC elisp
+(use-package orderless
+  :defer t
+  :after vertico
+  :custom
+  (completion-styles '(orderless)))
+#+END_SRC
+*** all-the-icons-completion
+#+BEGIN_SRC elisp
+(use-package all-the-icons-completion
+  :after marginalia
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
+#+END_SRC
+*** savehist
+#+BEGIN_SRC elisp
+(use-package savehist
+  :defer t
+  :after consult
+  :init
+  (savehist-mode))
+#+END_SRC
+*** App launcher
+#+BEGIN_SRC elisp
+(use-package app-launcher
+  :defer t
+  :straight '(app-launcher :host github :repo "SebastienWae/app-launcher")
+  :commands (app-launcher-run-app)
+  :init
+  (jl/SPC-keys
+    "RET" 'app-launcher-run-app))
+#+END_SRC
 * Project Management
 ** Projectile
 *** Keybindings
@@ -987,7 +1087,7 @@ Provides better documentation.
   (defvar read-symbol-positions-list nil) ;; bug fix
 )
 #+end_src
-** eldoc
+** Eldoc
 #+BEGIN_SRC elisp
 (use-package eldoc
   :defer t
@@ -2602,6 +2702,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   (org-roam-v2-ack t)
   (org-roam-graph-viewer #'browse-url-firefox)
   (org-roam-directory "/home/james/Documents/Roam/")
+  (org-roam-node-display-template (concat "${title:*} " (propertize "${tags}" 'face 'org-tag)))
   :init
   (jl/org-roam-global-keys)
   :config
@@ -4080,11 +4181,11 @@ SCOPE can be:
 *** Initialisation
 #+begin_src elisp
 (use-package pandoc-mode
+  :commands (pandoc-main-hydra/body)
   :defer t
   :init
   (jl/pandoc-global-keys))
 #+end_src
-
 ** Iedit
 *** Keybindings
 #+begin_src elisp
@@ -4141,6 +4242,26 @@ SCOPE can be:
   ;;                 (window-system . x)))
 )
 
+#+END_SRC
+** Embark
+*** Initialisation
+#+BEGIN_SRC elisp
+(use-package embark
+  :defer t
+  :commands (embark-act
+             embark-dwim
+             embark-bindings)
+  :bind (("C-." . embark-act)
+         ("M-." . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :custom
+  (prefix-help-command #'embark-prefix-help-command))
+#+END_SRC
+*** embark-consult
+#+BEGIN_SRC elisp
+(use-package embark-consult
+  :defer t
+  :after (embark consult))
 #+END_SRC
 * Shells
 ** Term
