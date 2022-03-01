@@ -221,6 +221,7 @@ environment.systemPackages = with pkgs;
     nixfmt
     mkvtoolnix
     sbcl
+    pandoc
 
     ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
     (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
