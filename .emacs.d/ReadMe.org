@@ -832,7 +832,7 @@ folder, otherwise delete a character backward"
   (jl/SPC-keys
     "SPC" '(execute-extended-command :which-key "M-x")
     "C-s" 'consult-imenu
-    "C-RET" 'consult-minor-mode-menu
+    "C-<return>" 'consult-minor-mode-menu
     "ff" '(find-file :which-key "find file")
     "tt" '(consult-theme :which-key "choose theme")
     "bb" 'persp-switch-to-buffer*
@@ -863,8 +863,7 @@ Allows for partial searching in vertico.
 *** savehist
 #+BEGIN_SRC elisp
 (use-package savehist
-  :defer t
-  :after consult
+  :after vertico
   :init
   (savehist-mode))
 #+END_SRC
@@ -3329,26 +3328,26 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "are" 'elfeed))
 #+end_src
 *** Initialisation
+#+BEGIN_SRC elisp :tangle no
+(use-package elfeed)
+#+END_SRC
 #+begin_src elisp
 (use-package elfeed
   :commands (elfeed)
   :defer t
   :custom
   (elfeed-feeds '(;;Mathematics
-		  ("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
-		  ("https://homotopytypetheory.org/feed.xml" mathematics)
-		  ("https://terrytao.wordpress.com/feed.xml" mathematics)
-		  ("https://gowers.wordpress.com/feed.xml" mathematics)
-		  ("https://jadeedenstarmaster.wordpress.com/feed.xml" mathematics)
-		  ("https://bartoszmilewski.com/feed.xml" mathematics)
-		  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
-		  ("https://jeslie0.github.io/feed.xml" mathematics)
-
-		  ;; Webcomics
-		  ("https://xkcd.com/atom.xml" webcomic)
-		  ("https://www.smbc-comics.com/comic/rss" webcomic)
-		  ))
-  (elfeed-feeds '(("~/jeslie0.github.io/RSS/rss.xml")))
+        	  ("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
+        	  ("https://homotopytypetheory.org/feed.xml" mathematics)
+        	  ("https://terrytao.wordpress.com/feed.xml" mathematics)
+        	  ("https://gowers.wordpress.com/feed.xml" mathematics)
+        	  ("https://bartoszmilewski.com/feed.xml" mathematics)
+        	  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
+        	  ("https://jeslie0.github.io/rss.xml" mathematics)
+                  ("https://www.mohabatmath.ca/feed.xml" mathematics)
+        	  ;; Webcomics
+        	  ("https://xkcd.com/atom.xml" webcomic)
+                  ))
   :init
   (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/bookmarks"))
@@ -3360,11 +3359,20 @@ Calling org-babel languages in the following form saves a lot on startup time.
   )
 #+end_src
 *** Elfeed Goodies
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package elfeed-goodies
   :after elfeed
   :config
   (elfeed-goodies/setup))
+#+END_SRC
+*** Elfeed score
+#+BEGIN_SRC elisp
+(use-package elfeed-score
+  :defer t
+  :after elfeed
+  :config
+  (elfeed-score-enable)
+  )
 #+END_SRC
 ** Elpher
 *** Keybindings
@@ -3976,7 +3984,7 @@ there are no attachments."
 
 ** Company mode
 *** Initialisation
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package company
   :defer t
   :hook ((prog-mode text-mode) . company-mode)
@@ -3985,7 +3993,7 @@ there are no attachments."
   )
 #+end_src
 *** Prescient company
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package company-prescient
   :after company
   :config
@@ -3993,7 +4001,7 @@ there are no attachments."
   )
 #+END_SRC
 *** Company-shell
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package company-shell
   :defer t
   :after sh
@@ -4001,7 +4009,84 @@ there are no attachments."
   (add-to-list 'company-backends 'company-shell)
   )
 #+END_SRC
+** Corfu
+*** Initialisation
+#+BEGIN_SRC elisp
+(use-package corfu
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("C-j" . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous)
+        ("C-k" . corfu-previous))
+  :custom
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-separator ?\s)          ;; Orderless field separator
+  (corfu-quit-at-boundary t)     ;; Quit at completion boundary
+  (corfu-quit-no-match t)        ;; Quit if there is no match
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  (corfu-preselect-first t)      ;; Enable candidate preselection
+  (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  (corfu-echo-documentation nil) ;; Disable documentation in the echo area
+  (corfu-scroll-margin 5)        ;; Use scroll margin
+  ;; Works with `indent-for-tab-command'. Make sure tab doesn't indent when you
+  ;; want to perform completion
+  (tab-always-indent 'complete)
 
+  ;; You may want to enable Corfu only for certain modes.
+  :hook ((prog-mode . corfu-mode)
+         (text-mode . corfu-mode)
+         (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.
+  ;; This is recommended since dabbrev can be used globally (M-/).
+  :config
+  (corfu-global-mode)
+  :init
+  (general-define-key
+   :states 'insert
+   :keymaps 'corfu-map
+   "<escape>" 'corfu-quit))
+#+END_SRC
+*** kind-icon
+#+BEGIN_SRC elisp
+(use-package kind-icon
+  :after corfu
+  :custom
+  (kind-icon-default-face 'corfu-default) ; to compute blended backgrounds correctly
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+END_SRC
+*** corfu-doc
+#+BEGIN_SRC elisp
+(use-package corfu-doc
+  ;; NOTE 2022-02-05: At the time of writing, `corfu-doc' is not yet on melpa
+  :straight (corfu-doc :type git :host github :repo "galeo/corfu-doc")
+  :after corfu
+  :hook (corfu-mode . corfu-doc-mode)
+  :custom
+  (corfu-doc-delay 0.5)
+  (corfu-doc-max-width 70)
+  (corfu-doc-max-height 20)
+
+  ;; NOTE 2022-02-05: I've also set this in the `corfu' use-package to be
+  ;; extra-safe that this is set when corfu-doc is loaded. I do not want
+  ;; documentation shown in both the echo area and in the `corfu-doc' popup.
+  (corfu-echo-documentation nil))
+#+END_SRC
+*** cape
+#+BEGIN_SRC elisp
+(use-package cape
+  :after corfu
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-ispell)
+  (add-to-list 'completion-at-point-functions #'cape-tex)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+#+END_SRC
 ** Flycheck
 #+begin_src elisp
 (use-package flycheck
@@ -4270,7 +4355,7 @@ SCOPE can be:
   :commands (term)
   :defer t
   :custom
-  (explicit-shell-file-name "bash") ;; Change this to zsh, etc
+  (explicit-shell-file-name "fish") ;; Change this to zsh, etc
   ;;(setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific args
 
   ;; Match the default Bash shell prompt.  Update this if you have a custom prompt
@@ -4347,6 +4432,37 @@ SCOPE can be:
 
   (eshell-git-prompt-use-theme 'powerline))
 #+END_SRC
+*** eshell-did-you-mean
+#+BEGIN_SRC elisp
+(use-package eshell-did-you-mean
+  :straight (:host github :repo "xuchunyang/eshell-did-you-mean" :branch "master" :files ("*.el"))
+  :after eshell
+  :config
+  (eshell-did-you-mean-setup))
+#+END_SRC
+*** esh-help
+#+BEGIN_SRC elisp
+(use-package esh-help
+  :after eshell
+  :hook (eshell-mode . eldoc-mode)
+  :config
+  (setup-esh-help-eldoc))
+#+END_SRC
+*** eshell-syntax-highlighting
+#+BEGIN_SRC elisp
+(use-package eshell-syntax-highlighting
+  :after eshell
+  :config
+  (eshell-syntax-highlighting-global-mode +1))
+#+END_SRC
+*** emacs-fish-completion
+#+BEGIN_SRC elisp
+(when (executable-find "fish")
+  (use-package fish-completion
+    :after eshell
+    :config
+    (global-fish-completion-mode)))
+#+END_SRC
 * Fun
 ** Snow
 #+BEGIN_SRC elisp :tangle no
@@ -4374,5 +4490,7 @@ SCOPE can be:
 ** envrc
 #+BEGIN_SRC elisp
 (use-package envrc
-  :defer 2)
+  :defer 2
+  :config
+  (envrc-global-mode))
 #+END_SRC
