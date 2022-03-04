@@ -30,16 +30,19 @@ networking.interfaces.wlp59s0.useDHCP = true;
 
 # Enable the OpenSSH daemon.
 services.openssh.enable = true;
+# services.openssh.extraConfig = ''
+# AllowAgentForwarding yes
+# '';
 
 # Disable ipv6 for vpn
 networking.enableIPv6 = false;
 boot.kernelParams = [ "ipv6.disable=1" ];
 
-  # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 2000 ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  networking.firewall.enable = true;
+# Open ports in the firewall.
+networking.firewall.allowedTCPPorts = [ 2000 ];
+# networking.firewall.allowedUDPPorts = [ ... ];
+# Or disable the firewall altogether.
+networking.firewall.enable = true;
 
 # Bluetooth
 services.blueman.enable = true;
@@ -207,8 +210,19 @@ environment.systemPackages = with pkgs;
     syncthing
     home-manager
     spotify
-    ripgrep
     python39
+
+    fish
+    oh-my-fish
+    ripgrep
+    bat
+    exa
+    lsd
+    du-dust
+    fd
+    tldr
+    gping
+    zoxide
 
     mu
     coq
