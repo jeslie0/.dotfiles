@@ -1,5 +1,5 @@
 #+Title: James' Emacs Configuration
-#+PROPERTY: header-args:elisp :tangle ./init.el
+#+PROPERTY: header-args:elisp :tangle ./init.el :results none
 #+options: toc:t
 #+attr_html: :width 300px
 [[file:Icons/EmacsLogo.svg]]
@@ -380,6 +380,8 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
 *** Evil
 #+begin_src elisp
 (use-package evil
+
+
   :custom
   (evil-want-keybinding nil)
   (evil-normal-state-cursor '("#DAA520" box))
@@ -390,7 +392,7 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
-  )
+  (define-key evil-insert-state-map (kbd "C-k") nil))
 #+end_src
 *** Evil collection
 #+begin_src elisp
@@ -425,8 +427,7 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
   :config
   (evil-escape-mode)
   (setq-default evil-escape-key-sequence "jk")
-  (setq-default evil-escape-delay 0.2)
-  )
+  (setq-default evil-escape-delay 0.2))
 #+END_SRC
 ** Which-key
 Adds the popup for key commands with mulitple key presses.
@@ -1073,14 +1074,17 @@ Allows for partial searching in vertico.
 Provides better documentation.
 #+begin_src elisp
 (use-package helpful
-  :after ivy
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
+  ;; :after ivy
+  :after vertico
+  ;; :custom
+  ;; (counsel-describe-function-function #'helpful-callable)
+  ;; (counsel-describe-variable-function #'helpful-variable)
   :bind
-  ([remap describe-function] . counsel-describe-function)
+  ;; ([remap describe-function] . counsel-describe-function)
+  ([remap describe-function] . helpful-function)
   ([remap describe-command]  . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
+  ;; ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-variable] . helpful-variable)
   ([remap describe-key]      . helpful-key)
   :init
   (defvar read-symbol-positions-list nil) ;; bug fix
@@ -1705,6 +1709,194 @@ These keys work, but require a toggle of evil state before being usable.
 #+END_SRC
 ** Programming Languages
 For most programming languages, the development tools will be installed through a nix flake.
+*** TODO Emacs-lisp
+**** Ielm
+#+BEGIN_SRC elisp
+(use-package ielm
+  :defer t
+  :init
+  (jl/major-modes
+    :states '(normal operator motion)
+    :keymaps 'inferior-emacs-lisp-mode-map
+    :major-modes t
+    "hh" 'helpful-at-point)
+
+  (jl/major-modes
+    :states '(normal operator motion)
+    :keymaps 'emacs-lisp-mode-map
+    :major-modes t
+    "s" '(:ignore t :which-key "ielm")
+    "'" 'ielm
+    "si" 'ielm
+    )
+  )
+#+END_SRC
+**** Debug
+#+BEGIN_SRC elisp
+(use-package debug
+  :defer t
+  )
+
+(use-package edebug
+  :defer t
+  :config
+  (jl/major-modes
+    :keymaps 'edebug-eval-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "g" '(:ignore t :which-key "goto")
+    "e" '(:ignore t :which-key "eval")
+    "gw" 'edebug-where
+    "a" 'edebug-delete-eval-item
+    "k" 'edebug-delete-eval-item
+    "," 'edebug-update-eval-list
+    "c" 'edebug-update-eval-list
+    "ee" 'edebug-eval-last-sexp
+    "eE" 'edebug-eval-print-last-sexp
+    )
+  )
+
+#+END_SRC
+*** TODO Common-lisp
+**** Slime
+***** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/clisp-major-keys ()
+  (jl/major-modes
+    :keymaps 'lisp-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "h" '(:ignore t :which-key "help")
+    "e" '(:ignore t :which-key "eval")
+    "s" '(:ignore t :which-key "repl")
+    "c" '(:ignore t :which-key "compile")
+    "g" '(:ignore t :which-key "nav")
+    "m" '(:ignore t :which-key "macro")
+    "t" '(:ignore t :which-key "toggle")
+    "'" 'slime
+
+    "cc" 'slime-compile-file
+    "cC" 'slime-compile-and-load-file
+    "cl" 'slime-load-file
+    "cf" 'slime-compile-defun
+    "cr" 'slime-compile-region
+    "cn" 'slime-remove-notes
+
+    "eb" 'slime-eval-buffer
+    "ef" 'slime-eval-defun
+    "eF" 'slime-undefine-function
+    "ee" 'slime-eval-last-expression
+    "el" 'spacemacs/slime-eval-sexp-end-of-line
+    "er" 'slime-eval-region
+
+    "gb" 'slime-pop-find-definition-stack
+    "gn" 'slime-next-note
+    "gN" 'slime-previous-note
+
+    "ha" 'slime-apropos
+    "hA" 'slime-apropos-all
+    "hd" 'slime-disassemble-symbol
+    "hh" 'slime-describe-symbol
+    "hH" 'slime-hyperspec-lookup
+    "hi" 'slime-inspect-definition
+    "hp" 'slime-apropos-package
+    "ht" 'slime-toggle-trace-fdefinition
+    "hT" 'slime-untrace-all
+    "h<" 'slime-who-calls
+    "h>" 'slime-calls-who
+    ;; TODO: Add key bindings for who binds/sets globals?
+    "hr" 'slime-who-references
+    "hm" 'slime-who-macroexpands
+    "hs" 'slime-who-specializes
+
+    "ma" 'slime-macroexpand-all
+    "mo" 'slime-macroexpand-1
+
+    "se" 'slime-eval-last-expression-in-repl
+    "si" 'slime
+    "sq" 'slime-quit-lisp
+
+    "tf" 'slime-toggle-fancy-trace)
+  )
+#+END_SRC
+***** Initialisation
+#+BEGIN_SRC elisp
+(use-package slime
+  :defer t
+  :init
+  (setq inferior-lisp-program "sbcl")
+  :config
+  (jl/clisp-major-keys)
+  )
+
+#+END_SRC
+**** TODO evil-lisp-state
+#+BEGIN_SRC elisp :tangle no
+(use-package evil-lisp-state
+  :defer t
+  :config
+  (evil-lisp-state-leader ",,"))
+#+END_SRC
+**** evil-cleverparens
+#+BEGIN_SRC elisp
+(use-package evil-cleverparens
+  :hook ((common-lisp-mode emacs-lisp-mode) . evil-cleverparens-mode)
+  :defer t)
+#+END_SRC
+*** TODO C
+*** Elm
+**** Keybindings
+#+BEGIN_SRC elisp
+(defun jl/elm-keys ()
+  "Keybindings for elm major mode"
+  (jl/major-modes
+    :keymaps 'elm-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "m" '(:ignore t :which-key "make")
+    "s" '(:ignore t :which-key "repl")
+    "r" '(:ignore t :which-key "reactor")
+    "p" '(:ignore t :which-key "package")
+
+    "mc" 'elm-compile-buffer
+    "mm" 'elm-compile-main
+    "ma" 'elm-compile-add-annotations
+    "mr" 'elm-compile-clean-imports
+
+    "sl" 'elm-repl-load
+    "sp" 'elm-repl-push
+    "se" 'elm-repl-push-decl
+
+    "rn" 'elm-preview-buffer
+    "rm" 'elm-preview-main
+
+    "pd" 'elm-documentation-lookup
+    "pi" 'elm-import
+    "ps" 'elm-sort-imports
+    "pk" 'elm-package-catalog
+    "pK" 'elm-package-refresh-contents)
+
+  (when (executable-find "elm-format")
+    (jl/major-modes
+      :keymaps 'elm-mode-map
+      :states '(normal visual operator)
+      :major-modes t
+      "f" 'elm-format-buffer))
+
+  (when (executable-find "elm-test")
+    (jl/major-modes
+      :keymaps 'elm-mode-map
+      :states '(normal visual operator)
+      :major-modes t
+      "v" 'elm-test-project)))
+#+END_SRC
+**** Initialisation
+#+BEGIN_SRC elisp
+(use-package elm-mode
+  :defer t
+  :config
+  (jl/elm-keys))
+#+END_SRC
 *** Haskell
 **** lsp-haskell
 #+begin_src elisp :tangle no
@@ -1891,140 +2083,6 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   (jl/hlint-keys)
   )
 #+end_src
-*** TODO Emacs-lisp
-**** Ielm
-#+BEGIN_SRC elisp
-(use-package ielm
-  :defer t
-  :init
-  (jl/major-modes
-    :states '(normal operator motion)
-    :keymaps 'inferior-emacs-lisp-mode-map
-    :major-modes t
-    "hh" 'helpful-at-point)
-
-  (jl/major-modes
-    :states '(normal operator motion)
-    :keymaps 'emacs-lisp-mode-map
-    :major-modes t
-    "s" '(:ignore t :which-key "ielm")
-    "'" 'ielm
-    "si" 'ielm
-    )
-  )
-#+END_SRC
-**** Debug
-#+BEGIN_SRC elisp
-(use-package debug
-  :defer t
-  )
-
-(use-package edebug
-  :defer t
-  :config
-  (jl/major-modes
-    :keymaps 'edebug-eval-mode-map
-    :states '(normal visual operator)
-    :major-modes t
-    "g" '(:ignore t :which-key "goto")
-    "e" '(:ignore t :which-key "eval")
-    "gw" 'edebug-where
-    "a" 'edebug-delete-eval-item
-    "k" 'edebug-delete-eval-item
-    "," 'edebug-update-eval-list
-    "c" 'edebug-update-eval-list
-    "ee" 'edebug-eval-last-sexp
-    "eE" 'edebug-eval-print-last-sexp
-    )
-  )
-
-#+END_SRC
-*** TODO Common-lisp
-**** Slime
-***** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/clisp-major-keys ()
-  (jl/major-modes
-    :keymaps 'lisp-mode-map
-    :states '(normal visual operator)
-    :major-modes t
-    "h" '(:ignore t :which-key "help")
-    "e" '(:ignore t :which-key "eval")
-    "s" '(:ignore t :which-key "repl")
-    "c" '(:ignore t :which-key "compile")
-    "g" '(:ignore t :which-key "nav")
-    "m" '(:ignore t :which-key "macro")
-    "t" '(:ignore t :which-key "toggle")
-    "'" 'slime
-
-    "cc" 'slime-compile-file
-    "cC" 'slime-compile-and-load-file
-    "cl" 'slime-load-file
-    "cf" 'slime-compile-defun
-    "cr" 'slime-compile-region
-    "cn" 'slime-remove-notes
-
-    "eb" 'slime-eval-buffer
-    "ef" 'slime-eval-defun
-    "eF" 'slime-undefine-function
-    "ee" 'slime-eval-last-expression
-    "el" 'spacemacs/slime-eval-sexp-end-of-line
-    "er" 'slime-eval-region
-
-    "gb" 'slime-pop-find-definition-stack
-    "gn" 'slime-next-note
-    "gN" 'slime-previous-note
-
-    "ha" 'slime-apropos
-    "hA" 'slime-apropos-all
-    "hd" 'slime-disassemble-symbol
-    "hh" 'slime-describe-symbol
-    "hH" 'slime-hyperspec-lookup
-    "hi" 'slime-inspect-definition
-    "hp" 'slime-apropos-package
-    "ht" 'slime-toggle-trace-fdefinition
-    "hT" 'slime-untrace-all
-    "h<" 'slime-who-calls
-    "h>" 'slime-calls-who
-    ;; TODO: Add key bindings for who binds/sets globals?
-    "hr" 'slime-who-references
-    "hm" 'slime-who-macroexpands
-    "hs" 'slime-who-specializes
-
-    "ma" 'slime-macroexpand-all
-    "mo" 'slime-macroexpand-1
-
-    "se" 'slime-eval-last-expression-in-repl
-    "si" 'slime
-    "sq" 'slime-quit-lisp
-
-    "tf" 'slime-toggle-fancy-trace)
-  )
-#+END_SRC
-***** Initialisation
-#+BEGIN_SRC elisp
-(use-package slime
-  :defer t
-  :init
-  (setq inferior-lisp-program "sbcl")
-  :config
-  (jl/clisp-major-keys)
-  )
-
-#+END_SRC
-**** TODO evil-lisp-state
-#+BEGIN_SRC elisp :tangle no
-(use-package evil-lisp-state
-  :defer t
-  :config
-  (evil-lisp-state-leader ",,"))
-#+END_SRC
-**** evil-cleverparens
-#+BEGIN_SRC elisp
-(use-package evil-cleverparens
-  :hook ((common-lisp-mode emacs-lisp-mode) . evil-cleverparens-mode)
-  :defer t)
-#+END_SRC
 *** Shell
 **** Keybindings
 #+BEGIN_SRC elisp
@@ -2174,7 +2232,6 @@ We actually install the language server through Emacs, so we don't need to worry
                        (require 'lsp-java)
                        (setq lsp-java-server-install-dir "~/emacs-packages/java-language-server/"))))
 #+END_SRC
-*** TODO C
 *** Python
 **** Python LSP
 We need a function to find the lsp server when it's installed through a nix shell.
@@ -3857,8 +3914,7 @@ there are no attachments."
   :straight nil
   :hook ((mu4e-compose-mode . visual-fill-column-mode)
 	 (mu4e-compose-mode . variable-pitch-mode)
-	 (mu4e-view-mode . visual-fill-column-mode)
-         (message-mode . mu4e-compose-mode))
+	 (mu4e-view-mode . visual-fill-column-mode))
   :init
   (jl/mu4e-global-keys)
   :config
@@ -4045,11 +4101,7 @@ there are no attachments."
   ;; This is recommended since dabbrev can be used globally (M-/).
   :config
   (corfu-global-mode)
-  :init
-  (general-define-key
-   :states 'insert
-   :keymaps 'corfu-map
-   "<escape>" 'corfu-quit))
+)
 #+END_SRC
 *** kind-icon
 #+BEGIN_SRC elisp
@@ -4061,14 +4113,14 @@ there are no attachments."
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 #+END_SRC
 *** corfu-doc
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package corfu-doc
   ;; NOTE 2022-02-05: At the time of writing, `corfu-doc' is not yet on melpa
   :straight (corfu-doc :type git :host github :repo "galeo/corfu-doc")
   :after corfu
   :hook (corfu-mode . corfu-doc-mode)
   :custom
-  (corfu-doc-delay 0.5)
+  (corfu-doc-delay 1.5)
   (corfu-doc-max-width 70)
   (corfu-doc-max-height 20)
 
@@ -4081,11 +4133,19 @@ there are no attachments."
 #+BEGIN_SRC elisp
 (use-package cape
   :after corfu
+  :config
+  ;; Silence the pcomplete capf, no errors or messages!
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+
+  ;; Ensure that pcomplete does not write to the buffer
+  ;; and behaves as a pure `completion-at-point-function'.
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
   :init
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-tex)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  )
 #+END_SRC
 ** Flycheck
 #+begin_src elisp
@@ -4424,6 +4484,10 @@ SCOPE can be:
   :init
   (jl/eshell-global-keys)
   :config
+  (general-define-key
+    :keymaps 'eshell-mode-map
+    "C-j" 'eshell-next-matching-input-from-input
+    "C-k" 'eshell-previous-matching-input-from-input)
   (defalias 'eshell/d 'dired)
 
   (with-eval-after-load 'esh-opt
