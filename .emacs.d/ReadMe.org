@@ -781,7 +781,7 @@ If the universal prefix argument is used then kill also the window."
   #+end_src
 ** Vertico
 *** Functions
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (defun minibuffer-backward-kill (arg)
   "When minibuffer is completing a file name delete up to parent
 folder, otherwise delete a character backward"
@@ -796,14 +796,21 @@ folder, otherwise delete a character backward"
 *** Initialisation
 #+BEGIN_SRC elisp
 (use-package vertico
+  :straight (vertico :includes vertico-directory
+                     :files (:defaults "extensions/vertico-directory.el"))
   :defer t
   :bind (:map vertico-map
               ("C-j" . vertico-next)
               ("C-k" . vertico-previous)
               ("C-g" . vertico-exit)
-              :map minibuffer-local-map
-              ("<backspace>" . minibuffer-backward-kill)
-              ("S-<backspace>"  . backward-delete-char))
+              ;; :map minibuffer-local-map
+              ;; ("<backspace>" . minibuffer-backward-kill)
+              ;; ("S-<backspace>"  . backward-delete-char)
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
   :custom
   (vertico-cycle t)
   :init
@@ -1543,12 +1550,11 @@ These keys work, but require a toggle of evil state before being usable.
 **** Initialisation
 #+BEGIN_SRC elisp
 (use-package eglot
-  :defer t
   :commands (eglot)
   :custom
   (eglot-confirm-server-initiated-edits nil)
   :config
-  (add-to-list 'eglot-server-programs '(LaTeX-mode . ("texlab" "")))
+  (add-to-list 'eglot-server-programs '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
   (add-to-list 'eglot-server-programs '(python-mode . ("python-language-server" "")))
   (jl/eglot-keys))
 #+END_SRC
@@ -4019,8 +4025,14 @@ there are no attachments."
   :config
   (yas-global-mode 1)
   :init
+  ;; (jl/SPC-keys
+  ;;   "is" 'ivy-yasnippet)
+  )
+(use-package consult-yasnippet
+  :commands consult-yasnippet
+  :init
   (jl/SPC-keys
-    "is" 'ivy-yasnippet))
+    "is" 'consult-yasnippet))
 
 (use-package yasnippet-snippets
   :defer t
@@ -4037,7 +4049,6 @@ there are no attachments."
 (use-package yatemplate
   :defer t)
 #+end_src
-
 ** Company mode
 *** Initialisation
 #+begin_src elisp :tangle no
