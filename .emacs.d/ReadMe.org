@@ -885,6 +885,26 @@ Allows for partial searching in vertico.
   (jl/SPC-keys
     "RET" 'app-launcher-run-app))
 #+END_SRC
+*** Embark
+**** Initialisation
+#+BEGIN_SRC elisp
+(use-package embark
+  :defer t
+  :commands (embark-act
+             embark-dwim
+             embark-bindings)
+  :bind (("C-." . embark-act)
+         ("M-." . embark-dwim)
+         ("C-h B" . embark-bindings))
+  :custom
+  (prefix-help-command #'embark-prefix-help-command))
+#+END_SRC
+**** embark-consult
+#+BEGIN_SRC elisp
+(use-package embark-consult
+  :defer t
+  :after (embark consult))
+#+END_SRC
 * Project Management
 ** Projectile
 *** Keybindings
@@ -1094,8 +1114,7 @@ Provides better documentation.
   ([remap describe-variable] . helpful-variable)
   ([remap describe-key]      . helpful-key)
   :init
-  (defvar read-symbol-positions-list nil) ;; bug fix
-)
+  (defvar read-symbol-positions-list nil)) ;; bug fix
 #+end_src
 ** Eldoc
 #+BEGIN_SRC elisp
@@ -4398,26 +4417,6 @@ SCOPE can be:
   ;;                 (window-system . x)))
 )
 
-#+END_SRC
-** Embark
-*** Initialisation
-#+BEGIN_SRC elisp
-(use-package embark
-  :defer t
-  :commands (embark-act
-             embark-dwim
-             embark-bindings)
-  :bind (("C-." . embark-act)
-         ("M-." . embark-dwim)
-         ("C-h B" . embark-bindings))
-  :custom
-  (prefix-help-command #'embark-prefix-help-command))
-#+END_SRC
-*** embark-consult
-#+BEGIN_SRC elisp
-(use-package embark-consult
-  :defer t
-  :after (embark consult))
 #+END_SRC
 * Shells
 ** Term
