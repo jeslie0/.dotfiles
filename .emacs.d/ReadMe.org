@@ -870,7 +870,6 @@ Allows for partial searching in vertico.
   :straight (consult-projectile :type git :host gitlab :repo "OlMon/consult-projectile" :branch "master"))
 #+END_SRC
 ** Magit
-*** Initialisation
 #+begin_src elisp
 (use-package magit
   :commands magit-status
@@ -879,27 +878,20 @@ Allows for partial searching in vertico.
     "gs" 'magit-status)
   (:keymaps 'magit-status-mode-map
             (kbd "SPC") nil)
-  (:kemaps 'git-commit-mode-map
+  (:keymaps 'git-commit-mode-map
            ",," 'with-editor-finish
            ",a" 'with-editor-cancel))
 #+end_src
 ** Treemacs
-*** Keybindings
-#+begin_src elisp
-(defun jl/treemacs-keys ()
-  (jl/SPC-keys
-    "0"  'treemacs-select-window
-    "ft" 'treemacs
-    )
-  )
-#+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package treemacs
-  :defer t
   :commands (treemacs)
+  :general
+  (jl/SPC-keys
+    "0"  'treemacs-select-window
+    "ft" 'treemacs)
   :init
-  (jl/treemacs-keys)
   (with-eval-after-load 'winum
     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
   :custom
@@ -960,15 +952,7 @@ Allows for partial searching in vertico.
 	   (`(t . _)
 	    (treemacs-git-mode 'simple)))
 
-	 (treemacs-hide-gitignored-files-mode nil))
-  :bind
-  (:map global-map
-        ("M-0"       . treemacs-select-window)
-        ("C-x t 1"   . treemacs-delete-other-windows)
-        ("C-x t t"   . treemacs)
-        ("C-x t B"   . treemacs-bookmark)
-        ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
+	 (treemacs-hide-gitignored-files-mode nil)))
         #+END_SRC
 *** Treemacs evil
 #+BEGIN_SRC elisp
@@ -1043,8 +1027,7 @@ Provides better documentation.
 #+begin_src elisp
 (use-package rainbow-delimiters
   :defer t
-  :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode)
-  )
+  :hook ((prog-mode agda2-mode) . rainbow-delimiters-mode))
 #+end_src
 ** Outshine
 #+begin_src elisp
@@ -1084,18 +1067,14 @@ Provides better documentation.
 ** Smartparens
 #+BEGIN_SRC elisp
 (use-package smartparens
-  :hook (
-	 ;; (org-mode . smartparens-mode)
-	 (emacs-lisp-mode . smartparens-mode))
-  :defer t
-  )
+  :hook ((emacs-lisp-mode . smartparens-mode))
+  :defer t)
 #+END_SRC
 ** Save place mode
 #+begin_src elisp
 (use-package saveplace
   :defer t
-  :hook ((prog-mode text-mode) . save-place-mode)
-  )
+  :hook ((prog-mode text-mode) . save-place-mode))
 #+end_src
 ** Variable pitch
 #+BEGIN_SRC elisp
@@ -1104,12 +1083,12 @@ Provides better documentation.
   :straight face-remap
   :hook (text-mode . variable-pitch-mode))
 #+END_SRC
-** Visual line mode
+** TODO Visual line mode
 #+BEGIN_SRC elisp
 (add-hook 'text-mode-hook 'visual-line-mode)
 #+END_SRC
 * Passwords
-** Pin entry and GPG key
+** TODO Pin entry and GPG key
 #+begin_src elisp
 (setq epa-pinentry-mode 'loopback)
 (setq auth-sources '(password-store))
@@ -1137,63 +1116,43 @@ Provides better documentation.
     (message "%s" description)))
 #+end_src
 *** Ivy-pass
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package ivy-pass
   :defer t
   :after ivy)
 #+end_src
 *** Password-store
-**** Keybindings
-#+begin_src elisp
-(defun jl/pass-keys ()
-  (jl/SPC-keys
-    "atPy" 'password-store-copy
-    "atPg" 'password-store-generate
-    "atPi" 'password-store-insert
-    "atPc" 'password-store-edit
-    "atPr" 'password-store-rename
-    "atPd" 'password-store-remove
-    "atPD" 'password-store-clear
-    "atPI" 'password-store-init
-    "atPw" 'password-store-url
-    )
-
-  (jl/SPC-keys
-    "atP" '(:ignore t :which-key "pass")
-    )
-  )
-#+end_src
-
-**** Initialsation
+**** Initialisation
 #+begin_src elisp
 (use-package password-store
-  :defer t
-  :init
-  (jl/pass-keys))
+  :general
+  (jl/SPC-keys
+    "apy" 'password-store-copy
+    "apg" 'password-store-generate
+    "api" 'password-store-insert
+    "apc" 'password-store-edit
+    "apr" 'password-store-rename
+    "apd" 'password-store-remove
+    "apD" 'password-store-clear
+    "apI" 'password-store-init
+    "apw" 'password-store-url)
+  (jl/SPC-keys
+    "ap" '(:ignore t :which-key "pass")))
 #+end_src
 *** Password-store otp
-**** Keybindings
-#+begin_src elisp
-(defun jl/pass-otp-keys ()
-  (jl/SPC-keys
-    "atPoy" 'password-store-otp-token-copy
-    "atPoY" 'password-store-otp-uri-copy
-    "atPoi" 'password-store-otp-insert
-    "atPoa" 'password-store-otp-append
-    "atPoA" 'password-store-otp-append-from-image
-    )
-
-  (jl/SPC-keys
-    "atPo" '(:ignore t :which-key "otp")
-    )
-  )
-#+end_src
 **** Initialisation
 #+begin_src elisp
 (use-package password-store-otp
   :defer t
-  :init
-  (jl/pass-otp-keys))
+  :general
+  (jl/SPC-keys
+    "apoy" 'password-store-otp-token-copy
+    "apoY" 'password-store-otp-uri-copy
+    "apoi" 'password-store-otp-insert
+    "apoa" 'password-store-otp-append
+    "apoA" 'password-store-otp-append-from-image)
+  (jl/SPC-keys
+    "apo" '(:ignore t :which-key "otp")))
 #+end_src
 *** Auth source pass
 #+begin_src elisp
@@ -1206,10 +1165,6 @@ Provides better documentation.
 * Languages
 ** Tools
 *** LSP
-We need to define a list of major mode maps to use =lsp-mode= in.
-#+BEGIN_SRC elisp
-(setq lsp-mode-maps '(haskell-mode-map python-mode-map java-mode-map))
-#+END_SRC
 **** Keybindings
 #+begin_src elisp :tangle no
 (defun jl/lsp-keys-descr ()
@@ -1277,8 +1232,11 @@ We need to define a list of major mode maps to use =lsp-mode= in.
    )
   )
 #+end_src
+**** Initialisation
 #+begin_src elisp
-(defun jl/lsp-keys ()
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :general
   (jl/major-modes
     :keymaps 'lsp-mode-map
     :states '(normal visual motion)
@@ -1339,15 +1297,7 @@ We need to define a list of major mode maps to use =lsp-mode= in.
     "wq" #'lsp-workspace-shutdown
     "wd" #'lsp-describe-session
     "wD" #'lsp-disconnect
-    "wv" #'lsp-version))
-#+end_src
-**** Initialisation
-#+begin_src elisp
-(use-package lsp-mode
-  :defer t
-  :commands (lsp lsp-deferred)
-  :config
-  (jl/lsp-keys)
+    "wv" #'lsp-version)
   ;; (advice-add 'lsp :before #'direnv-update-environment)
   :custom
   (lsp-modeline-code-actions-enable nil)
@@ -1380,82 +1330,58 @@ We need to define a list of major mode maps to use =lsp-mode= in.
 			    "[/\\\\]\\.reference$"
 					; Haskell stuff
 			    "[/\\\\]\\dist-newstyle$"
-			    )
-			  )
-  )
+			    )))
 #+end_src
 **** lsp-ui
 #+begin_src elisp
 (use-package lsp-ui
-  :defer t
-  :after lsp
-  :commands lsp-ui-mode
+  :after (lsp)
+  :commands (lsp-ui-mode)
   :custom
   (lsp-lens-enable 1)
   (lsp-ui-doc-show-with-mouse nil)
-  (lsp-ui-doc-show-with-cursor t)
-  )
+  (lsp-ui-doc-show-with-cursor t))
 #+end_src
 **** lsp-treemacs
-***** Keybindings
 #+begin_src elisp
-(defun jl/lsp-treemacs-keys ()
+(use-package lsp-treemacs
+  :after (lsp treemacs)
+  :commands (lsp-treemacs-symbols
+             lsp-treemacs-references
+             lsp-treemacs-errors-list)
+  :general
   (jl/major-modes
-    :keymaps lsp-mode-maps
+    :keymaps 'lsp-mode-map
     :states '(normal visual motion)
     :major-modes t
     "t" '(:ignore t :which-key "lsp-treemacs")
     "th" #'lsp-treemacs-call-hierarchy
     "te" 'lsp-treemacs-errors-list
     "tr" 'lsp-treemacs-references
-    "ts" 'lsp-treemacs-symbols
-    )
-  )
-#+end_src
-***** Initialisation
-#+begin_src elisp
-(use-package lsp-treemacs
-  :defer t
-  :after (lsp treemacs)
-  :commands (lsp-treemacs-symbols
-             lsp-treemacs-references
-             lsp-treemacs-errors-list)
-  :init
-  (jl/lsp-treemacs-keys)
+    "ts" 'lsp-treemacs-symbols)
   :config
-  (lsp-treemacs-sync-mode 1)
-  )
+  (lsp-treemacs-sync-mode 1))
   #+end_src
 **** lsp-ivy
-***** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/lsp-ivy-keys ()
+#+begin_src elisp :tangle no
+(use-package lsp-ivy
+  :after (lsp ivy)
+  :commands (lsp-ivy-workspace-symbol
+             lsp-ivy-global-workspace-symbol)
+  :general
   (jl/major-modes
-    :keymaps lsp-mode-maps
+    :keymaps 'lsp-mode-map
     :states '(normal visual motion)
     :major-modes t
     "i"  '(:toggle nil :which-key "lsp-ivy")
     "is" 'lsp-ivy-workspace-symbol
-    "iS" 'lsp-ivy-global-workspace-symbol
-    )
-  )
-#+END_SRC
-***** Initialisation
-#+begin_src elisp
-(use-package lsp-ivy
-  :defer t
-  :after (lsp ivy)
-  :commands (lsp-ivy-workspace-symbol
-             lsp-ivy-global-workspace-symbol)
-  :init
-  (jl/lsp-ivy-keys)
-  )
+    "iS" 'lsp-ivy-global-workspace-symbol))
 #+end_src
 *** Eglot
-**** Keybindings
-These keys work, but require a toggle of evil state before being usable.
 #+BEGIN_SRC elisp
-(defun jl/eglot-keys ()
+(use-package eglot
+  :commands (eglot)
+  :general
   (jl/major-modes
     :keymaps 'eglot-mode-map
     :states '(normal visual operator)
@@ -1476,46 +1402,18 @@ These keys work, but require a toggle of evil state before being usable.
     "=g"  'xref-find-definitions
 
     "=Be" 'eglot-events-buffer
-    "=Bs" 'eglot-stderr-buffer))
-#+END_SRC
-**** Initialisation
-#+BEGIN_SRC elisp
-(use-package eglot
-  :commands (eglot)
+    "=Bs" 'eglot-stderr-buffer)
   :custom
   (eglot-confirm-server-initiated-edits nil)
   :config
   (add-to-list 'eglot-server-programs '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
-  (add-to-list 'eglot-server-programs '(python-mode . ("python-language-server" "")))
-  (jl/eglot-keys))
+  (add-to-list 'eglot-server-programs '(python-mode . ("python-language-server" ""))))
 #+END_SRC
 ** Proof Assistants
 *** Agda
-**** Keybindings
 #+begin_src elisp
-(defhydra jl/agda-goal-navigation (:hint nil)
-  "
-^Next Goal^    ^Previous Goal
-^^^--------------------------
-[_f_]          [_b_]
-"
-  ("f" agda2-next-goal)
-  ("b" agda2-previous-goal)
-  ("q" nil "quit" :exit t))
-
-(defun agda2-next-goal-transient ()
-  (interactive)
-  (jl/agda-goal-navigation/body)
-  (agda2-next-goal)
-  )
-
-(defun agda2-previous-goal-transient ()
-  (interactive)
-  (jl/agda-goal-navigation/body)
-  (agda2-previous-goal)
-  )
-
-(defun jl/agda-keys ()
+(use-package agda2-mode
+  :general
   (jl/major-modes
     :states '(normal visual operator)
     :keymaps 'agda2-mode-map
@@ -1561,21 +1459,32 @@ These keys work, but require a toggle of evil state before being usable.
     "xs"  'agda2-set-program-version
     "x;"  'agda2-comment-dwim-rest-of-buffer
 
-    "z"   'agda2-search-about-toplevel))
-#+end_src
-**** Initialisation
-#+begin_src elisp
-(use-package agda2-mode
-  ;; :load-path "/home/james/.cabal/share/x86_64-linux-ghc-8.10.5/Agda-2.6.3/emacs-mode/agda2.el"
-  :mode "\\.agda\\'"
-  :defer t
+    "z"   'agda2-search-about-toplevel)
   :config
-  (jl/agda-keys))
+  (defhydra jl/agda-goal-navigation (:hint nil)
+    "
+^Next Goal^    ^Previous Goal
+^^^--------------------------
+[_f_]          [_b_]
+"
+    ("f" agda2-next-goal)
+    ("b" agda2-previous-goal)
+    ("q" nil "quit" :exit t))
+
+  (defun agda2-next-goal-transient ()
+    (interactive)
+    (jl/agda-goal-navigation/body)
+    (agda2-next-goal))
+
+  (defun agda2-previous-goal-transient ()
+    (interactive)
+    (jl/agda-goal-navigation/body)
+    (agda2-previous-goal)))
 #+end_src
 *** Coq
-**** Keybindings
 #+BEGIN_SRC elisp
-(defun jl/coq-mode-keys ()
+(use-package proof-general
+  :general
   (jl/major-modes
     :keymaps 'coq-mode-map
     :states '(normal visual motion)
@@ -1627,22 +1536,14 @@ These keys work, but require a toggle of evil state before being usable.
     "il" 'company-coq-lemma-from-goal
     "im" 'company-coq-insert-match-construct
     "ao" 'company-coq-occur
+
+    "h"  '(:ignore t :which-key "Help")
     "he" 'company-coq-document-error
     "hE" 'company-coq-browse-error-messages
-    "hh" 'company-coq-doc
-    )
-  )
-
-#+END_SRC
-**** Initialisation
-#+BEGIN_SRC elisp
-(use-package proof-general
-  :defer t
-  :hook (coq-mode . jl/coq-mode-keys)
+    "hh" 'company-coq-doc)
   :custom
   (proof-splash-enable nil)
-  (proof-three-window-mode-policy 'hybrid)
-  )
+  (proof-three-window-mode-policy 'hybrid))
 #+END_SRC
 ** Programming Languages
 For most programming languages, the development tools will be installed through a nix flake.
@@ -1650,8 +1551,7 @@ For most programming languages, the development tools will be installed through 
 **** Ielm
 #+BEGIN_SRC elisp
 (use-package ielm
-  :defer t
-  :init
+  :general
   (jl/major-modes
     :states '(normal operator motion)
     :keymaps 'inferior-emacs-lisp-mode-map
@@ -1664,19 +1564,15 @@ For most programming languages, the development tools will be installed through 
     :major-modes t
     "s" '(:ignore t :which-key "ielm")
     "'" 'ielm
-    "si" 'ielm
-    )
-  )
+    "si" 'ielm))
 #+END_SRC
 **** Debug
 #+BEGIN_SRC elisp
 (use-package debug
-  :defer t
-  )
+  :defer t)
 
 (use-package edebug
-  :defer t
-  :config
+  :general
   (jl/major-modes
     :keymaps 'edebug-eval-mode-map
     :states '(normal visual operator)
@@ -1689,16 +1585,16 @@ For most programming languages, the development tools will be installed through 
     "," 'edebug-update-eval-list
     "c" 'edebug-update-eval-list
     "ee" 'edebug-eval-last-sexp
-    "eE" 'edebug-eval-print-last-sexp
-    )
-  )
-
+    "eE" 'edebug-eval-print-last-sexp))
 #+END_SRC
 *** TODO Common-lisp
 **** Slime
-***** Keybindings
 #+BEGIN_SRC elisp
-(defun jl/clisp-major-keys ()
+(use-package slime
+  :defer t
+  :init
+  (setq inferior-lisp-program "sbcl")
+  :general
   (jl/major-modes
     :keymaps 'lisp-mode-map
     :states '(normal visual operator)
@@ -1753,19 +1649,7 @@ For most programming languages, the development tools will be installed through 
     "si" 'slime
     "sq" 'slime-quit-lisp
 
-    "tf" 'slime-toggle-fancy-trace)
-  )
-#+END_SRC
-***** Initialisation
-#+BEGIN_SRC elisp
-(use-package slime
-  :defer t
-  :init
-  (setq inferior-lisp-program "sbcl")
-  :config
-  (jl/clisp-major-keys)
-  )
-
+    "tf" 'slime-toggle-fancy-trace))
 #+END_SRC
 **** TODO evil-lisp-state
 #+BEGIN_SRC elisp :tangle no
@@ -1782,10 +1666,9 @@ For most programming languages, the development tools will be installed through 
 #+END_SRC
 *** TODO C
 *** Elm
-**** Keybindings
 #+BEGIN_SRC elisp
-(defun jl/elm-keys ()
-  "Keybindings for elm major mode"
+(use-package elm-mode
+  :general
   (jl/major-modes
     :keymaps 'elm-mode-map
     :states '(normal visual operator)
@@ -1812,27 +1695,19 @@ For most programming languages, the development tools will be installed through 
     "ps" 'elm-sort-imports
     "pk" 'elm-package-catalog
     "pK" 'elm-package-refresh-contents)
-
+  :config
   (when (executable-find "elm-format")
     (jl/major-modes
       :keymaps 'elm-mode-map
       :states '(normal visual operator)
       :major-modes t
       "f" 'elm-format-buffer))
-
   (when (executable-find "elm-test")
     (jl/major-modes
       :keymaps 'elm-mode-map
       :states '(normal visual operator)
       :major-modes t
       "v" 'elm-test-project)))
-#+END_SRC
-**** Initialisation
-#+BEGIN_SRC elisp
-(use-package elm-mode
-  :defer t
-  :config
-  (jl/elm-keys))
 #+END_SRC
 *** Haskell
 **** lsp-haskell
@@ -1847,34 +1722,6 @@ For most programming languages, the development tools will be installed through 
   (lsp-haskell-server-path "haskell-language-server-wrapper")
   (lsp-haskell-server-args ()))
 #+end_src
-**** Functions
-To get evil's "o" and "O" keys to work with indentation as expected, we use these two functions from [[https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026][hatashiro]].
-#+begin_src elisp
-(defun haskell-evil-open-above ()
-  (interactive)
-  (evil-digit-argument-or-evil-beginning-of-line)
-  (haskell-indentation-newline-and-indent)
-  (evil-previous-line)
-  (haskell-indentation-indent-line)
-  (evil-append-line nil))
-
-(defun haskell-evil-open-below ()
-  (interactive)
-  (evil-append-line nil)
-  (haskell-indentation-newline-and-indent))
-#+END_SRC
-#+BEGIN_SRC elisp
-(defun haskell-format-imports ()
-  "Sort and align import statements from anywhere in the source file."
-  (interactive)
-  (save-excursion
-    (haskell-navigate-imports)
-    (haskell-mode-format-imports)))
-
-(defun haskell-process-do-type-on-prev-line ()
-  (interactive)
-  (haskell-process-do-type 1))
-#+end_src
 **** Keybindings
 #+begin_src elisp
 (defun jl/haskell-keys ()
@@ -1887,8 +1734,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "c" '(:ignore t :which-key "cabal")
     "h" '(:ignore t :which-key "documentation")
     "d" '(:ignore t :which-key "debug")
-    "r" '(:ignore t :which-key "refactor")
-    )
+    "r" '(:ignore t :which-key "refactor"))
 
   (jl/major-modes
     :keymaps 'haskell-mode-map
@@ -1928,16 +1774,14 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "ds"  'haskell-debug/step
     "dt"  'haskell-debug/trace
 
-    "ri"  'haskell-format-imports
-    )
+    "ri"  'haskell-format-imports)
 
   (general-define-key
    :states '(normal insert visual)
    :keymaps 'haskell-interactive-mode-map
    "C-j" 'haskell-interactive-mode-history-next
    "C-k" 'haskell-interactive-mode-history-previous
-   "C-l" 'haskell-interactive-mode-clear
-   )
+   "C-l" 'haskell-interactive-mode-clear)
 
   (jl/major-modes
     :states '(normal visual)
@@ -1953,30 +1797,54 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "p"   'haskell-cabal-previous-subsection
     "N"   'haskell-cabal-next-section
     "P"   'haskell-cabal-previous-section
-    "f"   'haskell-cabal-find-or-create-source-file
-    )
-
-
-  )
+    "f"   'haskell-cabal-find-or-create-source-file))
 #+end_src
 **** Initialisation
 #+begin_src elisp
 (use-package haskell-mode
-  :defer t
   :hook ((haskell-mode . auto-fill-mode))
+  :general
+  (:keymaps 'haskell-mode-map
+            :states 'normal
+            "o" 'haskell-evil-open-above
+            "O" 'haskell-evil-open-above)
   :init
-  (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
   :config
-  (evil-define-key 'normal haskell-mode-map "o" 'haskell-evil-open-below
-    "O" 'haskell-evil-open-above)
+  (jl/haskell-keys)
+  ;; To get evil's "o" and "O" keys to work with indentation as expected, we use these two functions from [[https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026][hatashiro]].
+  (defun haskell-evil-open-above ()
+    (interactive)
+    (evil-digit-argument-or-evil-beginning-of-line)
+    (haskell-indentation-newline-and-indent)
+    (evil-previous-line)
+    (haskell-indentation-indent-line)
+    (evil-append-line nil))
+
+  (defun haskell-evil-open-below ()
+    (interactive)
+    (evil-append-line nil)
+    (haskell-indentation-newline-and-indent))
+
+  (defun haskell-format-imports ()
+    "Sort and align import statements from anywhere in the source file."
+    (interactive)
+    (save-excursion
+      (haskell-navigate-imports)
+      (haskell-mode-format-imports)))
+
+  (defun haskell-process-do-type-on-prev-line ()
+    (interactive)
+    (haskell-process-do-type 1))
+
   :custom
   (haskell-process-type 'ghci))
 #+end_src
 **** hindent
-***** Keybindings
 #+begin_src elisp
-(defun jl/hindent ()
+(use-package hindent
+  :after haskell-mode
+  :general
   (jl/major-modes
     :states '(normal visual operator)
     :keymaps 'haskell-mode-map
@@ -1985,46 +1853,35 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "fB" 'hindent-reformat-buffer
     "fd" 'hindent-reformat-decl
     "ff" 'hindent-reformat-decl-or-fill
-    "fr" 'hindent-reformat-region
-    )
-  )
-#+end_src
-***** Initialisation
-#+begin_src elisp
-(use-package hindent
-  :after haskell-mode
-  :defer t
-  :hook (haskell-mode . hindent-mode)
-  :config
-  (jl/hindent)
-  )
+    "fr" 'hindent-reformat-region)
+  :hook (haskell-mode . hindent-mode))
 #+end_src
 **** hlint-refactor
-***** Keybindings
 #+begin_src elisp
-(defun jl/hlint-keys ()
+(use-package hlint-refactor
+  :hook (haskell-mode . hlint-refactor-mode)
+  :general
   (jl/major-modes
     :states '(normal visual)
     :keymaps 'haskell-mode-map
     :major-modes t
     "rb" 'hlint-refactor-refactor-buffer
-    "rr" 'hlint-refactor-refactor-at-point
-    )
-  )
-#+end_src
-***** Initialisation
-#+begin_src elisp
-(use-package hlint-refactor
-  :defer t
-  :hook (haskell-mode . hlint-refactor-mode)
-  :config
-  (jl/hlint-keys)
-  )
+    "rr" 'hlint-refactor-refactor-at-point))
 #+end_src
 *** Shell
-**** Keybindings
+**** Initialisation
 #+BEGIN_SRC elisp
-(defun jl/shell-keys ()
+(use-package sh-script
+  :defer t
+  :mode ("\\.sh\\'"
+	 "\\.zsh\\'"
+         "zlogin\\'"
+         "zlogout\\'"
+         "zpreztorc\\'"
+         "zprofile\\'"
+         "zshenv\\'"
+         "zshrc\\'")
+  :general
   (jl/major-modes
     :keymaps 'sh-mode-map
     :states '(normal visual operator)
@@ -2042,38 +1899,19 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "ir" 'sh-repeat
     "is" 'sh-select
     "iu" 'sh-until
-    "ig" 'sh-while-getopts
-    ))
-#+END_SRC
-**** Initialisation
-#+BEGIN_SRC elisp
-(use-package sh-script
-  :defer t
-  :mode ("\\.sh\\'"
-	 "\\.zsh\\'"
-         "zlogin\\'"
-         "zlogout\\'"
-         "zpreztorc\\'"
-         "zprofile\\'"
-         "zshenv\\'"
-         "zshrc\\'")
-  :config
-  (jl/shell-keys)
-  )
-#+END_SRC
+    "ig" 'sh-while-getopts))
+  #+END_SRC
 **** Shfmt
 Requires shfmt installed on system.
 #+BEGIN_SRC elisp
 (use-package shfmt
-  :defer t
   :hook (sh-mode . shfmt-on-save-mode)
-  :config
+  :general
   (jl/major-modes
     :keymaps 'sh-mode-map
     :states '(normal visual operator)
     :major-modes t
-    "=" 'shfmt-buffer)
-  )
+    "=" 'shfmt-buffer))
 #+END_SRC
 **** Insert Shebang
 Not tested. Probably doesn't work.
@@ -2081,13 +1919,12 @@ Not tested. Probably doesn't work.
 (use-package insert-shebang
   :defer t
   :hook (sh-mode . insert-shebang-mode)
-  :config
+  :general
   (jl/major-modes
     :keymaps 'sh-mode-map
     :states '(normal visual operator)
     :major-modes t
-    "i!" 'insert-shebang)
-  )
+    "i!" 'insert-shebang))
 #+END_SRC
 *** Nix
 **** Functions
@@ -2103,44 +1940,32 @@ Not tested. Probably doesn't work.
   (find-file-existing "~/.config/nixpkgs/home.nix"))
 #+END_SRC
 **** Nix-mode
-***** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/nix-keys ()
+#+begin_src elisp
+(use-package nix-mode
+  :general
   (jl/major-modes
     :keymaps 'nix-mode-map
     :states '(normal visual motion)
     :major-modes t
-    "=" '(nix-format-buffer)
-    )
-  )
-#+END_SRC
-***** Initialisation
-#+begin_src elisp
-(use-package nix-mode
-  :defer t
-  :config
-  (jl/nix-keys)
+    "=" '(nix-format-buffer))
   :mode "\\.nix\\'")
 #+END_SRC
 **** Ivy nixos options
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package ivy-nixos-options
-  :defer t
   :commands (ivy-nixos-options)
   :straight (:host github
 		   :repo "travisbhartwell/nix-emacs"
 		   :branch "master"
 		   :files ("ivy-nixos-options.el"))
-  :init
+  :general
   (jl/SPC-keys
     "fn" '(:ignore t :which-key "nix")
     "fnc" 'find-nixos-configuration
     "fnh" 'find-homemanager-configuration
-    "h>" 'ivy-nixos-options
-    )
+    "h>" 'ivy-nixos-options)
   :custom
-  (ivy-nixos-options-default 1)
-  )
+  (ivy-nixos-options-default 1))
 #+END_SRC
 **** NixOS options
 #+BEGIN_SRC elisp
@@ -2152,13 +1977,9 @@ Not tested. Probably doesn't work.
 (use-package nix-sandbox
   :defer t
   :custom
-  (haskell-process-wrapper-function
-   (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
-  (flycheck-command-wrapper-function
-   (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command)))
-  (flycheck-executable-find
-   (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd)))
-  )
+  (haskell-process-wrapper-function (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
+  (flycheck-command-wrapper-function (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command)))
+  (flycheck-executable-find (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd))))
 #+end_src
 *** TODO Java
 **** lsp-java
@@ -2175,17 +1996,17 @@ We actually install the language server through Emacs, so we don't need to worry
 We need a function to find the lsp server when it's installed through a nix shell.
 #+BEGIN_SRC elisp
 (use-package lsp-python-ms
+  :defer t
   :hook (python-mode . (lambda ()
-                         (require 'lsp-python-ms)))
-  :defer t)
+                         (require 'lsp-python-ms))))
 #+END_SRC
 **** python-mode
 #+BEGIN_SRC elisp
 (use-package python-mode
+  :defer t
   :custom
   (python-shell-interpreter "ipython")
   (python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
-  :defer t
   :config
   (defun lspython ()
     "Updates the lsp-python-ms-executable variable and runs lsp."
@@ -2196,17 +2017,15 @@ We need a function to find the lsp server when it's installed through a nix shel
 **** ipython-shell-send
 #+BEGIN_SRC elisp
 (use-package ipython-shell-send
-  :defer t
-  :hook (python-mode . (lambda ()
-                         (jl/major-modes
-                           :keymaps 'python-mode-map
-                           :states '(normal visual operator)
-                           :major-modes t
-                           "'" 'run-python
-                           "sb" 'ipython-shell-send-buffer
-                           "sr" 'ipython-shell-send-region
-                           "sd" 'ipython-shell-send-defun
-                           ))))
+  :general
+  (jl/major-modes
+    :keymaps 'python-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "'" 'run-python
+    "sb" 'ipython-shell-send-buffer
+    "sr" 'ipython-shell-send-region
+    "sd" 'ipython-shell-send-defun))
 #+END_SRC
 **** Blacken
 #+BEGIN_SRC elisp
@@ -2973,37 +2792,6 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (ox-extras-activate '(latex-header-blocks ignore-headlines)))
 #+END_SRC
 *** LaTeX
-**** Functions
-#+begin_src elisp
-(defun latex/build ()
-  (interactive)
-  (progn
-    (let ((TeX-save-query nil))
-      (TeX-save-document (TeX-master-file)))
-    (TeX-command latex-build-command 'TeX-master-file -1)))
-;; (setq build-proc (TeX-command latex-build-command 'TeX-master-
-
-(defun latex/auto-fill-mode ()
-  "Toggle auto-fill-mode using the custom auto-fill function."
-  (interactive)
-  (auto-fill-mode)
-  (setq auto-fill-function 'latex//autofill))
-
-;; Rebindings for TeX-font
-(defun latex/font-bold () (interactive) (TeX-font nil ?\C-b))
-(defun latex/font-medium () (interactive) (TeX-font nil ?\C-m))
-(defun latex/font-code () (interactive) (TeX-font nil ?\C-t))
-(defun latex/font-emphasis () (interactive) (TeX-font nil ?\C-e))
-(defun latex/font-italic () (interactive) (TeX-font nil ?\C-i))
-(defun latex/font-clear () (interactive) (TeX-font nil ?\C-d))
-(defun latex/font-calligraphic () (interactive) (TeX-font nil ?\C-a))
-(defun latex/font-small-caps () (interactive) (TeX-font nil ?\C-c))
-(defun latex/font-sans-serif () (interactive) (TeX-font nil ?\C-f))
-(defun latex/font-normal () (interactive) (TeX-font nil ?\C-n))
-(defun latex/font-serif () (interactive) (TeX-font nil ?\C-r))
-(defun latex/font-oblique () (interactive) (TeX-font nil ?\C-s))
-(defun latex/font-upright () (interactive) (TeX-font nil ?\C-u))
-#+end_src
 **** Keybindings
 #+begin_src elisp
 (defun jl/auctex-keys ()
@@ -3018,8 +2806,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "z" '(:ignore t :which-key "fold")
     "i" '(:ignore t :which-key "insert")
     "p" '(:ignore t :which-key "preview")
-    "r" '(:ignore t :which-key "reftex")
-    )
+    "r" '(:ignore t :which-key "reftex"))
 
   (jl/major-modes
     :keymaps 'LaTeX-mode-map
@@ -3100,9 +2887,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "rs" 'reftex-search-document
     "rt" 'reftex-toc
     "rT" 'reftex-toc-recenter
-    "rv" 'reftex-view-crossref
-    )
-  )
+    "rv" 'reftex-view-crossref))
 #+end_src
 **** Initialisation
 #+begin_src elisp
@@ -3160,7 +2945,35 @@ Calling org-babel languages in the following form saves a lot on startup time.
      '("align*"))
     )
   )
+  ;;; Functions
+(defun latex/build ()
+  (interactive)
+  (progn
+    (let ((TeX-save-query nil))
+      (TeX-save-document (TeX-master-file)))
+    (TeX-command latex-build-command 'TeX-master-file -1)))
+;; (setq build-proc (TeX-command latex-build-command 'TeX-master-
 
+(defun latex/auto-fill-mode ()
+  "Toggle auto-fill-mode using the custom auto-fill function."
+  (interactive)
+  (auto-fill-mode)
+  (setq auto-fill-function 'latex//autofill))
+
+;; Rebindings for TeX-font
+(defun latex/font-bold () (interactive) (TeX-font nil ?\C-b))
+(defun latex/font-medium () (interactive) (TeX-font nil ?\C-m))
+(defun latex/font-code () (interactive) (TeX-font nil ?\C-t))
+(defun latex/font-emphasis () (interactive) (TeX-font nil ?\C-e))
+(defun latex/font-italic () (interactive) (TeX-font nil ?\C-i))
+(defun latex/font-clear () (interactive) (TeX-font nil ?\C-d))
+(defun latex/font-calligraphic () (interactive) (TeX-font nil ?\C-a))
+(defun latex/font-small-caps () (interactive) (TeX-font nil ?\C-c))
+(defun latex/font-sans-serif () (interactive) (TeX-font nil ?\C-f))
+(defun latex/font-normal () (interactive) (TeX-font nil ?\C-n))
+(defun latex/font-serif () (interactive) (TeX-font nil ?\C-r))
+(defun latex/font-oblique () (interactive) (TeX-font nil ?\C-s))
+(defun latex/font-upright () (interactive) (TeX-font nil ?\C-u))
 #+end_src
 #+begin_src elisp
 (use-package auctex-latexmk
@@ -3175,25 +2988,16 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+END_SRC
 *** BibTex
 **** Ivy-bibtex
-***** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/ivy-bibtex-keys ()
-  (jl/major-modes
-    :keymaps 'bibtex-mode-map
-    :states 'normal
-    "m" 'ivy-bibtex
-    )
-  )
-#+END_SRC
-***** Initialisation
-#+begin_src elisp
+#+begin_src elisp :tnagle no
 (use-package ivy-bibtex
   :after (ivy bibtex)
   :defer t
-  :init
-  (jl/ivy-bibtex-keys)
-  )
-  #+end_src
+  :general
+  (jl/major-modes
+    :keymaps 'bibtex-mode-map
+    :states 'normal
+    "m" 'ivy-bibtex))
+#+end_src
 **** Org Ref
 ***** Keybindings
 #+BEGIN_SRC elisp
@@ -3246,10 +3050,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
     :states '(normal visual motion)
     :major-modes t
     "ir" 'org-ref-insert-ref-link
-    "ic" 'org-ref-insert-cite-link
-    )
-  )
-  #+END_SRC
+    "ic" 'org-ref-insert-cite-link))
+#+END_SRC
 ***** Initialisation
 #+begin_src elisp
 (use-package org-ref
@@ -3259,16 +3061,15 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
   (bibtex-completion-library-path "~/Documents/PDF/")
   (org-latex-prefer-user-labels t)
-  :init
-  (jl/org-ref-keys)
-  )
+  :config
+  (jl/org-ref-keys))
 
 (use-package org-ref-arxiv
   :straight org-ref
   :defer t)
-  #+end_src
+#+end_src
 **** Org Ref Ivy
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package org-ref-ivy
   :commands (org-ref-insert-cite-link
 	     org-ref-insert-ref-link)
@@ -3291,9 +3092,11 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+END_SRC
 * Readers
 ** Elfeed
-*** Keybindings
+*** TODO Initialisation
 #+begin_src elisp
-(defun jl/elfeed-keys ()
+(use-package elfeed
+  :commands (elfeed)
+  :general
   (jl/major-modes
     :keymaps 'elfeed-search-mode-map
     "c"  'elfeed-db-compact
@@ -3308,28 +3111,15 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "-"  'elfeed-search-untag-all
     "b"  'elfeed-search-browse-url
     "y"  'elfeed-search-yank)
-
   (jl/major-modes
     :states 'normal
     :keymaps 'elfeed-show-mode-map
     "n" 'elfeed-show-next
-    "p" 'elfeed-show-prev))
-
-(defun jl/elfeed-global-keys ()
+    "p" 'elfeed-show-prev)
   (jl/SPC-keys
-    "are" 'elfeed))
-#+end_src
-*** Initialisation
-#+BEGIN_SRC elisp :tangle no
-(use-package elfeed)
-#+END_SRC
-#+begin_src elisp
-(use-package elfeed
-  :commands (elfeed)
-  :defer t
+    "are" 'elfeed)
   :custom
-  (elfeed-feeds '(;;Mathematics
-        	  ("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
+  (elfeed-feeds '(("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
         	  ("https://homotopytypetheory.org/feed.xml" mathematics)
         	  ("https://terrytao.wordpress.com/feed.xml" mathematics)
         	  ("https://gowers.wordpress.com/feed.xml" mathematics)
@@ -3337,18 +3127,12 @@ Calling org-babel languages in the following form saves a lot on startup time.
         	  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
         	  ("https://jeslie0.github.io/rss.xml" mathematics)
                   ("https://www.mohabatmath.ca/feed.xml" mathematics)
-        	  ;; Webcomics
-        	  ("https://xkcd.com/atom.xml" webcomic)
-                  ))
+        	  ("https://xkcd.com/atom.xml" webcomic)))
   :init
   (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/bookmarks"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.emacs.d/bookmarks"))
-  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org"))
-  (jl/elfeed-global-keys)
-  :config
-  (jl/elfeed-keys)
-  )
+  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org")))
 #+end_src
 *** Elfeed Goodies
 #+BEGIN_SRC elisp :tangle no
@@ -3360,16 +3144,22 @@ Calling org-babel languages in the following form saves a lot on startup time.
 *** Elfeed score
 #+BEGIN_SRC elisp
 (use-package elfeed-score
-  :defer t
   :after elfeed
   :config
-  (elfeed-score-enable)
-  )
+  (elfeed-score-enable))
 #+END_SRC
-** Elpher
-*** Keybindings
+** TODO Elpher
 #+begin_src elisp
-(defun jl/elpher-key-bindings ()
+(use-package elpher
+  :commands (elpher)
+  :hook (elpher-mode . variable-pitch-mode)
+  :custom
+  (elpher-bookmarks-file "~/.spacemacs.d/elpher-bookmarks")
+  (elpher-start-page-url "gemini://gemini.circumlunar.space")
+  :general
+  (jl/SPC-keys
+    "arg" 'elpher)
+
   (jl/major-modes
     :keymaps 'elpher-mode-map
     "TAB"       'elpher-next-link
@@ -3398,48 +3188,12 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "B" 'elpher-bookmarks
     "S" 'elpher-set-gopher-coding-system
     "F" 'elpher-forget-current-certificate)
-  )
-
-(defun jl/elpher-global-keys ()
-  (jl/SPC-keys
-    "arg" 'elpher
-    )
-  )
-
-#+end_src
-*** Elpher initialisation
-#+begin_src elisp
-(use-package elpher
-  :commands (elpher)
-  :defer t
-  :hook (elpher-mode . variable-pitch-mode)
-  :custom
-  (elpher-bookmarks-file "~/.spacemacs.d/elpher-bookmarks")
-  (elpher-start-page-url "gemini://gemini.circumlunar.space")
-  :init
-  (jl/elpher-global-keys)
   :config
-  (jl/elpher-key-bindings)
   (set-face-attribute 'elpher-gemini-heading1 nil :inherit 'org-level-1)
   (set-face-attribute 'elpher-gemini-heading2 nil :inherit 'org-level-2)
-  (set-face-attribute 'elpher-gemini-heading3 nil :inherit 'org-level-2)
-  )
+  (set-face-attribute 'elpher-gemini-heading3 nil :inherit 'org-level-2))
 #+end_src
 ** erc
-*** Keybindings
-#+begin_src elisp
-(defun jl/erc-keys-global ()
-  (jl/SPC-keys
-    "ari" 'erc-tls))
-
-(defun jl/erc-keys ()
-  (general-define-key
-   :states '(normal insert visual)
-   :keymaps 'erc-mode-map
-   "C-j" 'erc-next-command
-   "C-k" 'erc-previous-command
-   "C-l" 'erc-clear-input-ring))
-#+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package erc
@@ -3447,6 +3201,14 @@ Calling org-babel languages in the following form saves a lot on startup time.
  	     erc-tls)
   :straight nil
   ;; :hook (erc-mode . erc-image-mode)
+  :general
+  (jl/SPC-keys
+    "ari" 'erc-tls)
+  (:states '(normal insert visual)
+           :keymaps 'erc-mode-map
+           "C-j" 'erc-next-command
+           "C-k" 'erc-previous-command
+           "C-l" 'erc-clear-input-ring)
   :custom
   (erc-server "irc.libera.chat")
   (erc-nick "KanFibration")
@@ -3465,24 +3227,22 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (erc-kill-buffer-on-part t)
   (erc-auto-query 'bury)
   :init
-  (jl/erc-keys-global)
-  (setq erc-autojoin-channels-alist '(("irc.libera.chat"
-				  ;; "#systemcrafters"
-				  ;; "#emacs"
-				  ;; "##math"
-				  ;; "#categorytheory"
-				  ;; "#haskell"
-				  ;; "#nyxt"
-				  "#nixos")))
-  :config
-  (jl/erc-keys))
+  (setq erc-autojoin-channels-alist
+        '(("irc.libera.chat"
+	   "#systemcrafters"
+	   "#emacs"
+	   "##math"
+	   "#categorytheory"
+	   "#haskell"
+	   "#nyxt"
+	   "#nixos"))))
 #+end_src
 *** erc-hl-nicks
 #+begin_src elisp
 (use-package erc-hl-nicks
   :defer t
-  :hook (erc-mode . erc-hl-nicks-mode)
-  :after erc-tls)
+  :after (erc)
+  :hook (erc-mode . erc-hl-nicks-mode))
 #+end_src
 *** erc-image
 #+begin_src elisp :tangle no
@@ -3503,24 +3263,18 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :defer t
   :straight (:host github :repo "alphapapa/ement.el" :branch "master" :files ("*.el"))
   :commands (ement-connect)
-  :init
+  :general
   (jl/SPC-keys
     :modes '(normal visual operator)
     "arm" 'ement-connect))
 #+END_SRC
-
-#+RESULTS:
-
 ** EWW
-*** Keybindings
 #+begin_src elisp
-(defun jl/eww-global-keys ()
-  (jl/SPC-keys
-    "ate" 'eww
-    )
-  )
-
-(defun jl/eww-keys ()
+(use-package eww
+  :defer t
+  :commands (eww)
+  :hook (eww-mode . variable-pitch-mode)
+  :general
   (jl/major-modes
     :keymaps 'eww-mode-map
     :major-modes t
@@ -3538,30 +3292,16 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "vx" 'eww-browse-with-external-browser
     "vf" 'eww-toggle-fonts
     "vr" 'eww-readable
-    "vs" 'eww-view-source
-    )
-
+    "vs" 'eww-view-source)
   (jl/major-modes
     :keymaps 'eww-mode-map
     :major-modes t
     "v" '(:ignore t :which-key "view")
-    "l" '(:ignore t :which-key "list")
-    )
-  )
-#+end_src
-*** Initialisation
-#+begin_src elisp
- (use-package eww
-   :defer t
-   :commands (eww)
-   :hook (eww-mode . variable-pitch-mode)
-   :init
-   (jl/eww-global-keys)
-   :config
-   (jl/eww-keys)
-   (evil-collection-define-key 'normal 'eww-mode-map
-     (kbd "SPC") nil)
-   )
+    "l" '(:ignore t :which-key "list"))
+  (jl/SPC-keys
+    "ate" 'eww)
+  (:states 'normal :keymaps 'eww-mode-map
+           (kbd "SPC") nil))
  #+end_src
 ** Mu4e
 *** Keybindings
@@ -3647,23 +3387,10 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "gX" 'mu4e-view-fetch-url
     "gx" 'mu4e-view-go-to-url
 
-    "as" 'mu4e-view-save-attachments
-    )
-
-
+    "as" 'mu4e-view-save-attachments)
 
   (general-evil-define-key '(normal motion) 'mu4e-main-mode-map
-    "j" 'mu4e~headers-jump-to-maildir
-    )
-  )
-
-
-(defun jl/mu4e-global-keys ()
-  (jl/C-c-keys
-    "e" 'mu4e)
-
-  (jl/SPC-keys
-    "ae" 'mu4e))
+    "j" 'mu4e~headers-jump-to-maildir))
 #+end_src
 *** Mail shortcuts
 #+begin_src elisp
@@ -3846,12 +3573,15 @@ there are no attachments."
 (use-package mu4e
   :defer t
   :commands mu4e
+  :general
+  (jl/C-c-keys
+    "e" 'mu4e)
+  (jl/SPC-keys
+    "ae" 'mu4e)
   :straight nil
   :hook ((mu4e-compose-mode . visual-fill-column-mode)
 	 (mu4e-compose-mode . variable-pitch-mode)
 	 (mu4e-view-mode . visual-fill-column-mode))
-  :init
-  (jl/mu4e-global-keys)
   :config
   (jl/mu4e-keys)
   (jl/mu4e-shortcuts)
@@ -3901,65 +3631,53 @@ there are no attachments."
     "ho" 'org-mime-edit-mail-in-org-mode
     "hh" 'org-mime-htmlize))
 #+END_SRC
-** Signal
-#+BEGIN_SRC elisp
-
-#+END_SRC
 * Avy
-** Functions
-#+BEGIN_SRC elisp
-(defun avy-goto-url ()
-  "Use avy to go to an URL in the buffer."
-  (interactive)
-  (avy-jump "https?://"))
-(defun avy-open-url ()
-  "Use avy to select an URL in the buffer and open it."
-  (interactive)
-  (save-excursion
-    (avy-goto-url)
-    (browse-url-at-point)))
-#+END_SRC
-** Initialisation
 #+begin_src elisp
 (use-package avy
-  :defer t
   :custom
   (avy-background t)
-  :commands (avy-pop-mark
-	     evil-avy-goto-char-timer
-	     evil-avy-goto-line
-	     evil-avy-goto-word-or-subword-1
-             avy-goto-url
-             avy-open-url)
-  :init
-  (general-define-key
-   :states '(normal visual motion)
-   "f" 'evil-avy-goto-char-timer)
+  :commands
+  (avy-pop-mark
+   evil-avy-goto-char-timer
+   evil-avy-goto-line
+   evil-avy-goto-word-or-subword-1
+   avy-goto-url
+   avy-open-url)
+  :general
+  (:states '(normal visual motion)
+           "f" 'evil-avy-goto-char-timer)
   (jl/SPC-keys
     "jb" 'avy-pop-mark
     "jj" 'evil-avy-goto-char-timer
     "jl" 'evil-avy-goto-line
     "jw" 'evil-avy-goto-word-or-subword-1
     "ju" 'avy-goto-url
-    "jU" 'avy-open-url))
-  #+end_src
+    "jU" 'avy-open-url)
+  :config
+  (defun avy-goto-url ()
+    "Use avy to go to an URL in the buffer."
+    (interactive)
+    (avy-jump "https?://"))
+  (defun avy-open-url ()
+    "Use avy to select an URL in the buffer and open it."
+    (interactive)
+    (save-excursion
+      (avy-goto-url)
+      (browse-url-at-point))))
+#+end_src
 
 * Auto-complete and spelling
 ** Yasnippet
 #+begin_src elisp
 (use-package yasnippet
-  :commands (ivy-yasnippet)
   :hook ((prog-mode text-mode) . yas-minor-mode)
   :defer t
   :config
-  (yas-global-mode 1)
-  :init
-  ;; (jl/SPC-keys
-  ;;   "is" 'ivy-yasnippet)
-  )
+  (yas-global-mode 1))
+
 (use-package consult-yasnippet
   :commands consult-yasnippet
-  :init
+  :general
   (jl/SPC-keys
     "is" 'consult-yasnippet))
 
@@ -3967,16 +3685,17 @@ there are no attachments."
   :defer t
   :after yasnippet)
 
-(use-package ivy-yasnippet
-  :defer t
-  :after yasnippet
-  )
+;; (use-package ivy-yasnippet
+;;   :defer t
+;;   :after yasnippet)
+
 (use-package haskell-snippets
   :defer t
-  :after yasnippets)
+  :after yasnippet)
 
 (use-package yatemplate
-  :defer t)
+  :defer t
+  :after yasnippet)
 #+end_src
 ** Company mode
 *** Initialisation
@@ -4009,14 +3728,14 @@ there are no attachments."
 *** Initialisation
 #+BEGIN_SRC elisp
 (use-package corfu
-  :bind
-  (:map corfu-map
-        ("TAB" . corfu-next)
-        ([tab] . corfu-next)
-        ("C-j" . corfu-next)
-        ("S-TAB" . corfu-previous)
-        ([backtab] . corfu-previous)
-        ("C-k" . corfu-previous))
+  :general
+  (:keymaps 'corfu-map
+            "TAB" 'corfu-next
+            [tab] 'corfu-next
+            "C-j" 'corfu-next
+            "S-TAB" 'corfu-previous
+            [backtab] 'corfu-previous
+            "C-k" 'corfu-previous)
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-auto t)                 ;; Enable auto completion
@@ -4040,8 +3759,7 @@ there are no attachments."
   ;; Recommended: Enable Corfu globally.
   ;; This is recommended since dabbrev can be used globally (M-/).
   :config
-  (corfu-global-mode)
-)
+  (corfu-global-mode))
 #+END_SRC
 *** kind-icon
 #+BEGIN_SRC elisp
@@ -4084,8 +3802,7 @@ there are no attachments."
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-tex)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  )
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
 #+END_SRC
 ** Flycheck
 #+begin_src elisp
@@ -4101,11 +3818,15 @@ there are no attachments."
   :defer t
   :hook (sh-mode . flycheck-bashate-setup))
 #+END_SRC
-
 ** Flyspell
-*** Keybindings
+*** Initialisation
 #+begin_src elisp
-(defun jl/flyspell ()
+(use-package flyspell
+  :defer t
+  :hook
+  (prog-mode . flyspell-prog-mode)
+  (text-mode . flyspell-mode)
+  :general
   (jl/SPC-keys
     "Sab" 'add-word-to-dict-buffer
     "Sag" 'add-word-to-dict-global
@@ -4115,129 +3836,110 @@ there are no attachments."
     "Sd" 'spell-checking/change-dictionary
     "Sn" 'flyspell-goto-next-error
     "Ss" 'flyspell-correct-at-point)
-
   (jl/SPC-keys
-    "Sa" '(:ignore t :which-key "add word to dict")
-    )
-  )
-#+end_src
-*** Functions
-#+begin_src elisp
-(defun spell-checking/add-flyspell-hook (hook)
-  "Add `flyspell-mode' to the given HOOK, if
+    "Sa" '(:ignore t :which-key "add word to dict"))
+  :custom
+  (ispell-dictionary "en_GB")
+  :config
+  (defun spell-checking/add-flyspell-hook (hook)
+    "Add `flyspell-mode' to the given HOOK, if
 `spell-checking-enable-by-default' is true."
-  (when spell-checking-enable-by-default
-    (add-hook hook 'flyspell-mode)))
+    (when spell-checking-enable-by-default
+      (add-hook hook 'flyspell-mode)))
 
-(defun spell-checking/change-dictionary ()
-  "Change the dictionary. Use the ispell version if
+  (defun spell-checking/change-dictionary ()
+    "Change the dictionary. Use the ispell version if
 auto-dictionary is not used, use the adict version otherwise."
-  (interactive)
-  (if (fboundp 'adict-change-dictionary)
-      (adict-change-dictionary)
-    (call-interactively 'ispell-change-dictionary)))
+    (interactive)
+    (if (fboundp 'adict-change-dictionary)
+        (adict-change-dictionary)
+      (call-interactively 'ispell-change-dictionary)))
 
-(defun add-word-to-dict-buffer ()
-  "Save word at point as correct in current buffer."
-  (interactive)
-  (add-word-to-dict 'buffer))
+  (defun add-word-to-dict-buffer ()
+    "Save word at point as correct in current buffer."
+    (interactive)
+    (add-word-to-dict 'buffer))
 
-(defun add-word-to-dict-global ()
-  "Save word at point as a correct word globally."
-  (interactive)
-  (add-word-to-dict 'save))
+  (defun add-word-to-dict-global ()
+    "Save word at point as a correct word globally."
+    (interactive)
+    (add-word-to-dict 'save))
 
-(defun add-word-to-dict-session ()
-  "Save word at point as correct in current session."
-  (interactive)
-  (add-word-to-dict 'session))
+  (defun add-word-to-dict-session ()
+    "Save word at point as correct in current session."
+    (interactive)
+    (add-word-to-dict 'session))
 
-(defun add-word-to-dict (scope)
-  "Save word at point as a correct word.
+  (defun add-word-to-dict (scope)
+    "Save word at point as a correct word.
 SCOPE can be:
 `save' to save globally,
 `session' to save in current session or
 `buffer' for buffer local."
-  (let ((current-location (point))
-        (word (flyspell-get-word)))
-    (when (consp word)
-      (if (spacemacs//word-in-dict-p (car word))
-          (error "%s is already in dictionary" (car word))
-        (progn
-          (flyspell-do-correct scope nil (car word) current-location
-                               (cadr word) (caddr word) current-location)
-          (ispell-pdict-save t))))))
+    (let ((current-location (point))
+          (word (flyspell-get-word)))
+      (when (consp word)
+        (if (spacemacs//word-in-dict-p (car word))
+            (error "%s is already in dictionary" (car word))
+          (progn
+            (flyspell-do-correct scope nil (car word) current-location
+                                 (cadr word) (caddr word) current-location)
+            (ispell-pdict-save t))))))
 
-(defun spacemacs//word-in-dict-p (word)
-  "Check if WORD is defined in any of the active dictionaries."
-  ;; use the correct dictionary
-  (flyspell-accept-buffer-local-defs)
-  (let (poss ispell-filter)
-    ;; now check spelling of word.
-    (ispell-send-string "%\n")	;put in verbose mode
-    (ispell-send-string (concat "^" word "\n"))
-    ;; wait until ispell has processed word
-    (while (progn
-             (accept-process-output ispell-process)
-             (not (string= "" (car ispell-filter)))))
-    ;; Remove leading empty element
-    (setq ispell-filter (cdr ispell-filter))
-    ;; ispell process should return something after word is sent.
-    ;; Tag word as valid (i.e., skip) otherwise
-    (or ispell-filter
-        (setq ispell-filter '(*)))
-    (if (consp ispell-filter)
-        (setq poss (ispell-parse-output (car ispell-filter))))
-    (or (eq poss t) (stringp poss))))
-#+end_src
-*** Initialisation
-#+begin_src elisp
-(use-package flyspell
-  :defer t
-  :hook
-  (prog-mode . flyspell-prog-mode)
-  (text-mode . flyspell-mode)
-  :custom
-  (ispell-dictionary "en_GB")
-  :config
-  (jl/flyspell))
+  (defun spacemacs//word-in-dict-p (word)
+    "Check if WORD is defined in any of the active dictionaries."
+    ;; use the correct dictionary
+    (flyspell-accept-buffer-local-defs)
+    (let (poss ispell-filter)
+      ;; now check spelling of word.
+      (ispell-send-string "%\n")	;put in verbose mode
+      (ispell-send-string (concat "^" word "\n"))
+      ;; wait until ispell has processed word
+      (while (progn
+               (accept-process-output ispell-process)
+               (not (string= "" (car ispell-filter)))))
+      ;; Remove leading empty element
+      (setq ispell-filter (cdr ispell-filter))
+      ;; ispell process should return something after word is sent.
+      ;; Tag word as valid (i.e., skip) otherwise
+      (or ispell-filter
+          (setq ispell-filter '(*)))
+      (if (consp ispell-filter)
+          (setq poss (ispell-parse-output (car ispell-filter))))
+      (or (eq poss t) (stringp poss)))))
 #+end_src
 *** Flyspell correct
 #+begin_src elisp
 (use-package flyspell-correct
   :after flyspell
-  :bind (:map flyspell-mode-map ("C-;" . flyspell-correct-wrapper)))
+  :general
+  (:keymaps 'flyspell-mode-map
+            "C-;"  'flyspell-correct-wrapper))
 
-(use-package flyspell-correct-ivy
-  :after (flyspell-correct ivy)
-  :commands (flyspell-correct-ivy)
-  :custom
-  (flyspell-correct-interface #'flyspell-correct-ivy)
-  )
+(use-package consult-flyspell
+  :straight (consult-flyspell :type git :host gitlab :repo "OlMon/consult-flyspell" :branch "master")
+  :after (flyspell consult)
+  :config
+  ;; default settings
+  (setq consult-flyspell-select-function nil
+        consult-flyspell-set-point-after-word t
+        consult-flyspell-always-check-buffer nil))
 #+end_src
 * Tools
 ** Undo Tree
-*** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/undo-tree-keys ()
-  (general-evil-define-key '(normal motion) 'undo-tree-visualizer-mode-map
-    "j"  'undo-tree-visualize-redo
-    "k"  'undo-tree-visualize-undo
-    "h"  'undo-tree-visualize-switch-branch-left
-    "l"  'undo-tree-visualize-switch-branch-right
-    )
-  )
-
-(defun jl/undo-tree-global-keys ()
-  (jl/SPC-keys
-    "au" 'undo-tree-visualize
-    )
-  )
-#+END_SRC
-*** Initialisation
 #+begin_src elisp
 (use-package undo-tree
   :hook ((prog-mode text-mode) . undo-tree-mode)
+  :commands (undo-tree-visualize)
+  :general
+  (:states '(normal motion)
+           :keymaps 'undo-tree-visualizer-mode-map
+           "j"  'undo-tree-visualize-redo
+           "k"  'undo-tree-visualize-undo
+           "h"  'undo-tree-visualize-switch-branch-left
+           "l"  'undo-tree-visualize-switch-branch-right)
+  (jl/SPC-keys
+    "au" 'undo-tree-visualize)
   :custom
   (undo-tree-visualizer-timestamps t)
   (undo-tree-visualizer-diff t)
@@ -4246,56 +3948,37 @@ SCOPE can be:
   (undo-limit 800000)
   (undo-strong-limit 12000000)
   (undo-outer-limit 120000000)
-  :init
-  (jl/undo-tree-global-keys)
-
-  :bind (:map undo-tree-visualizer-mode-map
-	      )
   :config
-  (jl/undo-tree-keys)
   (global-undo-tree-mode))
 #+end_src
-
 ** Pandoc
-*** Keybindings
-#+BEGIN_SRC elisp
-(defun jl/pandoc-global-keys ()
-  (jl/SPC-keys
-    "P" '(pandoc-main-hydra/body :which-key "Pandoc")))
-#+END_SRC
-*** Initialisation
 #+begin_src elisp
 (use-package pandoc-mode
   :commands (pandoc-main-hydra/body)
   :defer t
-  :init
-  (jl/pandoc-global-keys))
+  :general
+  (jl/SPC-keys
+    "P" '(pandoc-main-hydra/body :which-key "Pandoc")))
 #+end_src
 ** Iedit
-*** Keybindings
-#+begin_src elisp
-(defun jl/iedit-keys ()
-  (jl/SPC-keys
-    "se" 'iedit-mode))
-#+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package evil-iedit-state
   :defer t
-  :init
-  (jl/iedit-keys))
+  :general
+  (jl/SPC-keys
+    "se" 'iedit-mode))
 #+end_src
 *** wgrep
 #+BEGIN_SRC elisp
 (use-package wgrep
   :defer t)
 #+END_SRC
-
 ** Simple httpd
 #+BEGIN_SRC elisp
 (use-package simple-httpd
   :defer t
-  :commands httpd-serve-directory)
+  :commands (httpd-serve-directory))
 #+END_SRC
 ** Define word
 #+BEGIN_SRC elisp
@@ -4326,7 +4009,6 @@ SCOPE can be:
   ;;                 (menu-bar-lines . t)
   ;;                 (window-system . x)))
 )
-
 #+END_SRC
 ** esup
 #+BEGIN_SRC elisp
@@ -4375,8 +4057,7 @@ SCOPE can be:
 *** Keybindings
 #+BEGIN_SRC elisp
 (defun jl/eshell-global-keys ()
-  (jl/SPC-keys
-    "ase" 'eshell))
+  )
 #+END_SRC
 *** Initialisation
 #+BEGIN_SRC elisp
@@ -4406,21 +4087,21 @@ SCOPE can be:
   :commands (eshell)
   :defer t
   :hook (eshell-first-time-mode . efs/configure-eshell)
-  :init
-  (jl/eshell-global-keys)
+  :general
+  (jl/SPC-keys
+    "ase" 'eshell)
+  (:keymaps 'eshell-mode-map
+            "C-j" 'eshell-next-matching-input-from-input
+            "C-k" 'eshell-previous-matching-input-from-input)
   :config
-  (general-define-key
-    :keymaps 'eshell-mode-map
-    "C-j" 'eshell-next-matching-input-from-input
-    "C-k" 'eshell-previous-matching-input-from-input)
   (defalias 'eshell/d 'dired)
 
   (with-eval-after-load 'esh-opt
     (setq eshell-destroy-buffer-when-process-dies t)
-    (setq eshell-visual-commands '("htop" "zsh" "vim")))
+    (setq eshell-visual-commands '("htop" "zsh" "vim" "nmtui")))
 
   (eshell-git-prompt-use-theme 'powerline))
-#+END_SRC
+    #+END_SRC
 *** eshell-did-you-mean
 #+BEGIN_SRC elisp
 (use-package eshell-did-you-mean
@@ -4457,20 +4138,19 @@ SCOPE can be:
 #+BEGIN_SRC elisp :tangle no
 (use-package snow
   :defer t
-  :commands snow)
+  :commands (snow))
 #+END_SRC
 ** Fireplace
 #+BEGIN_SRC elisp :tangle no
 (use-package fireplace
   :defer t
-  :commands fireplace)
+  :commands (fireplace))
 #+END_SRC
-
 * Direnv
 ** direnv
 #+BEGIN_SRC elisp :tangle no
 (use-package direnv
-  :defer 2
+  :defer .1
   :config
   (direnv-mode)
   :custom
@@ -4479,7 +4159,7 @@ SCOPE can be:
 ** envrc
 #+BEGIN_SRC elisp
 (use-package envrc
-  :defer 2
+  :defer .1
   :config
   (envrc-global-mode))
 #+END_SRC
