@@ -735,17 +735,13 @@ folder, otherwise delete a character backward"
 (use-package vertico
   :straight (vertico :includes vertico-directory
                      :files (:defaults "extensions/vertico-directory.el"))
-  :defer t
-  :bind (:map vertico-map
-              ("C-j" . vertico-next)
-              ("C-k" . vertico-previous)
-              ("C-g" . vertico-exit)
-              ;; :map minibuffer-local-map
-              ;; ("<backspace>" . minibuffer-backward-kill)
-              ;; ("S-<backspace>"  . backward-delete-char)
-              ("RET" . vertico-directory-enter)
-              ("DEL" . vertico-directory-delete-char)
-              ("M-DEL" . vertico-directory-delete-word))
+  :general (:keymaps 'vertico-map
+                     "C-j" 'vertico-next
+                     "C-k" 'vertico-previous
+                     "C-g" 'vertico-exit
+                     "RET" 'vertico-directory-enter
+                     "DEL" 'vertico-directory-delete-char
+                     "M-DEL" 'vertico-directory-delete-word)
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
   :custom
@@ -765,15 +761,8 @@ folder, otherwise delete a character backward"
 *** Consult
 #+BEGIN_SRC elisp
 (use-package consult
-  :commands (execute-extended-command
-             consult-imenu
-             find-file
-             consult-theme
-             persp-switch-to-buffer*
-             consult-ripgrep
-             consult-line)
-  :bind (("C-s" . consult-line))
-  :init
+  :commands (execute-extended-command consult-imenu find-file consult-theme persp-switch-to-buffer* consult-ripgrep consult-line)
+  :general ("C-s" 'consult-line)
   (jl/SPC-keys
     "SPC" '(execute-extended-command :which-key "M-x")
     "C-s" 'consult-imenu
@@ -818,7 +807,7 @@ Allows for partial searching in vertico.
   :defer t
   :straight '(app-launcher :host github :repo "SebastienWae/app-launcher")
   :commands (app-launcher-run-app)
-  :init
+  :general
   (jl/SPC-keys
     "RET" 'app-launcher-run-app))
 #+END_SRC
@@ -826,27 +815,30 @@ Allows for partial searching in vertico.
 **** Initialisation
 #+BEGIN_SRC elisp
 (use-package embark
-  :defer t
-  :commands (embark-act
-             embark-dwim
-             embark-bindings)
-  :bind (("C-." . embark-act)
-         ("M-." . embark-dwim)
-         ("C-h B" . embark-bindings))
+  :commands
+  (embark-act
+   embark-dwim
+   embark-bindings)
+  :general
+  ("C-." 'embark-act
+   "M-."  'embark-dwim
+   "C-h B" 'embark-bindings)
   :custom
   (prefix-help-command #'embark-prefix-help-command))
 #+END_SRC
 **** embark-consult
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package embark-consult
   :defer t
   :after (embark consult))
 #+END_SRC
 * Project Management
 ** Projectile
-*** Keybindings
+*** Initialisation
 #+begin_src elisp
-(defun jl/projectile-keys ()
+(use-package projectile
+  :diminish projectile-mode
+  :general
   (jl/SPC-keys
     ;; Project
     "p!" 'projectile-run-shell-command-in-root
@@ -868,40 +860,28 @@ Allows for partial searching in vertico.
     "pr" 'projectile-recentf
     "pR" 'projectile-replace
     "pT" 'projectile-test-project
-    "pv" 'projectile-vc))
-#+end_src
-*** Initialisation
-#+begin_src elisp
-(use-package projectile
-  :after ivy
-  :diminish projectile-mode
-  :custom
-  (projectile-completion-system 'ivy)
+    "pv" 'projectile-vc)
   :config
-  (projectile-mode)
-  (jl/projectile-keys))
-
-(use-package counsel-projectile
-  :after (projectile counsel)
-  :config (counsel-projectile-mode))
+  (projectile-mode))
 #+end_src
+*** consult-projectile
+#+BEGIN_SRC elisp
+(use-package consult-projectile
+  :straight (consult-projectile :type git :host gitlab :repo "OlMon/consult-projectile" :branch "master"))
+#+END_SRC
 ** Magit
-*** Keybindings
-#+begin_src elisp
-(defun jl/magit-keys ()
-  (jl/SPC-keys
-    "gs" 'magit-status))
-#+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package magit
   :commands magit-status
-  :init
-  (jl/magit-keys)
-  :config
-  (define-key magit-status-mode-map (kbd "SPC") nil)
-  (evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
-  (evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel))
+  :general
+  (jl/SPC-keys
+    "gs" 'magit-status)
+  (:keymaps 'magit-status-mode-map
+            (kbd "SPC") nil)
+  (:kemaps 'git-commit-mode-map
+           ",," 'with-editor-finish
+           ",a" 'with-editor-cancel))
 #+end_src
 ** Treemacs
 *** Keybindings
