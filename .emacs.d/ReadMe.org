@@ -227,108 +227,64 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 #+begin_src elisp
 (use-package general
   :custom
-  (general-override-states '(insert
-                             emacs
-                             hybrid
-                             normal
-                             visual
-                             motion
-                             operator
-                             replace))
+  (general-override-states '(insert emacs hybrid normal visual motion operator replace))
   :config
-  (general-create-definer jl/SPC-keys
-    ;; :keymaps '(normal visual motion)
-    :states '(normal visual motion)
-    :keymaps 'override
-    :prefix "SPC"
-    )
+  (general-auto-unbind-keys)
+  (general-create-definer jl/SPC-keys :states '(normal visual motion) :keymaps 'override :prefix "SPC")
 
-  (general-create-definer jl/major-modes
-    ;; :keymaps '(normal visual motion)
-    :states '(normal visual motion)
-    :prefix "SPC m"
-    :global-prefix ","
-    )
-(general-create-definer jl/minor-modes
-    ;; :keymaps '(normal visual motion)
-    :states '(normal visual motion)
-    :definer 'minor-mode
-    :prefix "SPC m"
-    :global-prefix ","
-    )
+  (general-create-definer jl/major-modes :states '(normal visual motion) :prefix ",")
 
-  (general-create-definer jl/C-c-keys
-    ;; :keymaps '(normal visual insert emacs operator motion)
-    :states '(normal visual insert emacs operator motion)
-    :prefix "C-c"
-    )
-  )
+  (general-create-definer jl/C-c-keys :states '(normal visual insert emacs operator motion) :prefix "C-c")
+  (jl/SPC-keys
+    "a"  '(:ignore t :which-key "applications")
+    "ae" '(:ignore t :which-key "email")
+    "ar" '(:ignore t :which-key "readers")
+    "as" '(:ignore t :which-key "shells")
+    "at" '(:ignore t :which-key "tools")
+    "b"  '(:ignore t :which-key "buffers")
+    "c"  '(:ignore t :which-key "compile/Comments")
+    "e"  '(:ignore t :which-key "errors")
+    "f"  '(:which-key "files")
+    "fe" '(:which-key "Emacs")
+    "g"  '(:ignore t :which-key "git")
+    "h"  '(:ignore t :which-key "help")
+    "i"  '(:ignore t :which-key "insertion")
+    "j"  '(:ignore t :which-key "jump/join/split")
+    "k"  '(:ignore t :which-key "lisp")
+    "n"  '(:ignore t :which-key "narrow/numbers")
+    "p"  '(:ignore t :which-key "projects")
+    "q"  '(:ignore t :which-key "quit")
+    "r"  '(:ignore t :which-key "registers/rings/resume")
+    "s"  '(:ignore t :which-key "search/symbol")
+    "q"  '(:ignore t :which-key "quit")
+    "t"  '(:ignore t :which-key "toggles")
+    "w"  '(:ignore t :which-key "windows")
+    "z"  '(:ignore t :which-key "zoom")
+    "C"  '(:ignore t :which-key "Capture/Colours")
+    "D"  '(:ignore t :which-key "Diff/compare")
+    "F"  '(:ignore t :which-key "Frames")
+    "K"  '(:ignore t :which-key "Keyboard Macros")
+    "N"  '(:ignore t :which-key "Navigation")
+    "S"  '(:ignore t :which-key "Spelling")
+    "T"  '(:ignore t :which-key "UI toggles/Themes")
+    "C-v" '(:ignore t :which-key "Rectangles")
+    "m"   '(:ignore t :which-key "major mode")
 
-(general-auto-unbind-keys)
+    "!" 'eshell
+    "fc" 'copy-file
+    "fd" 'delete-file-and-buffer
+    "fed" '(find-emacs-dotfile :which-key "Open init file")
+    "fnd" '(find-system-dotfile :which-key "Open dotfiles")
+    "fE" '(sudo-edit :which-key "Edit with sudo...")
+    "fR" 'rename-file-and-buffer
+    "fs" '(save-buffer :which-key "save")
+    "qq" 'kill-emacs
+    "ts" '(hydra-text-scale/body :which-key "scale text")
+    "w-" 'split-window-below
+    "w/" 'split-window-right
+    "wd" 'delete-window))
 #+end_src
-*** SPC keys
-#+begin_src elisp
-(jl/SPC-keys
-  "a" '(:ignore t :which-key "applications")
-  "ae" '(:ignore t :which-key "email")
-  "ar" '(:ignore t :which-key "readers")
-  "as" '(:ignore t :which-key "shells")
-
-  "at" '(:ignore t :which-key "tools")
-
-  "b" '(:ignore t :which-key "buffers")
-  "c" '(:ignore t :which-key "compile/Comments")
-  "e" '(:ignore t :which-key "errors")
-  "f" '(:which-key "files")
-  "fe" '(:which-key "Emacs")
-
-
-  "g" '(:ignore t :which-key "git")
-  "h" '(:ignore t :which-key "help")
-  "i" '(:ignore t :which-key "insertion")
-  "j" '(:ignore t :which-key "jump/join/split")
-  "k" '(:ignore t :which-key "lisp")
-  "n" '(:ignore t :which-key "narrow/numbers")
-  "p" '(:ignore t :which-key "projects")
-  "q" '(:ignore t :which-key "quit")
-  "r" '(:ignore t :which-key "registers/rings/resume")
-  "s" '(:ignore t :which-key "search/symbol")
-  "q" '(:ignore t :which-key "quit")
-  "t" '(:ignore t :which-key "toggles")
-  "w" '(:ignore t :which-key "windows")
-  "z" '(:ignore t :which-key "zoom")
-  "C" '(:ignore t :which-key "Capture/Colours")
-  "D" '(:ignore t :which-key "Diff/compare")
-  "F" '(:ignore t :which-key "Frames")
-  "K" '(:ignore t :which-key "Keyboard Macros")
-  "N" '(:ignore t :which-key "Navigation")
-  "S" '(:ignore t :which-key "Spelling")
-  "T" '(:ignore t :which-key "UI toggles/Themes")
-  "C-v" '(:ignore t :which-key "Rectangles")
-  "m" '(:ignore t :which-key "major mode")
-
-
-  "!" 'eshell
-  "fc" 'copy-file
-  "fd" 'delete-file-and-buffer
-  "fed" '(find-emacs-dotfile :which-key "Open init file")
-  "fnd" '(find-system-dotfile :which-key "Open dotfiles")
-  "fE" '(sudo-edit :which-key "Edit with sudo...")
-  "fR" 'rename-file-and-buffer
-  "fs" '(save-buffer :which-key "save")
-
-  "qq" 'kill-emacs
-
-
-  "ts" '(hydra-text-scale/body :which-key "scale text")
-
-  "w-" 'split-window-below
-  "w/" 'split-window-right
-  "wd" 'delete-window
-
-  )
-#+end_src
-** Misc
+** TODO Misc
 #+begin_src elisp
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (general-define-key
@@ -342,46 +298,40 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buffers.
 #+begin_src elisp
 (use-package hydra
-  :defer t)
-#+end_src
-*** Text Scaling
-#+begin_src elisp
-(defhydra hydra-text-scale (:hint nil) ;;(:timeout 4) ;; -- I don't want a timeout
-  "
+  :defer t
+  :init
+  (defhydra hydra-text-scale (:hint nil) ;;(:timeout 4) ;; -- I don't want a timeout
+    "
 ^Increase^    ^Decrease^    ^Reset
 ^^^^^------------------------------
 [_+_]         [_-_]         [_0_]
 [_k_]         [_j_]         ^
 "
-  ("k" text-scale-increase)
-  ("+" text-scale-increase)
+    ("k" text-scale-increase)
+    ("+" text-scale-increase)
 
-  ("j" text-scale-decrease)
-  ("-" text-scale-decrease)
+    ("j" text-scale-decrease)
+    ("-" text-scale-decrease)
 
-  ("0" (text-scale-adjust 0))
-  ("f" nil "finished" :exit t))
-#+end_src
-*** Pasting
-#+begin_src elisp
-(defhydra jl/pasting-hydra ()
-  "Pasting Transient State"
-  ("C-j" evil-paste-pop)
-  ("C-k" evil-paste-pop-next)
-  ("p" evil-paste-after)
-  ("P" evil-paste-before))
+    ("0" (text-scale-adjust 0))
+    ("f" nil "finished" :exit t))
 
-(general-define-key
- :states 'normal
- "p"  'jl/pasting-hydra/evil-paste-after)
+  (defhydra jl/pasting-hydra ()
+    "Pasting Transient State"
+    ("C-j" evil-paste-pop)
+    ("C-k" evil-paste-pop-next)
+    ("p" evil-paste-after)
+    ("P" evil-paste-before))
 
+  (general-define-key
+   :states 'normal
+   "p"  'jl/pasting-hydra/evil-paste-after))
 #+end_src
 ** Evil mode
 *** Evil
 #+begin_src elisp
 (use-package evil
-
-
+  ;; :defer .1
   :custom
   (evil-want-keybinding nil)
   (evil-normal-state-cursor '("#DAA520" box))
@@ -398,7 +348,7 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
 #+begin_src elisp
 (use-package evil-collection
   :diminish t
-  :after evil
+  :after (evil)
   :config
   (evil-collection-init))
 #+end_src
@@ -406,24 +356,22 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
 #+begin_src elisp
 (use-package evil-commentary
   :diminish t
-  :after evil
+  :after (evil)
   :config
-  (evil-commentary-mode 1)
-  )
+  (evil-commentary-mode 1))
 #+end_src
 *** Evil surround
 #+BEGIN_SRC elisp
 (use-package evil-surround
-  :after evil
+  :after (evil)
   :config
-  (global-evil-surround-mode 1)
-  )
+  (global-evil-surround-mode 1))
 #+END_SRC
 *** Evil escape
 #+BEGIN_SRC elisp
 (use-package evil-escape
   :diminish t
-  :after evil
+  :after (evil)
   :config
   (evil-escape-mode)
   (setq-default evil-escape-key-sequence "jk")
@@ -433,7 +381,7 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
 Adds the popup for key commands with mulitple key presses.
 #+begin_src elisp
 (use-package which-key
-  :after evil
+  :after (evil)
   :config
   (which-key-mode)
   :diminish which-key-mode
@@ -445,11 +393,10 @@ Adds the popup for key commands with mulitple key presses.
   (which-key-min-display-lines 6)
   (which-key-max-description-length 32)
   (which-key-add-column-padding 1)
-  (which-key-allow-multiple-replacements t)
-  )
+  (which-key-allow-multiple-replacements t))
 #+end_src
 * UI configuration
-** Warnings
+** TODO Warnings
 #+begin_src elisp
 (setq warning-suppress-types '((comp) (org-roam) (org-element-cache) ()(:warning)))
 #+end_src
@@ -458,8 +405,7 @@ Adds the popup for key commands with mulitple key presses.
 (use-package solaire-mode
   :defer 0.5
   :custom
-  (solaire-global-mode +1)
-  )
+  (solaire-global-mode +1))
 #+END_SRC
 ** Themes
 *** Doom themes
@@ -467,8 +413,7 @@ Adds the popup for key commands with mulitple key presses.
 (use-package doom-themes
   :defer t
   :hook (server-after-make-frame . (lambda () (load-theme
-					       'doom-palenight t)))
-  )
+					       'doom-palenight t))))
 #+end_src
 *** Nord
 #+begin_src elisp
@@ -493,19 +438,15 @@ Adds the popup for key commands with mulitple key presses.
     (setf (alist-get "v" all-the-icons-extension-icon-alist nil nil #'equal) '(all-the-icons-fileicon "coq" :height 1.0 :v-adjust -0.2 :face all-the-icons-lred))
     (add-to-list 'all-the-icons-data/file-icon-alist '("agda" . "\x1315a"))
     (add-to-list 'all-the-icons-extension-icon-alist '("agda" all-the-icons-fileicon "agda" :height 1.0 :v-adjust -0.2 :face all-the-icons-lblue))
-    (add-to-list 'all-the-icons-extension-icon-alist '("lagda" all-the-icons-fileicon "agda" :height 1.0 :v-adjust -0.2 :face all-the-icons-lblue))
-    )
-  )
+    (add-to-list 'all-the-icons-extension-icon-alist '("lagda" all-the-icons-fileicon "agda" :height 1.0 :v-adjust -0.2 :face all-the-icons-lblue))))
 #+END_SRC
 *** All the icons dired
 #+BEGIN_SRC elisp
 (use-package all-the-icons-dired
   :commands (dired)
-  :defer t
   :hook (dired-mode . all-the-icons-dired-mode)
   :custom
-  (all-the-icons-dired-monochrome nil)
-  )
+  (all-the-icons-dired-monochrome nil))
 #+END_SRC
 ** Modeline
 We use doom modeline.
@@ -514,8 +455,7 @@ We use doom modeline.
   ;; :defer t
   :custom
   (inhibit-compacting-font-caches t)
-  :init (doom-modeline-mode)
-  )
+  :init (doom-modeline-mode))
 #+end_src
 ** Emacs-winum
 *** Keybindings
@@ -601,8 +541,7 @@ We use doom modeline.
   :config (winum-mode)
   :diminish winum-mode
   :config
-  (jl/winum-keys)
-  )
+  (jl/winum-keys))
 #+end_src
 ** Perspective
 *** Functions
@@ -671,12 +610,11 @@ If the universal prefix argument is used then kill also the window."
   (jl/persp-keys)
   (persp-mode))
 #+end_src
-** Fillings
+** TODO Fillings
 #+BEGIN_SRC elisp
 ;; (add-hook 'prog-mode-hook 'auto-fill-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
 #+END_SRC
-
 ** Dashboard
 *** Functions
 #+begin_src elisp
@@ -689,6 +627,11 @@ If the universal prefix argument is used then kill also the window."
 *** Initialisation
 #+begin_src elisp
 (use-package dashboard
+  :general (:keymaps 'dashboard-mode-map
+                     :states '(normal motion)
+                     :no-autoload t
+                     "j"  'widget-forward
+                     "k"  'widget-backward)
   :custom
   ;; Set the title
   (dashboard-banner-logo-title "Welcome to Emacs")
@@ -711,13 +654,7 @@ If the universal prefix argument is used then kill also the window."
   (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
   :config
-  (general-evil-define-key '(normal motion) 'dashboard-mode-map
-    "j"  'widget-forward
-    "k"  'widget-backward
-    )
-
-  (dashboard-setup-startup-hook)
-  )
+  (dashboard-setup-startup-hook))
 #+end_src
 * Completion frameworks
 ** Ivy and Counsel
@@ -953,23 +890,18 @@ Allows for partial searching in vertico.
 #+begin_src elisp
 (defun jl/magit-keys ()
   (jl/SPC-keys
-    "gs" 'magit-status
-    ))
-
-(evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
-(evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel)
-
+    "gs" 'magit-status))
 #+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package magit
-  :defer t
   :commands magit-status
   :init
   (jl/magit-keys)
   :config
   (define-key magit-status-mode-map (kbd "SPC") nil)
-  )
+  (evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
+  (evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel))
 #+end_src
 ** Treemacs
 *** Keybindings
@@ -1951,7 +1883,6 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   (evil-append-line nil)
   (haskell-indentation-newline-and-indent))
 #+END_SRC
-
 #+BEGIN_SRC elisp
 (defun haskell-format-imports ()
   "Sort and align import statements from anywhere in the source file."
@@ -2045,8 +1976,7 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
     "f"   'haskell-cabal-find-or-create-source-file
     )
 
-  (evil-define-key 'normal haskell-mode-map "o" 'haskell-evil-open-below
-    "O" 'haskell-evil-open-above)
+
   )
 #+end_src
 **** Initialisation
@@ -2057,6 +1987,9 @@ To get evil's "o" and "O" keys to work with indentation as expected, we use thes
   :init
   (jl/haskell-keys)
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
+  :config
+  (evil-define-key 'normal haskell-mode-map "o" 'haskell-evil-open-below
+    "O" 'haskell-evil-open-above)
   :custom
   (haskell-process-type 'ghci))
 #+end_src
@@ -2631,6 +2564,9 @@ We need a function to find the lsp server when it's installed through a nix shel
   (jl/org-mode-key-bindings)
   (jl/org-font-setup)
   (jl/org-luasvg)
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
   (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
   :custom
   (org-ellipsis " ▼")
@@ -3009,12 +2945,6 @@ Calling org-babel languages in the following form saves a lot on startup time.
   ;; Must be done everytime we run org-capture otherwise it will
   ;; be ignored until insert mode is entered.
   (add-hook 'org-capture-mode-hook 'org-capture-start))
-#+end_src
-**** Org Source blocks
-#+begin_src elisp
-(evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
-(evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
-(evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
 #+end_src
 **** Table of Contents
 #+BEGIN_SRC elisp
@@ -4417,6 +4347,11 @@ SCOPE can be:
   ;;                 (window-system . x)))
 )
 
+#+END_SRC
+** esup
+#+BEGIN_SRC elisp
+(use-package esup
+  :defer t)
 #+END_SRC
 * Shells
 ** Term
