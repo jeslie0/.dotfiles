@@ -12,8 +12,8 @@
  (location . "gemini://gemini.circumlunar.space/")
  (handler . elpher-bookmark-jump))
 ("org-capture-last-stored"
- (filename . "~/Documents/Roam/20220304224607-quick.org")
+ (filename . "~/Documents/Roam/20220310194853-mum.org")
  (front-context-string)
- (rear-context-string . "\n#+title: quick\n")
- (position . 83))
+ (rear-context-string . "D:\n#+title: Mum\n")
+ (position . 81))
 )

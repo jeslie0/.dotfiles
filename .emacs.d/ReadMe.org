@@ -16,16 +16,63 @@
 ;; compiled ones.
 (setq load-prefer-newer t)
 
+;; A big contributor to startup times is garbage collection. We up the gc
+;; threshold to temporarily prevent it from running, then reset it later by
+;; enabling `gcmh-mode'. Not resetting it will cause stuttering/freezes.
+(setq gc-cons-threshold most-positive-fixnum)
+
+(unless (or (daemonp)
+            noninteractive
+            init-file-debug)
+  (let ((old-file-name-handler-alist file-name-handler-alist))
+    ;; `file-name-handler-alist' is consulted on each `require', `load' and
+    ;; various path/io functions. You get a minor speed up by unsetting this.
+    ;; Some warning, however: this could cause problems on builds of Emacs where
+    ;; its site lisp files aren't byte-compiled and we're forced to load the
+    ;; *.el.gz files (e.g. on Alpine).
+    (setq-default file-name-handler-alist nil)
+    ;; ...but restore `file-name-handler-alist' later, because it is needed for
+    ;; handling encrypted or compressed files, among other things.
+    (defun doom-reset-file-handler-alist-h ()
+      (setq file-name-handler-alist
+            ;; Merge instead of overwrite because there may have bene changes to
+            ;; `file-name-handler-alist' since startup we want to preserve.
+            (delete-dups (append file-name-handler-alist
+                                 old-file-name-handler-alist))))
+    (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h 101))
+
+ ;; Premature redisplays can substantially affect startup times and produce
+  ;; ugly flashes of unstyled Emacs.
+  (setq-default inhibit-redisplay t
+                inhibit-message t)
+  (add-hook 'window-setup-hook
+            (lambda ()
+              (setq-default inhibit-redisplay nil
+                            inhibit-message nil)
+              (redisplay)))
+
+  ;; Site files tend to use `load-file', which emits "Loading X..." messages in
+  ;; the echo area, which in turn triggers a redisplay. Redisplays can have a
+  ;; substantial effect on startup times and in this case happens so early that
+  ;; Emacs may flash white while starting up.
+  (define-advice load-file (:override (file) silence)
+    (load file nil 'nomessage))
+
+  ;; Undo our `load-file' advice above, to limit the scope of any edge cases it
+  ;; may introduce down the road.
+  (define-advice startup--load-user-init-file (:before (&rest _) init-doom)
+    (advice-remove #'load-file #'load-file@silence)))
+
 
 ;; speedup blub - Taken from Reddit somewhere
-(let ((default-gc-threshold gc-cons-threshold)
-      (default-gc-percentage gc-cons-percentage))
-  (setq gc-cons-threshold most-positive-fixnum
-        default-gc-percentage 0.8)
-  (add-hook 'after-init-hook
-            (lambda ()
-              (setq gc-cons-percentage default-gc-percentage
-                    gc-cons-threshold default-gc-threshold))))
+;; (let ((default-gc-threshold gc-cons-threshold)
+;;       (default-gc-percentage gc-cons-percentage))
+;;   (setq gc-cons-threshold most-positive-fixnum
+;;         default-gc-percentage 0.8)
+;;   (add-hook 'after-init-hook
+;;             (lambda ()
+;;               (setq gc-cons-percentage default-gc-percentage
+;;                     gc-cons-threshold default-gc-threshold))))
 
 
 
@@ -47,15 +94,15 @@
 
 ;; Set the fonts
 (defvar jl/prog-font
-  "Source Code Pro")
+  "Fira Code")
 
 (defvar jl/text-font
   "Gill Sans")
 
 
-(set-face-attribute 'default nil :font jl/prog-font :height 110)
+(set-face-attribute 'default nil :family jl/prog-font :height 110)
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font jl/prog-font :height 110)
+(set-face-attribute 'fixed-pitch nil :family jl/prog-font :height 110)
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :family jl/text-font :height 140)
 
@@ -81,12 +128,14 @@
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
 (setq read-process-output-max (* 1024 1024))
 (setq-default indent-tabs-mode nil)
+(setq vc-follow-symlinks t)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 #+end_src
 * Package managers
 ** Straight.el
 #+begin_src elisp
 (setq straight-fix-flycheck t)
+(setq straight-check-for-modifications 'live) ;; Gives massive speed up to startup time!
 (defvar bootstrap-version)
 (let ((bootstrap-file
       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -328,7 +377,7 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
    "p"  'jl/pasting-hydra/evil-paste-after))
 #+end_src
 ** Evil mode
-*** Evil
+*** evil
 #+begin_src elisp
 (use-package evil
   ;; :defer .1
@@ -344,7 +393,7 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
   (evil-set-initial-state 'dashboard-mode 'normal)
   (define-key evil-insert-state-map (kbd "C-k") nil))
 #+end_src
-*** Evil collection
+*** evil-collection
 #+begin_src elisp
 (use-package evil-collection
   :diminish t
@@ -352,7 +401,7 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
   :config
   (evil-collection-init))
 #+end_src
-*** Evil commentary
+*** evil-commentary
 #+begin_src elisp
 (use-package evil-commentary
   :diminish t
@@ -360,14 +409,14 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
   :config
   (evil-commentary-mode 1))
 #+end_src
-*** Evil surround
+*** evil-surround
 #+BEGIN_SRC elisp
 (use-package evil-surround
   :after (evil)
   :config
   (global-evil-surround-mode 1))
 #+END_SRC
-*** Evil escape
+*** evil-escape
 #+BEGIN_SRC elisp
 (use-package evil-escape
   :diminish t
@@ -376,6 +425,12 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
   (evil-escape-mode)
   (setq-default evil-escape-key-sequence "jk")
   (setq-default evil-escape-delay 0.2))
+#+END_SRC
+*** evil-tex
+#+BEGIN_SRC elisp
+(use-package evil-tex
+  :hook (LaTeX-mode . evil-tex-mode)
+  :after (evil))
 #+END_SRC
 ** Which-key
 Adds the popup for key commands with mulitple key presses.
@@ -403,7 +458,6 @@ Adds the popup for key commands with mulitple key presses.
 ** Solaire mode
 #+BEGIN_SRC elisp
 (use-package solaire-mode
-  :defer 0.5
   :custom
   (solaire-global-mode +1))
 #+END_SRC
@@ -428,7 +482,6 @@ Adds the popup for key commands with mulitple key presses.
 ** All the icons
 #+BEGIN_SRC elisp
 (use-package all-the-icons
-  :defer t
   :straight (all-the-icons :type git :host github :repo "domtronn/all-the-icons.el"
 			   :fork (:host github
 					:repo "jeslie0/all-the-icons.el")
@@ -452,7 +505,6 @@ Adds the popup for key commands with mulitple key presses.
 We use doom modeline.
 #+begin_src elisp
 (use-package doom-modeline
-  ;; :defer t
   :custom
   (inhibit-compacting-font-caches t)
   :init (doom-modeline-mode))
@@ -555,8 +607,8 @@ If the universal prefix argument is used then kill also the window."
       (abort-recursive-edit)
     (if (equal '(4) arg)
         (kill-buffer-and-window)
-      (kill-buffer)))
-  )
+      (kill-buffer))))
+
 (defun toggle-centered-buffer ()
   "Toggle visual centering of the current buffer."
   (interactive)
@@ -579,9 +631,12 @@ If the universal prefix argument is used then kill also the window."
 ;;     (writeroom-mode 1)
 ;;     (spacemacs/centered-buffer-mode-transient-state/body)))
 #+end_src
-*** Keybindings
+*** Initialisation
 #+begin_src elisp
-(defun jl/persp-keys ()
+(use-package perspective
+  :defer .1
+  :general
+  ("C-x k" 'persp-kill-buffer*)
   (jl/SPC-keys
     "b'" 'persp-switch-by-number
     "ba" 'persp-add-buffer
@@ -598,16 +653,8 @@ If the universal prefix argument is used then kill also the window."
     "bS" 'persp-state-save
     "bL" 'persp-state-load
 
-    "bh" 'buffer-visit-dashboard
-    "bR" 'revert-buffer))
-#+end_src
-*** Initialisation
-#+begin_src elisp
-(use-package perspective
-  :defer 1
-  :bind (("C-x k" . persp-kill-buffer*))
+    "bR" 'revert-buffer)
   :config
-  (jl/persp-keys)
   (persp-mode))
 #+end_src
 ** TODO Fillings
@@ -615,23 +662,31 @@ If the universal prefix argument is used then kill also the window."
 ;; (add-hook 'prog-mode-hook 'auto-fill-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
 #+END_SRC
+** recentf
+#+BEGIN_SRC elisp
+(use-package recentf
+  :config
+  (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
+  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/bookmarks"))
+  (add-to-list 'recentf-exclude (expand-file-name "~/.emacs.d/bookmarks"))
+  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org")))
+#+END_SRC
 ** Dashboard
 *** Functions
 #+begin_src elisp
-(defun buffer-visit-dashboard ()
-  (interactive)
-  (switch-to-buffer "*dashboard*")
-  (dashboard-refresh-buffer)
-  )
 #+end_src
 *** Initialisation
 #+begin_src elisp
 (use-package dashboard
-  :general (:keymaps 'dashboard-mode-map
-                     :states '(normal motion)
-                     :no-autoload t
-                     "j"  'widget-forward
-                     "k"  'widget-backward)
+  :general
+  (jl/SPC-keys
+    :no-autoload t
+    "bh" 'buffer-visit-dashboard)
+  (:keymaps 'dashboard-mode-map
+            :states '(normal motion)
+            :no-autoload t
+            "j"  'widget-forward
+            "k"  'widget-backward)
   :custom
   ;; Set the title
   (dashboard-banner-logo-title "Welcome to Emacs")
@@ -654,8 +709,31 @@ If the universal prefix argument is used then kill also the window."
   (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
   :config
+  (defun buffer-visit-dashboard ()
+    (interactive)
+    (switch-to-buffer "*dashboard*")
+    (dashboard-refresh-buffer))
   (dashboard-setup-startup-hook))
 #+end_src
+** ligature.el
+#+BEGIN_SRC elisp
+(use-package ligature
+  :after prog-mode
+  :straight (:host github :repo "mickeynp/ligature.el" :branch "master" :files ("ligature.el"))
+  :config
+  (ligature-set-ligatures 'prog-mode '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+                                       ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+                                       "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+                                       "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+                                       "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
+                                       "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+                                       "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+                                       "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+                                       "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+                                       "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+
+  (global-ligature-mode 't))
+#+END_SRC
 * Completion frameworks
 ** Ivy and Counsel
 #+begin_src elisp :tangle no
@@ -867,6 +945,7 @@ Allows for partial searching in vertico.
 *** consult-projectile
 #+BEGIN_SRC elisp
 (use-package consult-projectile
+  :after (consult projectile)
   :straight (consult-projectile :type git :host gitlab :repo "OlMon/consult-projectile" :branch "master"))
 #+END_SRC
 ** Magit
@@ -1804,39 +1883,37 @@ For most programming languages, the development tools will be installed through 
 (use-package haskell-mode
   :hook ((haskell-mode . auto-fill-mode))
   :general
-  (:keymaps 'haskell-mode-map
-            :states 'normal
-            "o" 'haskell-evil-open-above
-            "O" 'haskell-evil-open-above)
+  ;; (:keymaps 'haskell-mode-map
+  ;;           :states 'normal
+  ;;           "o" 'haskell-indentation-newline-and-indent)
   :init
+  ;; ;; To get evil's "o" and "O" keys to work with indentation as expected, we use these two functions from [[https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026][hatashiro]].
+  ;; (defun haskell-evil-open-above ()
+  ;;   (interactive)
+  ;;   (evil-digit-argument-or-evil-beginning-of-line)
+  ;;   (haskell-indentation-newline-and-indent)
+  ;;   (evil-previous-line)
+  ;;   (haskell-indentation-indent-line)
+  ;;   (evil-append-line nil))
+
+  ;; (defun haskell-evil-open-below ()
+  ;;   (interactive)
+  ;;   (evil-append-line nil)
+  ;;   (haskell-indentation-newline-and-indent))
+
+  ;; (defun haskell-format-imports ()
+  ;;   "Sort and align import statements from anywhere in the source file."
+  ;;   (interactive)
+  ;;   (save-excursion
+  ;;     (haskell-navigate-imports)
+  ;;     (haskell-mode-format-imports)))
+
+  ;; (defun haskell-process-do-type-on-prev-line ()
+  ;;   (interactive)
+  ;;   (haskell-process-do-type 1))
   (remove-hook 'haskell-mode-hook 'electric-indent-mode)
   :config
   (jl/haskell-keys)
-  ;; To get evil's "o" and "O" keys to work with indentation as expected, we use these two functions from [[https://github.com/haskell/haskell-mode/issues/1265#issuecomment-252492026][hatashiro]].
-  (defun haskell-evil-open-above ()
-    (interactive)
-    (evil-digit-argument-or-evil-beginning-of-line)
-    (haskell-indentation-newline-and-indent)
-    (evil-previous-line)
-    (haskell-indentation-indent-line)
-    (evil-append-line nil))
-
-  (defun haskell-evil-open-below ()
-    (interactive)
-    (evil-append-line nil)
-    (haskell-indentation-newline-and-indent))
-
-  (defun haskell-format-imports ()
-    "Sort and align import statements from anywhere in the source file."
-    (interactive)
-    (save-excursion
-      (haskell-navigate-imports)
-      (haskell-mode-format-imports)))
-
-  (defun haskell-process-do-type-on-prev-line ()
-    (interactive)
-    (haskell-process-do-type 1))
-
   :custom
   (haskell-process-type 'ghci))
 #+end_src
@@ -1939,7 +2016,7 @@ Not tested. Probably doesn't work.
   (interactive)
   (find-file-existing "~/.config/nixpkgs/home.nix"))
 #+END_SRC
-**** Nix-mode
+**** nix-mode
 #+begin_src elisp
 (use-package nix-mode
   :general
@@ -1950,24 +2027,7 @@ Not tested. Probably doesn't work.
     "=" '(nix-format-buffer))
   :mode "\\.nix\\'")
 #+END_SRC
-**** Ivy nixos options
-#+BEGIN_SRC elisp :tangle no
-(use-package ivy-nixos-options
-  :commands (ivy-nixos-options)
-  :straight (:host github
-		   :repo "travisbhartwell/nix-emacs"
-		   :branch "master"
-		   :files ("ivy-nixos-options.el"))
-  :general
-  (jl/SPC-keys
-    "fn" '(:ignore t :which-key "nix")
-    "fnc" 'find-nixos-configuration
-    "fnh" 'find-homemanager-configuration
-    "h>" 'ivy-nixos-options)
-  :custom
-  (ivy-nixos-options-default 1))
-#+END_SRC
-**** NixOS options
+**** nixos-options
 #+BEGIN_SRC elisp
 (use-package nixos-options
   :defer t)
@@ -2319,20 +2379,21 @@ We need a function to find the lsp server when it's installed through a nix shel
 		  (org-level-7 . 1.1)
 		  (org-level-8 . 1.1))
 		)
-    (set-face-attribute (car face) nil :font jl/text-font :weight 'regular :height (cdr face))
+    (set-face-attribute (car face) nil :family jl/text-font :weight 'regular :height (cdr face))
     (set-face-attribute 'org-link nil :weight 'regular)
     )
 
   ;; (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   ;; (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
 
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch :font jl/prog-font)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch) :font jl/prog-font)
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :font jl/prog-font)
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch :family jl/prog-font)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch) :family jl/prog-font)
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch) :family jl/prog-font)
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch) :family jl/prog-font)
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch) :family jl/prog-font)
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch) :family jl/prog-font)
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch :family jl/prog-font)
+  (set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch :family jl/prog-font)
   )
   #+end_src
 **** Latex previews
@@ -2349,78 +2410,78 @@ We need a function to find the lsp server when it's installed through a nix shel
                         :image-converter ("dvisvgm %f -n -b min -c %S -o %O")))
 
   (add-to-list 'org-preview-latex-process-alist luasvg))
-
 #+END_SRC
 **** Initialisation
 #+begin_src elisp
-(use-package org
-  :defer t
-  :hook ((org-mode . jl/org-font-setup))
-  :init
-  (jl/org-mode-Cc-keys)
-  :config
-  (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
-  (jl/org-mode-key-bindings)
-  (jl/org-font-setup)
-  (jl/org-luasvg)
-  (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
-  (evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
-  (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
-  (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
-  :custom
-  (org-ellipsis " ▼")
-  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
-  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
-  (org-startup-indented t)
-  (org-hide-emphasis-markers nil)
-  (org-src-tab-acts-natively t)
-  (org-pretty-entities nil)
-  (org-startup-folded t)
-  (org-hide-block-startup t)
-  (org-edit-src-content-indentation 0)
-  (org-startup-with-latex-preview t)
-  (org-enable-reveal-js-support t)
-  (org-protocol-default-template-key "w")
-  (org-image-actual-width nil)
-  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
-  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-  ;; (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-  ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
-  ;;                     ;; "~/Documents/Org/GTD/inbox.org"
-  ;;                     ;; "~/Documents/Org/GTD/gtd.org"
-  ;;                     ;; "~/Documents/Org/GTD/tickler.org"
-  ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
-  ;;                     ))
-  (org-export-backends '(ascii beamer html icalendar latex md odt))
-  ;; Latex in Org
-  (org-preview-latex-default-process 'luasvg)
-  (org-latex-compiler "lualatex")
-  (org-highlight-latex-and-related '(latex script entities))
-  ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
-  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
-  ;; Org capture
-  (org-capture-templates
-   '(("t" "Todo [inbox]" entry
-      (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
-      "* TODO %i%?")
+  (use-package org
+    :defer t
+    :hook ((org-mode . jl/org-font-setup))
+    :init
+    (jl/org-mode-Cc-keys)
+    :config
+    (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
+    (jl/org-mode-key-bindings)
+    (jl/org-font-setup)
+    (jl/org-luasvg)
+    (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
+    (evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
+    (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
+    (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
+    :custom
+    (org-ellipsis " ▼")
+    (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
+    (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
+    (org-startup-indented t)
+    (org-display-remote-inline-images 'download)
+    (org-hide-emphasis-markers nil)
+    (org-src-tab-acts-natively t)
+    (org-pretty-entities nil)
+    (org-startup-folded t)
+    (org-hide-block-startup t)
+    (org-edit-src-content-indentation 0)
+    (org-startup-with-latex-preview t)
+    (org-enable-reveal-js-support t)
+    (org-protocol-default-template-key "w")
+    (org-image-actual-width nil)
+    (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
+    (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
+    ;; (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
+    ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
+    ;;                     ;; "~/Documents/Org/GTD/inbox.org"
+    ;;                     ;; "~/Documents/Org/GTD/gtd.org"
+    ;;                     ;; "~/Documents/Org/GTD/tickler.org"
+    ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
+    ;;                     ))
+    (org-export-backends '(ascii beamer html icalendar latex md odt))
+    ;; Latex in Org
+    (org-preview-latex-default-process 'luasvg)
+    (org-latex-compiler "lualatex")
+    (org-highlight-latex-and-related '(latex script entities))
+    ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
+    (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
+    ;; Org capture
+    (org-capture-templates
+     '(("t" "Todo [inbox]" entry
+        (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
+        "* TODO %i%?")
 
-     ("T" "Tickler" entry
-      (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
-      "* %i%? \n %U")
-     ("n" "Notes" entry
-      (file "~/Documents/Org/Notes/notes.org")
-      "* %?")
-     ("r" "Research Notes" entry
-      (file "~/Documents/Org/Research/notes.org")
-      "* %u \n %?")
-     ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
-      "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
-     ))
-  ;; GTD in org
-  (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
-                        ("~/Documents/Org/GTD/someday.org" :level . 1)
-                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
-  )
+       ("T" "Tickler" entry
+        (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
+        "* %i%? \n %U")
+       ("n" "Notes" entry
+        (file "~/Documents/Org/Notes/notes.org")
+        "* %?")
+       ("r" "Research Notes" entry
+        (file "~/Documents/Org/Research/notes.org")
+        "* %u \n %?")
+       ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
+        "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
+       ))
+    ;; GTD in org
+    (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
+                          ("~/Documents/Org/GTD/someday.org" :level . 1)
+                          ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
+    )
 #+end_src
 **** Org Roam
 ***** Keybindings
@@ -3127,12 +3188,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
         	  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
         	  ("https://jeslie0.github.io/rss.xml" mathematics)
                   ("https://www.mohabatmath.ca/feed.xml" mathematics)
-        	  ("https://xkcd.com/atom.xml" webcomic)))
-  :init
-  (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
-  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/bookmarks"))
-  (add-to-list 'recentf-exclude (expand-file-name "~/.emacs.d/bookmarks"))
-  (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org")))
+        	  ("https://xkcd.com/atom.xml" webcomic))))
 #+end_src
 *** Elfeed Goodies
 #+BEGIN_SRC elisp :tangle no
@@ -3472,13 +3528,13 @@ Calling org-babel languages in the following form saves a lot on startup time.
 *** Mu4e Rich text view
 #+begin_src elisp
 (defun jl/mu4e-rich ()
-  (setq ;; mu4e-html2text-command 'mu4e-shr2text
+  (setq
+   ;; mu4e-html2text-command 'mu4e-shr2text
    mu4e-html2text-command "w3m -dump -T text/html -o display_link_number=true"
    mu4e-view-show-images t
    mu4e-image-max-width 800
    ;; mu4e-view-prefer-html t
-   mu4e-use-fancy-chars t)
-  )
+   mu4e-use-fancy-chars t))
 #+end_src
 *** Mu4e attachement warning
 #+begin_src elisp
@@ -3571,7 +3627,6 @@ there are no attachments."
 *** Initialisation
 #+begin_src elisp
 (use-package mu4e
-  :defer t
   :commands mu4e
   :general
   (jl/C-c-keys
@@ -3667,6 +3722,9 @@ there are no attachments."
 #+end_src
 
 * Auto-complete and spelling
+#+BEGIN_SRC elisp
+(use-package ispell)
+#+END_SRC
 ** Yasnippet
 #+begin_src elisp
 (use-package yasnippet
@@ -3820,7 +3878,7 @@ there are no attachments."
 #+END_SRC
 ** Flyspell
 *** Initialisation
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package flyspell
   :defer t
   :hook
@@ -3828,16 +3886,16 @@ there are no attachments."
   (text-mode . flyspell-mode)
   :general
   (jl/SPC-keys
-    "Sab" 'add-word-to-dict-buffer
-    "Sag" 'add-word-to-dict-global
-    "Sas" 'add-word-to-dict-session
-    "Sb" 'flyspell-buffer
-    "Sr" 'flyspell-region
-    "Sd" 'spell-checking/change-dictionary
-    "Sn" 'flyspell-goto-next-error
-    "Ss" 'flyspell-correct-at-point)
+    "sab" 'add-word-to-dict-buffer
+    "sag" 'add-word-to-dict-global
+    "sas" 'add-word-to-dict-session
+    "sb" 'flyspell-buffer
+    "sr" 'flyspell-region
+    "sd" 'spell-checking/change-dictionary
+    "sn" 'flyspell-goto-next-error
+    "ss" 'flyspell-correct-at-point)
   (jl/SPC-keys
-    "Sa" '(:ignore t :which-key "add word to dict"))
+    "sa" '(:ignore t :which-key "add word to dict"))
   :custom
   (ispell-dictionary "en_GB")
   :config
@@ -3910,11 +3968,11 @@ SCOPE can be:
 #+end_src
 *** Flyspell correct
 #+begin_src elisp
-(use-package flyspell-correct
-  :after flyspell
-  :general
-  (:keymaps 'flyspell-mode-map
-            "C-;"  'flyspell-correct-wrapper))
+;; (use-package flyspell-correct
+;;   :after flyspell
+;;   :general
+;;   (:keymaps 'flyspell-mode-map
+;;             "C-;"  'flyspell-correct-wrapper))
 
 (use-package consult-flyspell
   :straight (consult-flyspell :type git :host gitlab :repo "OlMon/consult-flyspell" :branch "master")
@@ -3925,6 +3983,26 @@ SCOPE can be:
         consult-flyspell-set-point-after-word t
         consult-flyspell-always-check-buffer nil))
 #+end_src
+** Spell-fu
+#+BEGIN_SRC elisp
+(use-package spell-fu
+  :hook ((prog-mode text-mode) . spell-fu-mode)
+  :general
+  (jl/SPC-keys
+    "s" '(:ignore t :which-key "spelling")
+    "sa" 'spell-fu-word-add
+    "sb" 'spell-fu-buffer
+    "sn" 'spell-fu-goto-next-error
+    "sp" 'spell-fu-goto-previous-error
+    "sr" 'spell-fu-word-remove
+    "ss" 'ispell-word)
+  :init
+  (setq ispell-dictionary "en_GB"
+        ispell-personal-dictionary "~/.aspell.en.pws"
+        ispell-grep-command "rg"
+        ispell-use-framepop-p nil
+        spell-fu-faces-exclude '(org-block-begin-line org-block-end-line org-block org-code org-date org-drawer org-document-info-keyword org-ellipsis org-link org-meta-line org-properties org-properties-value org-special-keyword org-src org-tag org-verbatim)))
+#+END_SRC
 * Tools
 ** Undo Tree
 #+begin_src elisp
@@ -3967,7 +4045,7 @@ SCOPE can be:
   :defer t
   :general
   (jl/SPC-keys
-    "se" 'iedit-mode))
+    "Se" 'iedit-mode))
 #+end_src
 *** wgrep
 #+BEGIN_SRC elisp
@@ -4013,7 +4091,9 @@ SCOPE can be:
 ** esup
 #+BEGIN_SRC elisp
 (use-package esup
-  :defer t)
+  :commands (esup)
+  :config
+  (setq esup-depth 0))
 #+END_SRC
 * Shells
 ** Term
@@ -4127,11 +4207,13 @@ SCOPE can be:
 #+END_SRC
 *** emacs-fish-completion
 #+BEGIN_SRC elisp
-(when (executable-find "fish")
-  (use-package fish-completion
-    :after eshell
-    :config
-    (global-fish-completion-mode)))
+(use-package fish-completion
+  :hook (eshell-mode . fish-completion-mode)
+  :custom
+  (fish-completion-fallback-on-bash-p t)
+  :after eshell
+  :config
+  (global-fish-completion-mode))
 #+END_SRC
 * Fun
 ** Snow
