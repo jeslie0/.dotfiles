@@ -76,12 +76,14 @@ programs.sway = {
     swaylock-effects
     swayidle
     wl-clipboard
+    alacritty
     xfce.xfce4-terminal
     magic-wormhole
     dmenu
     dmenu-wayland
     bemenu
     i3status
+    starship
     rofi
     waybar
     self.inputs.passbemenuGitHub.defaultPackage.${system}
@@ -223,6 +225,7 @@ environment.systemPackages = with pkgs;
     tldr
     gping
     zoxide
+    fd
 
     mu
     coq
