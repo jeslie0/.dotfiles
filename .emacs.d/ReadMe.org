@@ -955,11 +955,9 @@ Allows for partial searching in vertico.
   :general
   (jl/SPC-keys
     "gs" 'magit-status)
-  (:keymaps 'magit-status-mode-map
-            (kbd "SPC") nil)
-  (:keymaps 'git-commit-mode-map
-           ",," 'with-editor-finish
-           ",a" 'with-editor-cancel))
+  :config
+  (evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
+  (evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel))
 #+end_src
 ** Treemacs
 *** Initialisation
@@ -2413,75 +2411,77 @@ We need a function to find the lsp server when it's installed through a nix shel
 #+END_SRC
 **** Initialisation
 #+begin_src elisp
-  (use-package org
-    :defer t
-    :hook ((org-mode . jl/org-font-setup))
-    :init
-    (jl/org-mode-Cc-keys)
-    :config
-    (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
-    (jl/org-mode-key-bindings)
-    (jl/org-font-setup)
-    (jl/org-luasvg)
-    (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
-    (evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
-    (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
-    (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
-    :custom
-    (org-ellipsis " ▼")
-    (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
-    (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
-    (org-startup-indented t)
-    (org-display-remote-inline-images 'download)
-    (org-hide-emphasis-markers nil)
-    (org-src-tab-acts-natively t)
-    (org-pretty-entities nil)
-    (org-startup-folded t)
-    (org-hide-block-startup t)
-    (org-edit-src-content-indentation 0)
-    (org-startup-with-latex-preview t)
-    (org-enable-reveal-js-support t)
-    (org-protocol-default-template-key "w")
-    (org-image-actual-width nil)
-    (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
-    (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-    ;; (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-    ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
-    ;;                     ;; "~/Documents/Org/GTD/inbox.org"
-    ;;                     ;; "~/Documents/Org/GTD/gtd.org"
-    ;;                     ;; "~/Documents/Org/GTD/tickler.org"
-    ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
-    ;;                     ))
-    (org-export-backends '(ascii beamer html icalendar latex md odt))
-    ;; Latex in Org
-    (org-preview-latex-default-process 'luasvg)
-    (org-latex-compiler "lualatex")
-    (org-highlight-latex-and-related '(latex script entities))
-    ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
-    (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
-    ;; Org capture
-    (org-capture-templates
-     '(("t" "Todo [inbox]" entry
-        (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
-        "* TODO %i%?")
+(use-package org
+  :defer t
+  :hook ((org-mode . jl/org-font-setup))
+  :init
+  (jl/org-mode-Cc-keys)
+  :config
+  (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
+  (jl/org-mode-key-bindings)
+  (jl/org-font-setup)
+  (jl/org-luasvg)
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
+  (evil-define-minor-mode-key 'normal 'org-capture-mode ",," 'org-capture-finalize)
+  (evil-define-minor-mode-key 'normal 'org-capture-mode ",a" 'org-capture-kill)
+  (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
+  :custom
+  (org-ellipsis " ▼")
+  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
+  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
+  (org-startup-indented t)
+  (org-display-remote-inline-images 'download)
+  (org-hide-emphasis-markers nil)
+  (org-src-tab-acts-natively t)
+  (org-pretty-entities nil)
+  (org-startup-folded t)
+  (org-hide-block-startup t)
+  (org-edit-src-content-indentation 0)
+  (org-startup-with-latex-preview t)
+  (org-enable-reveal-js-support t)
+  (org-protocol-default-template-key "w")
+  (org-image-actual-width nil)
+  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
+  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
+  ;; (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
+  ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
+  ;;                     ;; "~/Documents/Org/GTD/inbox.org"
+  ;;                     ;; "~/Documents/Org/GTD/gtd.org"
+  ;;                     ;; "~/Documents/Org/GTD/tickler.org"
+  ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
+  ;;                     ))
+  (org-export-backends '(ascii beamer html icalendar latex md odt))
+  ;; Latex in Org
+  (org-preview-latex-default-process 'luasvg)
+  (org-latex-compiler "lualatex")
+  (org-highlight-latex-and-related '(latex script entities))
+  ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
+  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
+  ;; Org capture
+  (org-capture-templates
+   '(("t" "Todo [inbox]" entry
+      (file+headline "~/Documents/Org/GTD/inbox.org" "Tasks")
+      "* TODO %i%?")
 
-       ("T" "Tickler" entry
-        (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
-        "* %i%? \n %U")
-       ("n" "Notes" entry
-        (file "~/Documents/Org/Notes/notes.org")
-        "* %?")
-       ("r" "Research Notes" entry
-        (file "~/Documents/Org/Research/notes.org")
-        "* %u \n %?")
-       ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
-        "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
-       ))
-    ;; GTD in org
-    (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
-                          ("~/Documents/Org/GTD/someday.org" :level . 1)
-                          ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
-    )
+     ("T" "Tickler" entry
+      (file+headline "~/Documents/Org/GTD/tickler.org" "Tickler")
+      "* %i%? \n %U")
+     ("n" "Notes" entry
+      (file "~/Documents/Org/Notes/notes.org")
+      "* %?")
+     ("r" "Research Notes" entry
+      (file "~/Documents/Org/Research/notes.org")
+      "* %u \n %?")
+     ("w" "org-protocol" entry (file "~/Documents/Org/GTD/inbox.org")
+      "* TODO Review %a\n%U\n%:initial\n" :immediate-finish t)
+     ))
+  ;; GTD in org
+  (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
+                        ("~/Documents/Org/GTD/someday.org" :level . 1)
+                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
+  )
 #+end_src
 **** Org Roam
 ***** Keybindings
@@ -2583,6 +2583,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   :init
   (jl/org-roam-global-keys)
   :config
+  (add-to-list 'org-agenda-files "~/Documents/Roam/daily")
   (jl/org-roam-daily-templates)
   (jl/org-roam-templates)
   (org-roam-db-autosync-mode)
@@ -2739,17 +2740,16 @@ Calling org-babel languages in the following form saves a lot on startup time.
 **** Evil Org
 #+begin_src elisp
 (use-package evil-org
-  :defer t
+  :straight (:host github :repo "Somelauw/evil-org-mode" :branch "master" :files ("evil-org.el"))
   :after org
   :hook (org-mode . evil-org-mode)
   :config
-  )
-(use-package evil-org-agenda
-  :defer t
-  :after evil-org
-  :straight evil-org
-  :config
-  (evil-org-agenda-set-keys)
+  (use-package evil-org-agenda
+    :defer t
+    :hook (org-agenda-mode . (lambda () (evil-org-agenda-set-keys)))
+    :straight (:host github :repo "Somelauw/evil-org-mode" :branch "master" :files ("evil-org-agenda.el"))
+    :config
+    (evil-org-agenda-set-keys))
   )
 #+end_src
 **** Org CalDav
@@ -3509,12 +3509,30 @@ Calling org-babel languages in the following form saves a lot on startup time.
                     (smtpmail-default-smtp-server . "posteo.de")
                     (smtpmail-smtp-server . "posteo.de")
                     (smtpmail-stream-type . ssl)
-                    (smtpmail-smtp-service . 465)
+                    (smtpmail-smtp-service . 465)))
 
-                    )
-            )
-          )
-	)
+          ,(make-mu4e-context
+            :name "Apps - jamesleslieapps@posteo.net"
+            :match-func (lambda (msg)
+                          (when msg
+                            (mu4e-message-contact-field-matches msg
+                                                                :to "jamesleslieapps@posteo.net")))
+            :vars '(
+                    (mu4e-sent-messages-behavior . sent)
+                    (mu4e-sent-folder . "/Posteo/Sent")
+                    (mu4e-drafts-folder . "/Posteo/Drafts")
+                    (mu4e-trash-folder . "/Posteo/Trash")
+                    (mu4e-refile-folder . "/Posteo/Archive")
+                    (user-full-name . "James Leslie")
+                    (user-mail-address . "jamesleslieapps@posteo.net")
+
+                    ;; SMTP configuration
+                    (smtpmail-smtp-user . "jamesleslie@posteo.net")
+                    (smtpmail-default-smtp-server . "posteo.de")
+                    (smtpmail-smtp-server . "posteo.de")
+                    (smtpmail-stream-type . ssl)
+                    (smtpmail-smtp-service . 465)))))
+
   (setq mu4e-context-policy 'pick-first)
 
   ;; Parse each context and gather a list of their `user-mail-address'es
@@ -4094,6 +4112,15 @@ SCOPE can be:
   :commands (esup)
   :config
   (setq esup-depth 0))
+#+END_SRC
+** openwith
+#+BEGIN_SRC elisp
+(use-package openwith
+  :after (:any dired vertico)
+  :custom
+  (openwith-associations '(("\\.pdf\\'" "zathura" (file))))
+  :config
+  (openwith-mode))
 #+END_SRC
 * Shells
 ** Term
