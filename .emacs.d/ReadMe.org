@@ -2743,13 +2743,13 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :straight (:host github :repo "Somelauw/evil-org-mode" :branch "master" :files ("evil-org.el"))
   :after org
   :hook (org-mode . evil-org-mode)
-  :config
-  (use-package evil-org-agenda
-    :defer t
-    :hook (org-agenda-mode . (lambda () (evil-org-agenda-set-keys)))
-    :straight (:host github :repo "Somelauw/evil-org-mode" :branch "master" :files ("evil-org-agenda.el"))
-    :config
-    (evil-org-agenda-set-keys))
+  ;; :config
+  ;; (use-package evil-org-agenda
+  ;;   :defer t
+  ;;   :hook (org-agenda-mode . (lambda () (evil-org-agenda-set-keys)))
+  ;;   :straight (:host github :repo "Somelauw/evil-org-mode" :branch "master" :files ("evil-org-agenda.el"))
+  ;;   :config
+  ;;   (evil-org-agenda-set-keys))
   )
 #+end_src
 **** Org CalDav

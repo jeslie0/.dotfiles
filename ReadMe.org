@@ -2897,6 +2897,7 @@ WantedBy=default.target
 		     , "network"
 		     , "cpu"
 		     , "memory"
+                     , "disk"
 		     , "temperature"
 		     , "backlight"
 		     , "battery"
@@ -2934,6 +2935,12 @@ WantedBy=default.target
 
     "memory": {
         "format": " {used:0.1f}G | {avail:0.1f}G"
+    },
+
+    "disk": {
+        "format": " {free} / {total}",
+        "path": "/",
+        "interval": 30
     },
 
     "temperature": {
@@ -2998,7 +3005,7 @@ WantedBy=default.target
 
 }
 
-  
+
 #+end_src
 
 *** style.css
@@ -3169,7 +3176,8 @@ label:focus {
 }
 
 #disk {
-    background-color: #964B00;
+    background-color:  #00ccff;
+    color: #000000;
 }
 
 #backlight {
