@@ -1624,124 +1624,42 @@ Provides better documentation.
 #+END_SRC
 ** Programming Languages
 For most programming languages, the development tools will be installed through a nix flake.
-*** TODO Emacs-lisp
-**** Ielm
+*** TODO C/C++
+**** TODO clang-format
 #+BEGIN_SRC elisp
-(use-package ielm
-  :general
-  (jl/major-modes
-    :states '(normal operator motion)
-    :keymaps 'inferior-emacs-lisp-mode-map
-    :major-modes t
-    "hh" 'helpful-at-point)
-
-  (jl/major-modes
-    :states '(normal operator motion)
-    :keymaps 'emacs-lisp-mode-map
-    :major-modes t
-    "s" '(:ignore t :which-key "ielm")
-    "'" 'ielm
-    "si" 'ielm))
-#+END_SRC
-**** Debug
-#+BEGIN_SRC elisp
-(use-package debug
-  :defer t)
-
-(use-package edebug
-  :general
-  (jl/major-modes
-    :keymaps 'edebug-eval-mode-map
-    :states '(normal visual operator)
-    :major-modes t
-    "g" '(:ignore t :which-key "goto")
-    "e" '(:ignore t :which-key "eval")
-    "gw" 'edebug-where
-    "a" 'edebug-delete-eval-item
-    "k" 'edebug-delete-eval-item
-    "," 'edebug-update-eval-list
-    "c" 'edebug-update-eval-list
-    "ee" 'edebug-eval-last-sexp
-    "eE" 'edebug-eval-print-last-sexp))
-#+END_SRC
-*** TODO Common-lisp
-**** Slime
-#+BEGIN_SRC elisp
-(use-package slime
-  :defer t
-  :init
-  (setq inferior-lisp-program "sbcl")
-  :general
-  (jl/major-modes
-    :keymaps 'lisp-mode-map
-    :states '(normal visual operator)
-    :major-modes t
-    "h" '(:ignore t :which-key "help")
-    "e" '(:ignore t :which-key "eval")
-    "s" '(:ignore t :which-key "repl")
-    "c" '(:ignore t :which-key "compile")
-    "g" '(:ignore t :which-key "nav")
-    "m" '(:ignore t :which-key "macro")
-    "t" '(:ignore t :which-key "toggle")
-    "'" 'slime
-
-    "cc" 'slime-compile-file
-    "cC" 'slime-compile-and-load-file
-    "cl" 'slime-load-file
-    "cf" 'slime-compile-defun
-    "cr" 'slime-compile-region
-    "cn" 'slime-remove-notes
-
-    "eb" 'slime-eval-buffer
-    "ef" 'slime-eval-defun
-    "eF" 'slime-undefine-function
-    "ee" 'slime-eval-last-expression
-    "el" 'spacemacs/slime-eval-sexp-end-of-line
-    "er" 'slime-eval-region
-
-    "gb" 'slime-pop-find-definition-stack
-    "gn" 'slime-next-note
-    "gN" 'slime-previous-note
-
-    "ha" 'slime-apropos
-    "hA" 'slime-apropos-all
-    "hd" 'slime-disassemble-symbol
-    "hh" 'slime-describe-symbol
-    "hH" 'slime-hyperspec-lookup
-    "hi" 'slime-inspect-definition
-    "hp" 'slime-apropos-package
-    "ht" 'slime-toggle-trace-fdefinition
-    "hT" 'slime-untrace-all
-    "h<" 'slime-who-calls
-    "h>" 'slime-calls-who
-    ;; TODO: Add key bindings for who binds/sets globals?
-    "hr" 'slime-who-references
-    "hm" 'slime-who-macroexpands
-    "hs" 'slime-who-specializes
-
-    "ma" 'slime-macroexpand-all
-    "mo" 'slime-macroexpand-1
-
-    "se" 'slime-eval-last-expression-in-repl
-    "si" 'slime
-    "sq" 'slime-quit-lisp
-
-    "tf" 'slime-toggle-fancy-trace))
-#+END_SRC
-**** TODO evil-lisp-state
-#+BEGIN_SRC elisp :tangle no
-(use-package evil-lisp-state
+(use-package clang-format
   :defer t
   :config
-  (evil-lisp-state-leader ",,"))
+  (setq clang-format-style-option "llvm"))
 #+END_SRC
-**** evil-cleverparens
+**** TODO gendoxy
 #+BEGIN_SRC elisp
-(use-package evil-cleverparens
-  :hook ((common-lisp-mode emacs-lisp-mode) . evil-cleverparens-mode)
+(use-package gendoxy
+ :straight (:host github :repo "mp81ss/gendoxy" :branch "master" :files ("*.el"))
   :defer t)
 #+END_SRC
-*** TODO C
+**** CANCELLED r-tags
+#+BEGIN_SRC elisp :tangle no
+(use-package rtags
+    :defer t)
+#+END_SRC
+*** TODO C#
+#+BEGIN_SRC elisp
+(use-package csharp-mode
+  :defer t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
+
+(use-package omnisharp
+  :defer t)
+
+(use-package tree-sitter
+  :defer t)
+(use-package tree-sitter-langs
+  :defer t)
+(use-package tree-sitter-indent
+  :defer t)
+#+END_SRC
 *** Elm
 #+BEGIN_SRC elisp
 (use-package elm-mode
@@ -1943,6 +1861,124 @@ For most programming languages, the development tools will be installed through 
     "rb" 'hlint-refactor-refactor-buffer
     "rr" 'hlint-refactor-refactor-at-point))
 #+end_src
+*** Lisps
+**** TODO Common Lisp
+***** Slime
+#+BEGIN_SRC elisp
+(use-package slime
+  :defer t
+  :init
+  (setq inferior-lisp-program "sbcl")
+  :general
+  (jl/major-modes
+    :keymaps 'lisp-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "h" '(:ignore t :which-key "help")
+    "e" '(:ignore t :which-key "eval")
+    "s" '(:ignore t :which-key "repl")
+    "c" '(:ignore t :which-key "compile")
+    "g" '(:ignore t :which-key "nav")
+    "m" '(:ignore t :which-key "macro")
+    "t" '(:ignore t :which-key "toggle")
+    "'" 'slime
+
+    "cc" 'slime-compile-file
+    "cC" 'slime-compile-and-load-file
+    "cl" 'slime-load-file
+    "cf" 'slime-compile-defun
+    "cr" 'slime-compile-region
+    "cn" 'slime-remove-notes
+
+    "eb" 'slime-eval-buffer
+    "ef" 'slime-eval-defun
+    "eF" 'slime-undefine-function
+    "ee" 'slime-eval-last-expression
+    "el" 'spacemacs/slime-eval-sexp-end-of-line
+    "er" 'slime-eval-region
+
+    "gb" 'slime-pop-find-definition-stack
+    "gn" 'slime-next-note
+    "gN" 'slime-previous-note
+
+    "ha" 'slime-apropos
+    "hA" 'slime-apropos-all
+    "hd" 'slime-disassemble-symbol
+    "hh" 'slime-describe-symbol
+    "hH" 'slime-hyperspec-lookup
+    "hi" 'slime-inspect-definition
+    "hp" 'slime-apropos-package
+    "ht" 'slime-toggle-trace-fdefinition
+    "hT" 'slime-untrace-all
+    "h<" 'slime-who-calls
+    "h>" 'slime-calls-who
+    ;; TODO: Add key bindings for who binds/sets globals?
+    "hr" 'slime-who-references
+    "hm" 'slime-who-macroexpands
+    "hs" 'slime-who-specializes
+
+    "ma" 'slime-macroexpand-all
+    "mo" 'slime-macroexpand-1
+
+    "se" 'slime-eval-last-expression-in-repl
+    "si" 'slime
+    "sq" 'slime-quit-lisp
+
+    "tf" 'slime-toggle-fancy-trace))
+#+END_SRC
+***** TODO evil-lisp-state
+#+BEGIN_SRC elisp :tangle no
+(use-package evil-lisp-state
+  :defer t
+  :config
+  (evil-lisp-state-leader ",,"))
+#+END_SRC
+***** evil-cleverparens
+#+BEGIN_SRC elisp
+(use-package evil-cleverparens
+  :hook ((common-lisp-mode emacs-lisp-mode) . evil-cleverparens-mode)
+  :defer t)
+#+END_SRC
+**** TODO Emacs Lisp
+***** Ielm
+#+BEGIN_SRC elisp
+(use-package ielm
+  :general
+  (jl/major-modes
+    :states '(normal operator motion)
+    :keymaps 'inferior-emacs-lisp-mode-map
+    :major-modes t
+    "hh" 'helpful-at-point)
+
+  (jl/major-modes
+    :states '(normal operator motion)
+    :keymaps 'emacs-lisp-mode-map
+    :major-modes t
+    "s" '(:ignore t :which-key "ielm")
+    "'" 'ielm
+    "si" 'ielm))
+#+END_SRC
+***** Debug
+#+BEGIN_SRC elisp
+(use-package debug
+  :defer t)
+
+(use-package edebug
+  :general
+  (jl/major-modes
+    :keymaps 'edebug-eval-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "g" '(:ignore t :which-key "goto")
+    "e" '(:ignore t :which-key "eval")
+    "gw" 'edebug-where
+    "a" 'edebug-delete-eval-item
+    "k" 'edebug-delete-eval-item
+    "," 'edebug-update-eval-list
+    "c" 'edebug-update-eval-list
+    "ee" 'edebug-eval-last-sexp
+    "eE" 'edebug-eval-print-last-sexp))
+#+END_SRC
 *** Shell
 **** Initialisation
 #+BEGIN_SRC elisp
@@ -3188,7 +3224,9 @@ Calling org-babel languages in the following form saves a lot on startup time.
         	  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
         	  ("https://jeslie0.github.io/rss.xml" mathematics)
                   ("https://www.mohabatmath.ca/feed.xml" mathematics)
-        	  ("https://xkcd.com/atom.xml" webcomic))))
+        	  ("https://xkcd.com/atom.xml" webcomic)
+                  ("https://mmhaskell.com/blog/atom.xml" haskell)
+                  ("https://www.tweag.io/rss.xml" tweag))))
 #+end_src
 *** Elfeed Goodies
 #+BEGIN_SRC elisp :tangle no
@@ -3738,7 +3776,6 @@ there are no attachments."
       (avy-goto-url)
       (browse-url-at-point))))
 #+end_src
-
 * Auto-complete and spelling
 #+BEGIN_SRC elisp
 (use-package ispell)
