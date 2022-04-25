@@ -73,7 +73,7 @@ programs.sway = {
   enable = true;
   wrapperFeatures.gtk = true;
   extraPackages = with pkgs; [
-    swaylock-effects
+    # swaylock-effects # using nix flake
     swayidle
     wl-clipboard
     alacritty
@@ -89,6 +89,7 @@ programs.sway = {
     self.inputs.passbemenuGitHub.defaultPackage.${system}
     self.inputs.swaybgchangerGitHub.defaultPackage.${system}
     self.inputs.bemenuFocusGitHub.defaultPackage.${system}
+    self.inputs.swaylockeffectsGitHub.defaultPackage.${system}
   ];
 };
 

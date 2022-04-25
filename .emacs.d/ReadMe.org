@@ -1119,6 +1119,8 @@ Provides better documentation.
   :init
   (global-aggressive-indent-mode 1)
   :config
+  (add-to-list 'aggressive-indent-excluded-modes 'cc-mode)
+  (add-to-list 'aggressive-indent-excluded-modes 'c-mode)
   (add-to-list 'aggressive-indent-excluded-modes 'haskell-cabal-mode)
   (add-to-list 'aggressive-indent-excluded-modes 'haskell-mode))
 #+END_SRC
@@ -1234,8 +1236,6 @@ Provides better documentation.
 *** Auth source pass
 #+begin_src elisp
 (use-package auth-source-pass
-  :after auth-source
-  :defer t
   :config
   (auth-source-pass-enable))
 #+end_src
@@ -1310,7 +1310,7 @@ Provides better documentation.
   )
 #+end_src
 **** Initialisation
-#+begin_src elisp
+#+begin_src elisp :tangle no
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :general
@@ -1625,6 +1625,12 @@ Provides better documentation.
 ** Programming Languages
 For most programming languages, the development tools will be installed through a nix flake.
 *** TODO C/C++
+**** Initialisation
+#+BEGIN_SRC elisp
+(use-package cc-mode
+  :hook ((c-mode . electric-pair-mode)
+         (c-mode . electric-indent-mode)))
+#+END_SRC
 **** TODO clang-format
 #+BEGIN_SRC elisp
 (use-package clang-format
@@ -1648,6 +1654,7 @@ For most programming languages, the development tools will be installed through 
 (use-package csharp-mode
   :defer t
   :config
+  (setq lsp-csharp-server-path (executable-find "omnisharp"))
   (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
 
 (use-package omnisharp
@@ -1706,13 +1713,13 @@ For most programming languages, the development tools will be installed through 
 #+END_SRC
 *** Haskell
 **** lsp-haskell
-#+begin_src elisp :tangle no
+#+begin_src elisp
 (use-package lsp-haskell
   :defer t
-  :hook ((haskell-mode . lsp)
-	 (haskell-mode . lsp-mode)
-	 (haskell-literate-mode . lsp)
-	 (haskell-mode . lsp-mode))
+  ;; :hook ((haskell-mode . lsp)
+  ;;        (haskell-mode . lsp-mode)
+  ;;        (haskell-literate-mode . lsp)
+  ;;        (haskell-mode . lsp-mode))
   :custom
   (lsp-haskell-server-path "haskell-language-server-wrapper")
   (lsp-haskell-server-args ()))
@@ -1831,7 +1838,7 @@ For most programming languages, the development tools will be installed through 
   :config
   (jl/haskell-keys)
   :custom
-  (haskell-process-type 'ghci))
+  (haskell-process-type 'auto))
 #+end_src
 **** hindent
 #+begin_src elisp
@@ -2175,8 +2182,7 @@ We need a function to find the lsp server when it's installed through a nix shel
    :states '(normal visual motion)
    "RET" 'org-open-at-point ;; Allows links to be opened with RET
    "$"   'end-of-line       ;; Evil-org changes this behaviour. This changes it back.
-   "0"   'beginning-of-line
-   )
+   "0"   'beginning-of-line)
 
   (jl/major-modes
     :states '(normal visual)
@@ -2349,10 +2355,23 @@ We need a function to find the lsp server when it's installed through a nix shel
     ;; "xr" (spacemacs|org-emphasize spacemacs/org-clear ? )
     "xs" 'org-strike-through
     "xu" 'org-underline
-    "xv" 'org-verbatim
+    "xv" 'org-verbatim)
 
-    )
-  )
+
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
+  (evil-define-minor-mode-key 'visual 'org-src-mode ",c" 'org-edit-src-exit)
+
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
+  (evil-define-minor-mode-key 'visual 'org-src-mode ",," 'org-edit-src-exit)
+
+  (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
+  (evil-define-minor-mode-key 'visual 'org-src-mode ",a" 'org-edit-src-abort)
+
+  (evil-define-minor-mode-key 'normal 'org-capture-mode ",," 'org-capture-finalize)
+  (evil-define-minor-mode-key 'visual 'org-capture-mode ",," 'org-capture-finalize)
+
+  (evil-define-minor-mode-key 'normal 'org-capture-mode ",a" 'org-capture-kill)
+  (evil-define-minor-mode-key 'visual 'org-capture-mode ",a" 'org-capture-kill))
 #+end_src
 #+begin_src elisp
   ;; Add global evil-leader mappings. Used to access org-agenda
@@ -2386,19 +2405,13 @@ We need a function to find the lsp server when it's installed through a nix shel
    "aos" 'org-search-view
    "aot" 'org-todo-list
    ;; SPC C- capture/colors
-   "Cc" 'org-capture
-   )
-  )
+   "Cc" 'org-capture))
 
 (defun jl/org-mode-Cc-keys ()
   (jl/C-c-keys
     "a" 'org-agenda
     "c" 'org-capture
-    "l" 'org-store-link
-    )
-  )
-
-(jl/org-mode-global-keys)
+    "l" 'org-store-link))
 #+end_src
 **** Font configuration
 #+begin_src elisp
@@ -2452,16 +2465,12 @@ We need a function to find the lsp server when it's installed through a nix shel
   :hook ((org-mode . jl/org-font-setup))
   :init
   (jl/org-mode-Cc-keys)
+  (jl/org-mode-global-keys)
   :config
   (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
   (jl/org-mode-key-bindings)
   (jl/org-font-setup)
   (jl/org-luasvg)
-  (evil-define-minor-mode-key 'normal 'org-src-mode ",c" 'org-edit-src-exit)
-  (evil-define-minor-mode-key 'normal 'org-src-mode ",," 'org-edit-src-exit)
-  (evil-define-minor-mode-key 'normal 'org-src-mode ",a" 'org-edit-src-abort)
-  (evil-define-minor-mode-key 'normal 'org-capture-mode ",," 'org-capture-finalize)
-  (evil-define-minor-mode-key 'normal 'org-capture-mode ",a" 'org-capture-kill)
   (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
   :custom
   (org-ellipsis " ▼")
@@ -2482,7 +2491,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
   (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
   ;; (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-  ;; (org-agenda-files '("~/Documents/Calendar/Agenda.org"
+  (org-agenda-files '("~/Documents/Calendar/Agenda.org"))
   ;;                     ;; "~/Documents/Org/GTD/inbox.org"
   ;;                     ;; "~/Documents/Org/GTD/gtd.org"
   ;;                     ;; "~/Documents/Org/GTD/tickler.org"
@@ -2805,13 +2814,11 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (org-caldav-calendar-id "default")
   (org-caldav-inbox "~/Documents/Calendar/Agenda.org")
   (org-caldav-files '("~/Documents/Calendar/Appointments.org"))
-  (org-icalendar-timezone "America/Toronto")
+  (org-icalendar-timezone "Europe/London")
   (org-caldav-delete-org-entries 'always)
   (org-caldav-delete-calendar-entries 'never)
   :init
-  (jl/org-caldav-keybindings)
-  )
-
+  (jl/org-caldav-keybindings))
 #+end_src
 **** Org Present
 #+BEGIN_SRC elisp
@@ -4021,14 +4028,8 @@ SCOPE can be:
           (setq poss (ispell-parse-output (car ispell-filter))))
       (or (eq poss t) (stringp poss)))))
 #+end_src
-*** Flyspell correct
-#+begin_src elisp
-;; (use-package flyspell-correct
-;;   :after flyspell
-;;   :general
-;;   (:keymaps 'flyspell-mode-map
-;;             "C-;"  'flyspell-correct-wrapper))
-
+*** consult-flyspell
+#+begin_src elisp :tangle no
 (use-package consult-flyspell
   :straight (consult-flyspell :type git :host gitlab :repo "OlMon/consult-flyspell" :branch "master")
   :after (flyspell consult)
@@ -4037,6 +4038,16 @@ SCOPE can be:
   (setq consult-flyspell-select-function nil
         consult-flyspell-set-point-after-word t
         consult-flyspell-always-check-buffer nil))
+#+end_src
+** Flyspell correct
+#+begin_src elisp
+(use-package flyspell-correct
+  :after (:any flyspell spell-fu)
+  :general
+  (:keymaps 'flyspell-mode-map
+            "C-;"  'flyspell-correct-wrapper)
+  :config
+  (ispell-set-spellchecker-params))
 #+end_src
 ** Spell-fu
 #+BEGIN_SRC elisp
@@ -4050,7 +4061,8 @@ SCOPE can be:
     "sn" 'spell-fu-goto-next-error
     "sp" 'spell-fu-goto-previous-error
     "sr" 'spell-fu-word-remove
-    "ss" 'ispell-word)
+    ;; "ss" 'ispell-word
+    "ss" 'flyspell-correct-at-point)
   :init
   (setq ispell-dictionary "en_GB"
         ispell-personal-dictionary "~/.aspell.en.pws"
@@ -4153,11 +4165,16 @@ SCOPE can be:
 ** openwith
 #+BEGIN_SRC elisp
 (use-package openwith
-  :after (:any dired vertico)
+  :after (:all (:any dired vertico) gnus)
   :custom
   (openwith-associations '(("\\.pdf\\'" "zathura" (file))))
   :config
   (openwith-mode))
+
+(use-package mm-util
+  :straight gnus
+  :config
+  (add-to-list 'mm-inhibit-file-name-handlers 'openwith-file-handler))
 #+END_SRC
 * Shells
 ** Term

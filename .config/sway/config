@@ -420,6 +420,41 @@ input "1739:31251:SYNA2393:00_06CB:7A13_Touchpad" {
 # enable numlock
 input * xkb_numlock enable
 
+bindsym Ctrl+$mod+Delete exec "swaylock \
+	--screenshots \
+	--clock \
+	--indicator \
+	--indicator-radius 100 \
+	--indicator-thickness 7 \
+	--effect-blur 7x5 \
+	--effect-vignette 0.5:0.5 \
+	--ring-color bb00cc \
+	--key-hl-color 880033 \
+	--line-color 00000000 \
+	--inside-color 00000088 \
+	--separator-color 00000000 \
+	--grace 2 \
+	--fade-in 0.2"
+
+exec swayidle -w \
+  timeout 1800 'swaylock \
+	--screenshots \
+	--clock \
+	--indicator \
+	--indicator-radius 100 \
+	--indicator-thickness 7 \
+	--effect-blur 7x5 \
+	--effect-vignette 0.5:0.5 \
+	--ring-color bb00cc \
+	--key-hl-color 880033 \
+	--line-color 00000000 \
+	--inside-color 00000088 \
+	--separator-color 00000000 \
+	--grace 2 \
+	--fade-in 0.2' \
+  timeout 1805 'swaymsg "output * dpms off"' \
+  resume 'swaymsg "output * dpms on"'
+
 # Opacity settings. Not configured
 # set $opacity 0.9
 # for_window [class=".*"] opacity $opacity

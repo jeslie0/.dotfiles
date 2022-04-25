@@ -20,12 +20,16 @@
     bemenuFocusGitHub.url = "github:jeslie0/bemenuFocus";
     bemenuFocusGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
+    swaylockeffectsGitHub.url = "github:jeslie0/swaylock-effects-git";
+    swaylockeffectsGitHub.inputs.nixpkgs.follows = "nixpkgs";
+
     myfonts.url = "github:jeslie0/my-fonts-flake";
     myfonts.inputs.nixpkgs.follows = "nixpkgs";
 
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
-    emacs-overlay.url = "github:nix-community/emacs-overlay/da2f552d133497abd434006e0cae996c0a282394";
-    emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
+    emacs-overlay.url = "github:nix-community/emacs-overlay/c43afd748147e2bf631e5b37f7a68e93a98f89c5";
+    # "da2f552d133497abd434006e0cae996c0a282394";
+    # emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
     # emacs-overlay.inputs.nixpkgs.url = "github:nixos/nixpkgs/2128d0aa28edef51fd8fef38b132ffc0155595df";
   };
 
