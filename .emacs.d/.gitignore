@@ -2,11 +2,18 @@
 .org-id-locations
 auto-save-list/
 
+bookmarks
+
+elfeed.stats
+
 eln-cache/
 elpa/
 
+eshell/alias
 eshell/history
 eshell/lastdir
+
+history
 
 recentf
 init.el
@@ -16,15 +23,19 @@ ltximg/
 
 network-security.data
 
+org-caldav*
 org-roam.db
 projectile-bookmarks.eld
+
+prescient-data
+
+spell-fu*
 
 straight/build/
 straight/modified/
 straight/repos/
 straight/build-cache.el
 
-prescient-data
 
 tmp
 tramp
