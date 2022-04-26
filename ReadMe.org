@@ -3426,11 +3426,11 @@ set adjust-open			"width"
     myfonts.inputs.nixpkgs.follows = "nixpkgs";
 
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
-    emacs-overlay.url = "github:nix-community/emacs-overlay/4356a0643b98868883425711daa02dde1290b2ed";
+    emacs-overlay.url = "github:nix-community/emacs-overlay/ce0571f95210dc4c00a3affb4128012947f9a250";
+    emacs-overlay.inputs.nixpkgs.url = "github:nixos/nixpkgs/bc41b01dd7a9fdffd32d9b03806798797532a5fe";
     # emacs-overlay.url = "github:nix-community/emacs-overlay/c43afd748147e2bf631e5b37f7a68e93a98f89c5";
     # "da2f552d133497abd434006e0cae996c0a282394";
     # emacs-overlay.inputs.nixpkgs.follows = "nixpkgs";
-    # emacs-overlay.inputs.nixpkgs.url = "github:nixos/nixpkgs/2128d0aa28edef51fd8fef38b132ffc0155595df";
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
@@ -3587,7 +3587,7 @@ programs.sway = {
 *** EmacsPgtkNativeComp
 We use the pure GTK, native-compiled version of Emacs. To change the version used, this section and the corresponding flake input needs to be changed. As we want vterm enabled and we use emacsclient primarily, we add it to the service packages.
 #+begin_src nix
-services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkNativComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
+services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
 services.emacs.enable = true;
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
 ];
@@ -3751,7 +3751,7 @@ environment.systemPackages = with pkgs;
     sbcl
     pandoc
 
-    ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
+    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]))
     (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
 
     # From home-manager
@@ -3791,6 +3791,7 @@ Enable CUPS to print documents.
 services.printing.enable = true;
 services.printing.drivers = [ pkgs.gutenprint ];
 services.avahi.enable = true;
+services.avahi.nssmdns = true;
 #+END_SRC
 *** Miscellaneous
 #+begin_src nix

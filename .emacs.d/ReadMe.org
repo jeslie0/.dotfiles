@@ -655,6 +655,7 @@ If the universal prefix argument is used then kill also the window."
 
     "bR" 'revert-buffer)
   :config
+  (setq persp-suppress-no-prefix-key-warning t)
   (persp-mode))
 #+end_src
 ** TODO Fillings
@@ -3881,7 +3882,7 @@ there are no attachments."
   ;; Recommended: Enable Corfu globally.
   ;; This is recommended since dabbrev can be used globally (M-/).
   :config
-  (corfu-global-mode))
+  (global-corfu-mode))
 #+END_SRC
 *** kind-icon
 #+BEGIN_SRC elisp
