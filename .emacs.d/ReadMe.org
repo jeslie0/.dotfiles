@@ -2531,6 +2531,17 @@ We need a function to find the lsp server when it's installed through a nix shel
   )
 #+end_src
 **** Org Roam
+***** Functions
+#+BEGIN_SRC elisp
+(defun org-roam-force-rebuild-cache ()
+  "Rebuild the `org-mode' and `org-roam' cache."
+  (interactive)
+  (org-id-update-id-locations)
+  ;; Note: you may need `org-roam-db-clear-all'
+  ;; followed by `org-roam-db-sync'
+  (org-roam-db-sync)
+  (org-roam-update-org-id-locations))
+#+END_SRC
 ***** Keybindings
 #+begin_src elisp
 (defun jl/org-roam-global-keys ()
@@ -2543,6 +2554,7 @@ We need a function to find the lsp server when it's installed through a nix shel
     "aordt" 'org-roam-dailies-goto-today
     "aordT" 'org-roam-dailies-goto-tomorrow
     "aordd" 'org-roam-dailies-goto-date
+    "aorh" 'org-roam-force-rebuild-cache
     "aorf" 'org-roam-node-find
     "aorn" 'org-roam-node-find
     "aorg" 'org-roam-ui-open
@@ -2569,6 +2581,7 @@ We need a function to find the lsp server when it's installed through a nix shel
     "rdT" 'org-roam-dailies-goto-tomorrow
     "rdd" 'org-roam-dailies-goto-date
     "rf" 'org-roam-node-find
+    "rh" 'org-roam-force-rebuild-cache
     "rn" 'org-roam-node-find
     "rg" 'org-roam-ui-open
     "ri" 'org-roam-node-insert
@@ -3120,8 +3133,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
     :keymaps 'bibtex-mode-map
     :states 'normal
     :major-modes t
-    "l" '(:ignore t :which-key "lookup")
-    )
+    "l" '(:ignore t :which-key "lookup"))
+
   (jl/major-modes
     :keymaps 'bibtex-mode-map
     :states 'normal
@@ -3145,9 +3158,14 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "lA" 'arxiv-get-pdf-add-bibtex-entry
     "ld" 'doi-utils-add-bibtex-entry-from-doi
     "li" 'isbn-to-bibtex
-    "lp" 'pubmed-insert-bibtex-from-pmid)
-
-
+    "lp" 'pubmed-insert-bibtex-from-pmid))
+#+END_SRC
+***** Initialisation
+#+begin_src elisp
+(use-package org-ref
+  :after org
+  :defer t
+  :general
   (jl/major-modes
     :keymaps 'latex-mode-map
     :states 'normal
@@ -3158,13 +3176,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
     :states '(normal visual motion)
     :major-modes t
     "ir" 'org-ref-insert-ref-link
-    "ic" 'org-ref-insert-cite-link))
-#+END_SRC
-***** Initialisation
-#+begin_src elisp
-(use-package org-ref
-  :after org
-  :defer t
+    "ic" 'org-ref-insert-cite-link)
   :custom
   (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
   (bibtex-completion-library-path "~/Documents/PDF/")
