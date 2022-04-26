@@ -714,7 +714,8 @@ If the universal prefix argument is used then kill also the window."
     (interactive)
     (switch-to-buffer "*dashboard*")
     (dashboard-refresh-buffer))
-  (dashboard-setup-startup-hook))
+  (dashboard-setup-startup-hook)
+  (dashboard-refresh-buffer))
 #+end_src
 ** ligature.el
 #+BEGIN_SRC elisp
@@ -4089,6 +4090,7 @@ SCOPE can be:
   (jl/SPC-keys
     "au" 'undo-tree-visualize)
   :custom
+  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/tmp/undotree/")))
   (undo-tree-visualizer-timestamps t)
   (undo-tree-visualizer-diff t)
   ;; 10X bump of the undo limits to avoid issues with premature
