@@ -243,6 +243,18 @@ environment.systemPackages = with pkgs;
 
     ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
     (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
+
+    # From home-manager
+    pinentry_emacs
+    pciutils
+    chromium
+    zoom-us
+    obs-studio
+    pcmanfm
+    gnuplot
+    nmap
+    nnn
+    qbittorrent
   ];
 
 programs.light.enable = true;

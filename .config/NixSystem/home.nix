@@ -24,10 +24,6 @@
   nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
-    pinentry_emacs
-    pciutils
-    chromium
-    zoom-us
     # (import (fetchTarball https://github.com/haskell/haskell-language-server/archive/745ef26f406dbdd5e4a538585f8519af9f1ccb09.tar.gz)).defaultPackage.x86_64-linux
     # (import (fetchFromGitHub {
     #   owner = "haskell";
@@ -35,11 +31,5 @@
     #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
     #   sha256 = "10vj4wb0gdvfnrg1d7r3dqjnkw34ryh7v4fvxsby6fvn1l2kvsj5";
     # }))
-    obs-studio
-    pcmanfm
-    gnuplot
-    nmap
-    nnn
-    qbittorrent
   ];
 }
