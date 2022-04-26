@@ -93,7 +93,7 @@ programs.sway = {
   ];
 };
 
-services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]));
+services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
 services.emacs.enable = true;
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
 ];
@@ -241,7 +241,7 @@ environment.systemPackages = with pkgs;
     sbcl
     pandoc
 
-    ((emacsPackagesFor emacsPgtkGcc).emacsWithPackages (epkgs: [ epkgs.vterm ]))
+    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]))
     (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
 
     # From home-manager
@@ -274,6 +274,7 @@ systemd.services.keychron = {
 services.printing.enable = true;
 services.printing.drivers = [ pkgs.gutenprint ];
 services.avahi.enable = true;
+services.avahi.nssmdns = true;
 
 # Enable sound.
 # sound.enable = true;
