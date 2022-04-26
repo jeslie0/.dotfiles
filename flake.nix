@@ -23,7 +23,7 @@
     swaylockeffectsGitHub.url = "github:jeslie0/swaylock-effects-git";
     swaylockeffectsGitHub.inputs.nixpkgs.follows = "nixpkgs";
 
-    myfonts.url = "github:jeslie0/my-fonts-flake";
+    myfonts.url = "github:jeslie0/fonts";
     myfonts.inputs.nixpkgs.follows = "nixpkgs";
 
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
