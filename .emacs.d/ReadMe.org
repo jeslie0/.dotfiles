@@ -2503,7 +2503,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   (org-latex-compiler "lualatex")
   (org-highlight-latex-and-related '(latex script entities))
   ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
-  (reftex-default-bibliography '("/home/james/Documents/TeX/common/bibliography.bib"))
+  (reftex-default-bibliography '("~/texmf/bibtex/bib/bibliography.bib"))
   ;; Org capture
   (org-capture-templates
    '(("t" "Todo [inbox]" entry
@@ -3005,6 +3005,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 	 (LaTeX-mode . TeX-PDF-mode)
          (LaTeX-mode . (lambda () (variable-pitch-mode nil))))
   :custom
+  (TeX-parse-self t) ;; Enable Parse on load
+  (TeX-auto-save t) ;;Enable Parse on save
   (TeX-engine 'luatex)
   (font-latex-math-environments (quote ("display" "displaymath" "equation" "eqnarray" "gather" "math" "multline" "align" "alignat" "xalignat" "xxalignat" "flalign" "tikzcd")))
   (reftex-plug-into-auctex t)

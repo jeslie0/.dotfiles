@@ -28,11 +28,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1643991617,
-        "narHash": "sha256-VWwd6grh7/SzvM/gvwNRZfJfLp6MYalm5P+sgn3zyjg=",
+        "lastModified": 1650888161,
+        "narHash": "sha256-miaLKud3JDTHLzV1V5Pk6LStaYKUxNNimhAmcxIrjvw=",
         "owner": "jeslie0",
         "repo": "bemenuFocus",
-        "rev": "ea3f6ad77ee09ae5466bf5f376f3a191a5d665b3",
+        "rev": "c1de1fcfd58149dde541a3932124492b23efdfb3",
         "type": "github"
       },
       "original": {
@@ -43,17 +43,17 @@
     },
     "emacs-overlay": {
       "locked": {
-        "lastModified": 1648896330,
-        "narHash": "sha256-B63Mf2hQVdWpXg91CYC4ppkshMkTt7gtTONTWYNQZaQ=",
+        "lastModified": 1650946623,
+        "narHash": "sha256-YGoR+ypDCii9Kl4bZ2NgOh0DLV6xSjcyM2rZsAWVdCM=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "c43afd748147e2bf631e5b37f7a68e93a98f89c5",
+        "rev": "4356a0643b98868883425711daa02dde1290b2ed",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "c43afd748147e2bf631e5b37f7a68e93a98f89c5",
+        "rev": "4356a0643b98868883425711daa02dde1290b2ed",
         "type": "github"
       }
     },
@@ -89,11 +89,11 @@
     },
     "flake-utils_3": {
       "locked": {
-        "lastModified": 1644229661,
-        "narHash": "sha256-1YdnJAsNy69bpcjuoKdOYQX0YxZBiCYZo4Twxerqv7k=",
+        "lastModified": 1649676176,
+        "narHash": "sha256-OWKJratjt2RW151VUlJPRALb7OU2S5s+f0vLj4o1bHM=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "3cecb5b042f7f209c56ffd8371b2711a290ec797",
+        "rev": "a4b154ebbdc88c8498a5c7b01589addc9e9cb678",
         "type": "github"
       },
       "original": {
@@ -154,11 +154,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1648917498,
-        "narHash": "sha256-fdyVHsP6XeyCk9FRyjV6Wv+7qiOzWxykGXdNixadvyg=",
+        "lastModified": 1650920743,
+        "narHash": "sha256-7xxdtLp295HswhyEjr991QJsBFeadUo43NiAsHnQ5+8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "cfab869fcebc56710be6ec3aca76036b25c04a0d",
+        "rev": "223a73c2ba7d358b23666937cb13a59b31df511c",
         "type": "github"
       },
       "original": {
@@ -176,11 +176,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1648463170,
-        "narHash": "sha256-EIs2APbAQ/TxT0auFILcmuAUiCYXAUJo6qS/SX8qvLs=",
+        "lastModified": 1650902857,
+        "narHash": "sha256-n66c75k/Ps6gBAzm5fO9sg3VycQtA5CxX1mFJL5xPSI=",
         "owner": "jeslie0",
         "repo": "my-fonts-flake",
-        "rev": "44ac121063a0cee026608b94119332de4c797bc6",
+        "rev": "ad4246a2e46a46694e328306ed7f01f6e504c2e5",
         "type": "github"
       },
       "original": {
@@ -205,30 +205,16 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1648632716,
-        "narHash": "sha256-kCmnDeiaMsdhfnNKjxdOzwRh2H6eQb8yWAL+nNabC/Y=",
+        "lastModified": 1650831523,
+        "narHash": "sha256-6pDZ08SAXsUx5rOP391x+TG39ENP/XA8VMa1tQvgEjc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "710fed5a2483f945b14f4a58af2cd3676b42d8c8",
+        "rev": "87d34a6b8982e901b8e50096b8e79ebc0e66cda0",
         "type": "github"
       },
       "original": {
         "id": "nixpkgs",
         "ref": "nixos-unstable",
-        "type": "indirect"
-      }
-    },
-    "nur": {
-      "locked": {
-        "lastModified": 1648918087,
-        "narHash": "sha256-FSErc0r/tpy9iiLN7R7vgXAqWeBPXWMKHiAiprE855E=",
-        "owner": "nix-community",
-        "repo": "NUR",
-        "rev": "7d7d8e17e1df6c98ff0187a680b561800bba76e9",
-        "type": "github"
-      },
-      "original": {
-        "id": "nur",
         "type": "indirect"
       }
     },
@@ -261,7 +247,6 @@
         "home-manager": "home-manager",
         "myfonts": "myfonts",
         "nixpkgs": "nixpkgs_2",
-        "nur": "nur",
         "passbemenuGitHub": "passbemenuGitHub",
         "swaybgchangerGitHub": "swaybgchangerGitHub",
         "swaylockeffectsGitHub": "swaylockeffectsGitHub"
