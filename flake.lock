@@ -176,16 +176,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1650902857,
-        "narHash": "sha256-n66c75k/Ps6gBAzm5fO9sg3VycQtA5CxX1mFJL5xPSI=",
+        "lastModified": 1650990587,
+        "narHash": "sha256-knBfthTskDT8RJFBTQOCjKh8dEhtT6dFLCsX12eQ3KQ=",
         "owner": "jeslie0",
-        "repo": "my-fonts-flake",
-        "rev": "ad4246a2e46a46694e328306ed7f01f6e504c2e5",
+        "repo": "fonts",
+        "rev": "b1269770f3b5b3b8733c61df037788e080b71588",
         "type": "github"
       },
       "original": {
         "owner": "jeslie0",
-        "repo": "my-fonts-flake",
+        "repo": "fonts",
         "type": "github"
       }
     },
