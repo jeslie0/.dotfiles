@@ -467,7 +467,9 @@ Adds the popup for key commands with mulitple key presses.
 (use-package doom-themes
   :defer t
   :hook (server-after-make-frame . (lambda () (load-theme
-					       'doom-palenight t))))
+					       'doom-palenight t)))
+  :init
+  (load-theme 'doom-palenight t))
 #+end_src
 *** Nord
 #+begin_src elisp
@@ -672,51 +674,6 @@ If the universal prefix argument is used then kill also the window."
   (add-to-list 'recentf-exclude (expand-file-name "~/.emacs.d/bookmarks"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org")))
 #+END_SRC
-** Dashboard
-*** Functions
-#+begin_src elisp
-#+end_src
-*** Initialisation
-#+begin_src elisp
-(use-package dashboard
-  :general
-  (jl/SPC-keys
-    :no-autoload t
-    "bh" 'buffer-visit-dashboard)
-  (:keymaps 'dashboard-mode-map
-            :states '(normal motion)
-            :no-autoload t
-            "j"  'widget-forward
-            "k"  'widget-backward)
-  :custom
-  ;; Set the title
-  (dashboard-banner-logo-title "Welcome to Emacs")
-  ;; Set the logo
-  (dashboard-startup-banner "/home/james/.emacs.d/Icons/EmacsLogo.svg")
-  (dashboard-image-banner-max-width 300)
-
-  ;; Content is not centered by default. To center, set
-  (dashboard-center-content t)
-
-  ;; To disable shortcut "jump" indicators for each section, set
-  (dashboard-show-shortcuts nil)
-  (dashboard-set-heading-icons t)
-  (dashboard-set-file-icons t)
-  (dashboard-set-init-info t)
-  (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
-  (dashboard-items '((recents . 5)
-		     (projects . 5)))
-
-  (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-
-  :config
-  (defun buffer-visit-dashboard ()
-    (interactive)
-    (switch-to-buffer "*dashboard*")
-    (dashboard-refresh-buffer))
-  (dashboard-setup-startup-hook)
-  (dashboard-refresh-buffer))
-#+end_src
 ** ligature.el
 #+BEGIN_SRC elisp
 (use-package ligature
@@ -925,30 +882,38 @@ Allows for partial searching in vertico.
     "p&" 'projectile-run-async-shell-command-in-root
     "p%" 'projectile-replace-regexp
     "pa" 'projectile-toggle-between-implementation-and-test
-    "pb" 'projectile-switch-to-buffer
+    ;; "pb" 'projectile-switch-to-buffer
     "pc" 'projectile-compile-project
-    "pd" 'projectile-find-dir
+    ;; "pd" 'projectile-find-dir
     "pD" 'projectile-dired
     "pe" 'projectile-edit-dir-locals
-    "pf" 'projectile-find-file
+    ;; "pf" 'projectile-find-file
     "pF" 'projectile-find-file-dwim
     "pg" 'projectile-find-tag
     "pG" 'projectile-regenerate-tags
     "pI" 'projectile-invalidate-cache
     "pk" 'projectile-kill-buffers
-    "pp" 'projectile-switch-project
-    "pr" 'projectile-recentf
+    ;; "pp" 'projectile-switch-project
+    ;; "pr" 'projectile-recentf
     "pR" 'projectile-replace
     "pT" 'projectile-test-project
     "pv" 'projectile-vc)
-  :config
+  :init
   (projectile-mode))
 #+end_src
 *** consult-projectile
 #+BEGIN_SRC elisp
 (use-package consult-projectile
-  :after (consult projectile)
-  :straight (consult-projectile :type git :host gitlab :repo "OlMon/consult-projectile" :branch "master"))
+  ;; :after (consult projectile)
+  :straight (consult-projectile :type git :host gitlab :repo "OlMon/consult-projectile" :branch "master")
+  :general
+  (jl/SPC-keys
+    "pf" 'consult-projectile-find-file
+    "pd" 'consult-projectile-find-dir
+    "pr" 'consult-projectile-recentf
+    "pp" 'consult-projectile-switch-project
+    "pb" 'consult-projectile-switch-to-buffer
+    "pP" 'consult-projectile))
 #+END_SRC
 ** Magit
 #+begin_src elisp
@@ -1101,6 +1066,52 @@ Provides better documentation.
   (eldoc-idle-delay 0.5)
   (eldoc-echo-area-use-multiline-p nil))
 #+END_SRC
+* Dashboard
+** Functions
+#+begin_src elisp
+#+end_src
+** Initialisation
+#+begin_src elisp
+(use-package dashboard
+  :general
+  (jl/SPC-keys
+    :no-autoload t
+    "bh" 'buffer-visit-dashboard)
+  (:keymaps 'dashboard-mode-map
+            :states '(normal motion)
+            :no-autoload t
+            "j"  'widget-forward
+            "k"  'widget-backward)
+  :custom
+  ;; Set the title
+  (dashboard-banner-logo-title "Welcome to Emacs")
+  ;; Set the logo
+  (dashboard-startup-banner "/home/james/.emacs.d/Icons/EmacsLogo.svg")
+  (dashboard-image-banner-max-width 300)
+
+  ;; Content is not centered by default. To center, set
+  (dashboard-center-content t)
+
+  ;; To disable shortcut "jump" indicators for each section, set
+  (dashboard-show-shortcuts nil)
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-set-init-info t)
+  ;; (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+  (dashboard-items '((recents . 5)
+		     (projects . 5)
+))
+
+  (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+
+  :config
+  (defun buffer-visit-dashboard ()
+    (interactive)counsel-projectile-switch-project-by-name
+    (switch-to-buffer "*dashboard*")
+    (dashboard-refresh-buffer))
+  (dashboard-setup-startup-hook)
+  (dashboard-refresh-buffer))
+#+end_src
 * Minor modes
 ** Rainbow Delimiters
 #+begin_src elisp
@@ -1312,7 +1323,7 @@ Provides better documentation.
   )
 #+end_src
 **** Initialisation
-#+begin_src elisp :tangle no
+#+begin_src elisp
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :general
@@ -2505,7 +2516,6 @@ We need a function to find the lsp server when it's installed through a nix shel
   (org-latex-compiler "lualatex")
   (org-highlight-latex-and-related '(latex script entities))
   ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
-  (reftex-default-bibliography '("~/texmf/bibtex/bib/bibliography.bib"))
   ;; Org capture
   (org-capture-templates
    '(("t" "Todo [inbox]" entry
@@ -3025,6 +3035,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
   (TeX-engine 'luatex)
   (font-latex-math-environments (quote ("display" "displaymath" "equation" "eqnarray" "gather" "math" "multline" "align" "alignat" "xalignat" "xxalignat" "flalign" "tikzcd")))
   (reftex-plug-into-auctex t)
+  (reftex-default-bibliography '("~/texmf/bibtex/bib/bibliography.bib"))
   (reftex-label-alist
    '(("theorem" ?h "thm:" "~\\ref{%s}" t   ("theorem" "th.") -3)
      ("proof"   ?g "pf:"  "~\\ref{%s}" t   ("proof" "pf.") -3)
@@ -3179,7 +3190,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "ic" 'org-ref-insert-cite-link)
   :custom
   (bibtex-completion-bibliography "~/texmf/bibtex/bib/bibliography.bib")
-  (bibtex-completion-library-path "~/Documents/PDF/")
+  (bibtex-completion-library-path "~/Documents/PDFs/")
   (org-latex-prefer-user-labels t)
   :config
   (jl/org-ref-keys))
@@ -3872,6 +3883,9 @@ there are no attachments."
             "S-TAB" 'corfu-previous
             [backtab] 'corfu-previous
             "C-k" 'corfu-previous)
+  (:keymaps 'corfu-map
+            :states 'insert
+            [escape] 'jl/corfu-quit)
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-auto t)                 ;; Enable auto completion
@@ -3894,6 +3908,11 @@ there are no attachments."
 
   ;; Recommended: Enable Corfu globally.
   ;; This is recommended since dabbrev can be used globally (M-/).
+  :init
+  (defun jl/corfu-quit ()
+    (interactive)
+    (corfu-quit)
+    (evil-normal-state))
   :config
   (global-corfu-mode))
 #+END_SRC
@@ -4182,7 +4201,7 @@ SCOPE can be:
 ** openwith
 #+BEGIN_SRC elisp
 (use-package openwith
-  :after (:all (:any dired vertico) gnus)
+  :after (dired vertico)
   :custom
   (openwith-associations '(("\\.pdf\\'" "zathura" (file))))
   :config
