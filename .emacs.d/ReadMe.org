@@ -85,7 +85,7 @@
 (menu-bar-mode -1)     ; Disable the menu bar
 (blink-cursor-mode -1) ; Makes cursor not blink
 (column-number-mode 1) ;; Adds column numbering to the modeline
-(electric-indent-mode -1)
+(electric-indent-mode -1) ;; Turns off automatic indenting
 
 
 
@@ -1126,7 +1126,7 @@ Provides better documentation.
   :hook ((prog-mode LaTeX-mode) . outshine-mode))
 #+end_src
 ** Aggressive indent
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package aggressive-indent
   :defer t
   :init
@@ -1173,11 +1173,23 @@ Provides better documentation.
 (use-package variable-pitch
   :defer t
   :straight face-remap
-  :hook (text-mode . variable-pitch-mode))
+  ;; :hook (text-mode . variable-pitch-mode)
+)
 #+END_SRC
 ** TODO Visual line mode
 #+BEGIN_SRC elisp
 (add-hook 'text-mode-hook 'visual-line-mode)
+#+END_SRC
+** hl-todo
+#+BEGIN_SRC elisp
+(use-package hl-todo
+  :defer t
+  :hook ((prog-mode text-mode) . hl-todo-mode)
+  :config
+  (remove-hook 'org-mode-hook 'hl-todo-mode)
+  (setq hl-todo-keyword-faces
+        '(("TODO" . (face-foreground 'org-todo))
+          ("DONE" . (face-foreground 'org-done)))))
 #+END_SRC
 * Passwords
 ** TODO Pin entry and GPG key
@@ -1394,6 +1406,7 @@ Provides better documentation.
   (lsp-idle-delay 0.500)
   (lsp-lens-place-position 'above-line)
   (lsp-log-io nil)
+  (lsp-headerline-breadcrumb-icons-enable nil)
   (lsp-file-watch-ignored '("[/\\\\]\\.direnv$"
 					; SCM tools
 			    "[/\\\\]\\.git$"
@@ -1435,20 +1448,15 @@ Provides better documentation.
 **** lsp-treemacs
 #+begin_src elisp
 (use-package lsp-treemacs
-  :after (lsp treemacs)
-  :commands (lsp-treemacs-symbols
-             lsp-treemacs-references
-             lsp-treemacs-errors-list)
   :general
   (jl/major-modes
     :keymaps 'lsp-mode-map
     :states '(normal visual motion)
-    :major-modes t
     "t" '(:ignore t :which-key "lsp-treemacs")
     "th" #'lsp-treemacs-call-hierarchy
-    "te" 'lsp-treemacs-errors-list
-    "tr" 'lsp-treemacs-references
-    "ts" 'lsp-treemacs-symbols)
+    "te" #'lsp-treemacs-errors-list
+    "tr" #'lsp-treemacs-references
+    "ts" #'lsp-treemacs-symbols)
   :config
   (lsp-treemacs-sync-mode 1))
   #+end_src
@@ -1641,8 +1649,8 @@ For most programming languages, the development tools will be installed through 
 **** Initialisation
 #+BEGIN_SRC elisp
 (use-package cc-mode
-  :hook ((c-mode . electric-pair-mode)
-         (c-mode . electric-indent-mode)))
+  :hook ((c-mode-common . electric-pair-mode)
+         (c-mode-common . electric-indent-mode)))
 #+END_SRC
 **** TODO clang-format
 #+BEGIN_SRC elisp
@@ -2078,7 +2086,7 @@ Not tested. Probably doesn't work.
     :keymaps 'nix-mode-map
     :states '(normal visual motion)
     :major-modes t
-    "=" '(nix-format-buffer))
+    "=" 'nix-format-buffer)
   :mode "\\.nix\\'")
 #+END_SRC
 **** nixos-options
@@ -2439,7 +2447,7 @@ We need a function to find the lsp server when it's installed through a nix shel
 		  (org-level-7 . 1.1)
 		  (org-level-8 . 1.1))
 		)
-    (set-face-attribute (car face) nil :family jl/text-font :weight 'regular :height (cdr face))
+    (set-face-attribute (car face) nil :family jl/prog-font :weight 'regular :height (cdr face))
     (set-face-attribute 'org-link nil :weight 'regular)
     )
 
@@ -2687,7 +2695,7 @@ We need a function to find the lsp server when it's installed through a nix shel
 #+begin_src elisp :tangle no
 (defun jl/org-mode-setup ()
   (visual-line-mode 1)
-  (variable-pitch-mode 1)
+  ;; (variable-pitch-mode 1)
   (smartparens-mode 1)
   (org-fragtog-mode 1)
   (rainbow-delimiters-mode 1)
@@ -2720,92 +2728,73 @@ Calling org-babel languages in the following form saves a lot on startup time.
 ***** Shell
 #+BEGIN_SRC elisp
 (use-package ob-shell
-  :after org
-  :defer t
-  :straight org-contrib
+  :straight org
   :commands
   (org-babel-execute:sh
    org-babel-expand-body:sh
 
    org-babel-execute:bash
    org-babel-expand-body:bash)
-  )
+  :config
+  (add-to-list 'org-babel-load-languages '(shell . t)))
 #+END_SRC
 ***** Python
 #+BEGIN_SRC elisp
 (use-package ob-python
-  :after org
-  :defer t
-  :straight org-contrib
+  :straight org
   :commands
   (org-babel-execute:python
-   org-babel-expand-body:python
-   )
-  )
+   org-babel-expand-body:python))
 #+END_SRC
 ***** Emacs Lisp
 #+BEGIN_SRC elisp
 (use-package ob-emacs-lisp
-  :after org
-  :defer t
-  :straight org-contrib
+  :straight org
   :commands
   (org-babel-execute:emacs-lisp
    org-babel-expand-body:emacs-lisp
-
-
-  org-babel-execute:elisp
-   org-babel-expand-body:elisp
-   )
-  )
+   org-babel-execute:elisp
+   org-babel-expand-body:elisp))
 #+END_SRC
 ***** JS
 #+BEGIN_SRC elisp
 (use-package ob-js
-  :after org
-  :defer t
-  :straight org-contrib
+  :straight org
   :commands
   (org-babel-execute:js
-   org-babel-expand-body:js
-   )
-  )
+   org-babel-expand-body:js))
 #+END_SRC
 ***** LaTeX
 #+BEGIN_SRC elisp
 (use-package ob-latex
-  :after org
-  :defer t
-  :straight org-contrib
+  :straight org
   :commands
   (org-babel-execute:latex
-   org-babel-expand-body:latex
-   )
-  )
+   org-babel-expand-body:latex))
 #+END_SRC
 ***** Haskell
 #+BEGIN_SRC elisp
 (use-package ob-haskell
-  :after org
-  :defer t
-  :straight org-contrib
+  :straight org
   :commands
   (org-babel-execute:haskell
-   org-babel-expand-body:haskell
-   )
-  )
+   org-babel-expand-body:haskell))
 #+END_SRC
-***** C
+***** C/C++
 #+BEGIN_SRC elisp
 (use-package ob-C
-  :after org
-  :defer t
-  :straight org-contrib
+  :straight org
   :commands
   (org-babel-execute:C
    org-babel-expand-body:C
-   )
-  )
+   org-babel-execute:C++
+   org-babel-expand-body:C++))
+#+END_SRC
+***** CANCELLED ob-async
+#+BEGIN_SRC elisp :tangle no
+(use-package ob-async
+  :after org
+  :defer t)
 #+END_SRC
 **** Evil Org
 #+begin_src elisp
@@ -2917,6 +2906,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+BEGIN_SRC elisp
 (use-package ox-extra
   :after org
+  :straight org-contrib
   :config
   (ox-extras-activate '(latex-header-blocks ignore-headlines)))
 #+END_SRC
@@ -3028,7 +3018,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 	 (LaTeX-mode . LaTeX-math-mode)
 	 (LaTeX-mode . TeX-source-correlate-mode)
 	 (LaTeX-mode . TeX-PDF-mode)
-         (LaTeX-mode . (lambda () (variable-pitch-mode nil))))
+         ;; (LaTeX-mode . (lambda () (variable-pitch-mode nil)))
+         )
   :custom
   (TeX-parse-self t) ;; Enable Parse on load
   (TeX-auto-save t) ;;Enable Parse on save
@@ -3223,7 +3214,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+END_SRC
 * Readers
 ** Elfeed
-*** TODO Initialisation
+*** Initialisation
 #+begin_src elisp
 (use-package elfeed
   :commands (elfeed)
@@ -3246,23 +3237,36 @@ Calling org-babel languages in the following form saves a lot on startup time.
     :states 'normal
     :keymaps 'elfeed-show-mode-map
     "n" 'elfeed-show-next
-    "p" 'elfeed-show-prev)
+    "p" 'elfeed-show-prev
+    "v" 'elfeed-view-mpv)
   (jl/SPC-keys
     "are" 'elfeed)
   :custom
-  (elfeed-feeds '(("https://golem.ph.utexas.edu/category/atom10.xml" mathematics)
-        	  ("https://homotopytypetheory.org/feed.xml" mathematics)
-        	  ("https://terrytao.wordpress.com/feed.xml" mathematics)
-        	  ("https://gowers.wordpress.com/feed.xml" mathematics)
-        	  ("https://bartoszmilewski.com/feed.xml" mathematics)
+  (elfeed-feeds '(("https://golem.ph.utexas.edu/category/atom10.xml" mathematics cat-cafe)
+        	  ("https://homotopytypetheory.org/feed.xml" mathematics hott)
+        	  ("https://terrytao.wordpress.com/feed.xml" mathematics terry-tao)
+        	  ("https://gowers.wordpress.com/feed.xml" mathematics timothy-gowers)
+        	  ("https://bartoszmilewski.com/feed.xml" mathematics bartosz-milewski)
         	  ("http://logic-forall.blogspot.com/feeds/posts/default" mathematics)
-        	  ("https://jeslie0.github.io/rss.xml" mathematics)
-                  ("https://www.mohabatmath.ca/feed.xml" mathematics)
-        	  ("https://xkcd.com/atom.xml" webcomic)
-                  ("https://mmhaskell.com/blog/atom.xml" haskell)
-                  ("https://www.tweag.io/rss.xml" tweag))))
+        	  ("https://jeslie0.github.io/rss.xml" mathematics james-leslie)
+                  ("https://www.mohabatmath.ca/feed.xml" mathematics mohabat-tarkeshian)
+        	  ("https://xkcd.com/atom.xml" webcomic xkcd)
+                  ("https://mmhaskell.com/blog/atom.xml" haskell mmm)
+                  ("https://www.tweag.io/rss.xml" tweag)
+                  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCAiiOTio8Yu69c3XnR7nQBQ" youtube system-crafters) ;; System Crafters
+                  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCG5h8yHSUS4n7zPnh0dG0SA" youtube georg-rockall-schmidt) ;; Georg Rockall-Schmidt
+                  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCxLYtICsUCWdr1YPrj5DtwA" youtube ordinary-things) ;; Ordinary Things
+                  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCnEuIogVV2Mv6Q1a3nHIRsQ" youtube carefree-wandering) ;; Carefree Wandering
+                  ("https://www.youtube.com/feeds/videos.xml?channel_id=UCR1D15p_vdP3HkrH8wgjQRw" youtube internet-historian) ;; Internet Historian
+                  ))
+  :config
+  (defun elfeed-view-mpv ()
+    "Watch a video from URL in MPV"
+    (interactive)
+    (async-shell-command (format "mpv %s" (thing-at-point-url-at-point)))))
 #+end_src
 *** Elfeed Goodies
+This gives a nice view to Elfeed, but makes it hard to watch videos.
 #+BEGIN_SRC elisp :tangle no
 (use-package elfeed-goodies
   :after elfeed
@@ -3280,7 +3284,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+begin_src elisp
 (use-package elpher
   :commands (elpher)
-  :hook (elpher-mode . variable-pitch-mode)
+  ;; :hook (elpher-mode . variable-pitch-mode)
   :custom
   (elpher-bookmarks-file "~/.spacemacs.d/elpher-bookmarks")
   (elpher-start-page-url "gemini://gemini.circumlunar.space")
@@ -3401,7 +3405,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 (use-package eww
   :defer t
   :commands (eww)
-  :hook (eww-mode . variable-pitch-mode)
+  ;; :hook (eww-mode . variable-pitch-mode)
   :general
   (jl/major-modes
     :keymaps 'eww-mode-map
@@ -3725,7 +3729,7 @@ there are no attachments."
     "ae" 'mu4e)
   :straight nil
   :hook ((mu4e-compose-mode . visual-fill-column-mode)
-	 (mu4e-compose-mode . variable-pitch-mode)
+	 ;; (mu4e-compose-mode . variable-pitch-mode)
 	 (mu4e-view-mode . visual-fill-column-mode))
   :config
   (jl/mu4e-keys)
@@ -3882,10 +3886,9 @@ there are no attachments."
             "C-j" 'corfu-next
             "S-TAB" 'corfu-previous
             [backtab] 'corfu-previous
-            "C-k" 'corfu-previous)
-  (:keymaps 'corfu-map
-            :states 'insert
-            [escape] 'jl/corfu-quit)
+            "C-k" 'corfu-previous
+            [escape] 'jl/corfu-quit
+            )
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-auto t)                 ;; Enable auto completion
@@ -3914,7 +3917,11 @@ there are no attachments."
     (corfu-quit)
     (evil-normal-state))
   :config
-  (global-corfu-mode))
+  (global-corfu-mode)
+
+  (general-define-key :keymaps 'corfu-map
+                      :states 'insert
+                      [escape] 'jl/corfu-quit))
 #+END_SRC
 *** kind-icon
 #+BEGIN_SRC elisp
@@ -3957,7 +3964,10 @@ there are no attachments."
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-tex)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (setq-local completion-at-point-functions
+              (mapcar #'cape-company-to-capf
+                      (list #'company-nix))))
 #+END_SRC
 ** Flycheck
 #+begin_src elisp
@@ -4212,7 +4222,7 @@ SCOPE can be:
   :config
   (add-to-list 'mm-inhibit-file-name-handlers 'openwith-file-handler))
 #+END_SRC
-* Shells
+* DONE Shells
 ** Term
 #+BEGIN_SRC elisp
 (use-package term

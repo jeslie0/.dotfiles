@@ -66,8 +66,8 @@ console = {
 };
 
 # Set your time zone.
-# time.timeZone = "America/Toronto";
-time.timeZone = "Europe/London";
+time.timeZone = "America/Toronto";
+# time.timeZone = "Europe/London";
 
 programs.sway = {
   enable = true;
@@ -257,18 +257,6 @@ environment.systemPackages = with pkgs;
   ];
 
 programs.light.enable = true;
-
-systemd.services.keychron = {
-  enable = true;
-  description = "The command to make the Keychron K6 function keys work";
-  unitConfig = {
-    Type = "oneshot";
-  };
-  serviceConfig = {
-    ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/module/hid_apple/parameters/fnmode'";
-  };
-  wantedBy = [ "multi-user.target" ];
-};
 
 services.printing.enable = true;
 services.printing.drivers = [ pkgs.gutenprint ];

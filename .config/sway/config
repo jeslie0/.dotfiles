@@ -244,6 +244,7 @@ bindsym Shift+Print exec 'grim -g "$(slurp)" ~/Images/Screenshots/`date +%Y-%m-%
 bindsym Ctrl+$mod+e exec 'emacsclient --create-frame --alternate-editor=""'
 bindsym Ctrl+$mod+f exec 'firefox'
 bindsym Ctrl+$mod+s exec 'signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland'
+bindsym Ctrl+$mod+m exec 'spotify --enable-features=UseOzonePlatform --ozone-platform=wayland'
 bindsym Ctrl+$mod+z exec 'zathura'
 bindsym Ctrl+$mod+p exec 'passbemenu'
 
