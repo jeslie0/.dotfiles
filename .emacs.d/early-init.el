@@ -78,7 +78,7 @@
 (menu-bar-mode -1)     ; Disable the menu bar
 (blink-cursor-mode -1) ; Makes cursor not blink
 (column-number-mode 1) ;; Adds column numbering to the modeline
-(electric-indent-mode -1)
+(electric-indent-mode -1) ;; Turns off automatic indenting
 
 
 
