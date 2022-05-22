@@ -182,7 +182,7 @@ auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-
 * Keybindings
 ** Functions
 *** sudo-edit
-shamelessly stolen from Spacemacs.
+Shamelessly stolen from Spacemacs.
 #+begin_src elisp
 (defun sudo-edit (&optional arg)
   (interactive "P")
@@ -340,8 +340,7 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
  :states 'normal
  "p" 'counsel-yank-pop
  "C-r" 'undo-tree-redo
- "u" 'undo-tree-undo
- )
+ "u" 'undo-tree-undo)
 #+end_src
 ** Hydra
 We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buffers.
@@ -1172,9 +1171,7 @@ Provides better documentation.
 #+BEGIN_SRC elisp
 (use-package variable-pitch
   :defer t
-  :straight face-remap
-  ;; :hook (text-mode . variable-pitch-mode)
-)
+  :straight face-remap)
 #+END_SRC
 ** TODO Visual line mode
 #+BEGIN_SRC elisp
@@ -1187,9 +1184,8 @@ Provides better documentation.
   :hook ((prog-mode text-mode) . hl-todo-mode)
   :config
   (remove-hook 'org-mode-hook 'hl-todo-mode)
-  (setq hl-todo-keyword-faces
-        '(("TODO" . (face-foreground 'org-todo))
-          ("DONE" . (face-foreground 'org-done)))))
+  (add-to-list 'hl-todo-keyword-faces `("TODO" . ,(face-foreground 'org-todo)))
+  (add-to-list 'hl-todo-keyword-faces `("DONE" . ,(face-foreground 'org-done))))
 #+END_SRC
 * Passwords
 ** TODO Pin entry and GPG key
