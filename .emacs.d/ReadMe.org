@@ -2087,6 +2087,37 @@ Not tested. Probably doesn't work.
     :states '(normal visual motion)
     :major-modes t
     "=" 'nix-format-buffer)
+  (jl/SPC-keys
+    :states '(normal visual motion)
+    "n"    '(:ignore t :which-key "nix")
+    "nf"   '(:ignore t :which-key "flakes")
+    "nfi"  '(:ignore t :which-key "init")
+    "nf."  'nix-flake
+    "nfd"  'nix-flake-dispatch
+    "nfr"  'nix-flake-run-default
+    "nfR"  'nix-flake-run-attribute
+
+    "nfii" 'nix-flake-init
+    "nfiI" 'nix-flake-init-dispatch
+    "nfir" 'nix-flake-init:from-registry
+    "nfit" 'nix-flake-init-select-template
+    "nfid" 'nix-flake-init:default-templates
+
+    "nfl"  'nix-flake-lock
+    "nfc"  'nix-flake-check
+    "nfu"  'nix-flake-update
+    "nfb"  'nix-flake-build-default
+    "nfB"  'nix-flake-build-attribute
+
+    "nr"   'nix-repl
+    "ns"   'nix-shell
+    "ne"   'nix-eshell
+    "nS"   'nix-search
+    "nc"   'nix-compile
+    "ng"   'nix-shell-build
+    "nC"   'nix-clear-caches
+    "nu"   'nix-shell-unpack
+    "nU"   'nix-shell-configure)
   :mode "\\.nix\\'")
 #+END_SRC
 **** nixos-options
@@ -4360,6 +4391,12 @@ SCOPE can be:
 #+BEGIN_SRC elisp :tangle no
 (use-package direnv
   :defer .1
+  :general
+  (jl/SPC-keys
+    "d"  '(:ignore t :which-key "direnv")
+    "da" 'direnv-allow
+    "du" 'direnv-update-environment
+    "dU" 'direnv-update-directory-environment)
   :config
   (direnv-mode)
   :custom
@@ -4369,6 +4406,14 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package envrc
   :defer .1
+  :general
+  (jl/SPC-keys
+    "d"  '(:ignore t :which-key "direnv")
+    "da" 'envrc-allow
+    "dd" 'envrc-deny
+    "dg" 'envrc-global-mode
+    "dr" 'envrc-reload
+    "dR" 'envrc-reload-all)
   :config
   (envrc-global-mode))
 #+END_SRC
