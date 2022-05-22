@@ -191,6 +191,7 @@ environment.systemPackages = with pkgs;
     zulip-term
     netcat
     mpv
+    imv
     rpi-imager
     openvpn
 
@@ -215,7 +216,6 @@ environment.systemPackages = with pkgs;
     python39
 
     fish
-    oh-my-fish
     ripgrep
     bat
     exa
@@ -233,7 +233,6 @@ environment.systemPackages = with pkgs;
     unzip
     gnome3.adwaita-icon-theme
     self.inputs.agdaGitHub.packages.${system}.Agda
-    # self.inputs.hlsGitHub.defaultPackage.${system}
 
     nixfmt
     mkvtoolnix
