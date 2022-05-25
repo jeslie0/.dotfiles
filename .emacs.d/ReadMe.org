@@ -85,7 +85,8 @@
 (menu-bar-mode -1)     ; Disable the menu bar
 (blink-cursor-mode -1) ; Makes cursor not blink
 (column-number-mode 1) ;; Adds column numbering to the modeline
-(electric-indent-mode -1) ;; Turns off automatic indenting
+(electric-pair-mode -1); Turns off automatic pairing of brackets
+;; (electric-indent-mode -1) ;; Turns off automatic indenting
 
 
 
@@ -134,8 +135,12 @@
 * Package managers
 ** Straight.el
 #+begin_src elisp
-(setq straight-fix-flycheck t)
-(setq straight-check-for-modifications 'live) ;; Gives massive speed up to startup time!
+(setq straight-fix-flycheck t                ;; Gives a fix for flycheck
+      straight-check-for-modifications 'live ;; Gives massive speed up to startup time
+      straight-use-package-by-default t)     ;; Defaults use-package to use straight
+
+
+;; Install straight package manager
 (defvar bootstrap-version)
 (let ((bootstrap-file
       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -150,21 +155,20 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
-
-(setq straight-use-package-by-default t)
 #+end_src
 * Cleaning folders and files
 ** Folders
 *** Backup folder
 #+begin_src elisp
-(setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory)))) ;; Change backup location to a set folder
 #+end_src
 *** Auto-saves
 #+begin_src elisp
-(make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+(make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t) ;; Put auto-saves into set folder
 
 (setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
-auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-emacs-directory) t)))
+      auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp/auto-saves" user-emacs-directory) t)))
 #+end_src
 ** Files
 *** Whitespace (ws-butler)
@@ -1158,7 +1162,6 @@ Provides better documentation.
 ** Smartparens
 #+BEGIN_SRC elisp
 (use-package smartparens
-  :hook ((emacs-lisp-mode . smartparens-mode))
   :defer t)
 #+END_SRC
 ** Save place mode
@@ -1182,10 +1185,12 @@ Provides better documentation.
 (use-package hl-todo
   :defer t
   :hook ((prog-mode text-mode) . hl-todo-mode)
+  :after org
   :config
   (remove-hook 'org-mode-hook 'hl-todo-mode)
-  (add-to-list 'hl-todo-keyword-faces `("TODO" . ,(face-foreground 'org-todo)))
-  (add-to-list 'hl-todo-keyword-faces `("DONE" . ,(face-foreground 'org-done))))
+  (add-to-list 'hl-todo-keyword-faces `("TODO" . ,(face-foreground org-todo)))
+  (add-to-list 'hl-todo-keyword-faces `("DONE" . ,(face-foreground org-done)))
+  )
 #+END_SRC
 * Passwords
 ** TODO Pin entry and GPG key
@@ -1964,6 +1969,15 @@ For most programming languages, the development tools will be installed through 
   :defer t)
 #+END_SRC
 **** TODO Emacs Lisp
+***** Global bindings
+#+BEGIN_SRC elisp
+(jl/SPC-keys
+  "e"  '(:ignore t :which-key "elisp")
+  "er" 'eval-region
+  "eb" 'eval-buffer)
+
+(add-hook 'emacs-lisp-mode-hook 'electric-pair-mode)
+#+END_SRC
 ***** Ielm
 #+BEGIN_SRC elisp
 (use-package ielm
@@ -2088,8 +2102,8 @@ Not tested. Probably doesn't work.
     "n"    '(:ignore t :which-key "nix")
     "nf"   '(:ignore t :which-key "flakes")
     "nfi"  '(:ignore t :which-key "init")
-    "nf."  'nix-flake
-    "nfd"  'nix-flake-dispatch
+    "nf."  'nix-flake-dispatch
+    "nff"  'nix-flake
     "nfr"  'nix-flake-run-default
     "nfR"  'nix-flake-run-attribute
 
@@ -2515,41 +2529,42 @@ We need a function to find the lsp server when it's installed through a nix shel
   (jl/org-mode-Cc-keys)
   (jl/org-mode-global-keys)
   :config
-  (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
+  (setq
+   org-format-latex-options (plist-put org-format-latex-options :background "Transparent")
+   org-ellipsis " ▼"  ;; Change folded header ellipsis
+   org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED"))
+   org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red"))
+   org-startup-indented t
+   org-display-remote-inline-images 'download
+   org-hide-emphasis-markers nil
+   org-src-tab-acts-natively t
+   org-pretty-entities nil
+   org-startup-folded t
+   org-hide-block-startup t
+   org-edit-src-content-indentation 0
+   org-startup-with-latex-preview t
+   org-enable-reveal-js-support t
+   org-protocol-default-template-key "w"
+   org-image-actual-width nil
+   org-re-reveal-root "file:///home/james/emacs-packages/reveal.js"
+   org-preview-latex-image-directory "~/Documents/Org/ltximg/"
+   org-export-backends '(ascii beamer html icalendar latex md odt)
+   ;; Latex in Org
+   org-preview-latex-default-process 'luasvg
+   org-latex-compiler "lualatex"
+   org-highlight-latex-and-related '(latex script entities))
+
   (jl/org-mode-key-bindings)
   (jl/org-font-setup)
   (jl/org-luasvg)
   (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
   :custom
-  (org-ellipsis " ▼")
-  (org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE" "CANCELLED")))
-  (org-todo-keyword-faces '(("WAITING" . "aquamarine1") ("CANCELLED" . "red")))
-  (org-startup-indented t)
-  (org-display-remote-inline-images 'download)
-  (org-hide-emphasis-markers nil)
-  (org-src-tab-acts-natively t)
-  (org-pretty-entities nil)
-  (org-startup-folded t)
-  (org-hide-block-startup t)
-  (org-edit-src-content-indentation 0)
-  (org-startup-with-latex-preview t)
-  (org-enable-reveal-js-support t)
-  (org-protocol-default-template-key "w")
-  (org-image-actual-width nil)
-  (org-re-reveal-root "file:///home/james/emacs-packages/reveal.js")
-  (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
-  ;; (org-preview-latex-image-directory "~/Documents/Org/ltximg/")
   (org-agenda-files '("~/Documents/Calendar/Agenda.org"))
   ;;                     ;; "~/Documents/Org/GTD/inbox.org"
   ;;                     ;; "~/Documents/Org/GTD/gtd.org"
   ;;                     ;; "~/Documents/Org/GTD/tickler.org"
   ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
   ;;                     ))
-  (org-export-backends '(ascii beamer html icalendar latex md odt))
-  ;; Latex in Org
-  (org-preview-latex-default-process 'luasvg)
-  (org-latex-compiler "lualatex")
-  (org-highlight-latex-and-related '(latex script entities))
   ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
   ;; Org capture
   (org-capture-templates
@@ -2572,8 +2587,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   ;; GTD in org
   (org-refile-targets '(("~/Documents/Org/GTD/gtd.org" :maxlevel . 3)
                         ("~/Documents/Org/GTD/someday.org" :level . 1)
-                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2)))
-  )
+                        ("~/Documents/Org/GTD/tickler.org" :maxlevel . 2))))
 #+end_src
 **** Org Roam
 ***** Functions
@@ -3992,9 +4006,7 @@ there are no attachments."
   (add-to-list 'completion-at-point-functions #'cape-ispell)
   (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (setq-local completion-at-point-functions
-              (mapcar #'cape-company-to-capf
-                      (list #'company-nix))))
+  )
 #+END_SRC
 ** Flycheck
 #+begin_src elisp
@@ -4240,7 +4252,10 @@ SCOPE can be:
 (use-package openwith
   :after (dired vertico)
   :custom
-  (openwith-associations '(("\\.pdf\\'" "zathura" (file))))
+  (openwith-associations '(("\\.pdf\\'" "zathura" (file))
+                           ("\\.png\\'" "imv" (file))
+                           ("\\.jpg\\'" "imv" (file))
+                           ("\\.svg\\'" "imv" (file))))
   :config
   (openwith-mode))
 
@@ -4249,7 +4264,7 @@ SCOPE can be:
   :config
   (add-to-list 'mm-inhibit-file-name-handlers 'openwith-file-handler))
 #+END_SRC
-* DONE Shells
+* Shells
 ** Term
 #+BEGIN_SRC elisp
 (use-package term
