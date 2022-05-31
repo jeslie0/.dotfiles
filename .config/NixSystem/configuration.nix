@@ -86,6 +86,7 @@ programs.sway = {
     starship
     rofi
     waybar
+    swaynotificationcenter
     self.inputs.passbemenuGitHub.defaultPackage.${system}
     self.inputs.swaybgchangerGitHub.defaultPackage.${system}
     self.inputs.bemenuFocusGitHub.defaultPackage.${system}

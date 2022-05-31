@@ -801,10 +801,11 @@ folder, otherwise delete a character backward"
 *** Consult
 #+BEGIN_SRC elisp
 (use-package consult
-  :commands (execute-extended-command consult-imenu find-file consult-theme persp-switch-to-buffer* consult-ripgrep consult-line)
-  :general ("C-s" 'consult-line)
+  :general
+  ("C-s" 'consult-line)
   (jl/SPC-keys
     "SPC" '(execute-extended-command :which-key "M-x")
+    "C-e" 'consult-flymake
     "C-s" 'consult-imenu
     "C-<return>" 'consult-minor-mode-menu
     "ff" '(find-file :which-key "find file")
@@ -1060,6 +1061,7 @@ Provides better documentation.
   (defvar read-symbol-positions-list nil)) ;; bug fix
 #+end_src
 ** Eldoc
+*** Initialisation
 #+BEGIN_SRC elisp
 (use-package eldoc
   :defer t
@@ -1068,6 +1070,13 @@ Provides better documentation.
   (eldoc-echo-area-prefer-doc-buffer t)
   (eldoc-idle-delay 0.5)
   (eldoc-echo-area-use-multiline-p nil))
+#+END_SRC
+*** eldoc-box
+#+BEGIN_SRC elisp
+(use-package eldoc-box
+  :commands eldoc-box-eglot-help-at-point
+  :config
+  (set-face-attribute 'eldoc-box-body nil :background (face-background 'solaire-default-face)))
 #+END_SRC
 * Dashboard
 ** Functions
@@ -1187,9 +1196,8 @@ Provides better documentation.
   :hook ((prog-mode text-mode) . hl-todo-mode)
   :after org
   :config
-  (remove-hook 'org-mode-hook 'hl-todo-mode)
-  (add-to-list 'hl-todo-keyword-faces `("TODO" . ,(face-foreground org-todo)))
-  (add-to-list 'hl-todo-keyword-faces `("DONE" . ,(face-foreground org-done)))
+  (add-to-list 'hl-todo-keyword-faces `("TODO" . ,(face-foreground 'org-todo)))
+  ;; (add-to-list 'hl-todo-keyword-faces `("DONE" . ,(face-foreground 'org-done)))
   )
 #+END_SRC
 * Passwords
@@ -1505,6 +1513,10 @@ Provides better documentation.
   :custom
   (eglot-confirm-server-initiated-edits nil)
   :config
+  (general-define-key
+   :keymaps 'eglot-mode-map
+   :states '(normal operator)
+   "K" 'eldoc-box-eglot-help-at-point)
   (add-to-list 'eglot-server-programs '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
   (add-to-list 'eglot-server-programs '(python-mode . ("python-language-server" ""))))
 #+END_SRC
@@ -1663,7 +1675,20 @@ For most programming languages, the development tools will be installed through 
 **** TODO gendoxy
 #+BEGIN_SRC elisp
 (use-package gendoxy
- :straight (:host github :repo "mp81ss/gendoxy" :branch "master" :files ("*.el"))
+  :straight (:host github :repo "mp81ss/gendoxy" :branch "master" :files ("*.el"))
+  :general
+ (jl/major-modes
+   :keymaps '(c-mode-map c++-mode-map)
+   :states '(normal visual operator)
+   :major-modes t
+   "d" '(:ignore t :which-key "doxygen")
+   "dh" 'gendoxy-header
+   "dt" 'gendoxy-tag
+   "dT" 'gendoxy-tag-header
+   "dg" 'gendoxy-group
+   "dG" 'gendoxy-group-header
+   "ds" 'gendoxy-group-start
+   "de" 'gendoxy-group-end)
   :defer t)
 #+END_SRC
 **** CANCELLED r-tags
@@ -2950,6 +2975,13 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :straight org-contrib
   :config
   (ox-extras-activate '(latex-header-blocks ignore-headlines)))
+#+END_SRC
+**** engrave faces
+#+BEGIN_SRC elisp
+(use-package engrave-faces
+  :after org
+  :config
+  (setq org-latex-src-block-backend 'engraved))
 #+END_SRC
 *** LaTeX
 **** Keybindings
@@ -4251,12 +4283,10 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package openwith
   :after (dired vertico)
-  :custom
-  (openwith-associations '(("\\.pdf\\'" "zathura" (file))
-                           ("\\.png\\'" "imv" (file))
-                           ("\\.jpg\\'" "imv" (file))
-                           ("\\.svg\\'" "imv" (file))))
   :config
+  (setq openwith-associations '(("\\.pdf\\'" "zathura" (file))
+                                ))
+
   (openwith-mode))
 
 (use-package mm-util
