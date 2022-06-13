@@ -66,8 +66,8 @@ console = {
 };
 
 # Set your time zone.
-time.timeZone = "America/Toronto";
-# time.timeZone = "Europe/London";
+# time.timeZone = "America/Toronto";
+time.timeZone = "Europe/London";
 
 programs.sway = {
   enable = true;
