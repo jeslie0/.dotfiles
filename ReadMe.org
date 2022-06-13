@@ -3739,8 +3739,8 @@ console = {
 };
 
 # Set your time zone.
-time.timeZone = "America/Toronto";
-# time.timeZone = "Europe/London";
+# time.timeZone = "America/Toronto";
+time.timeZone = "Europe/London";
 #+end_src
 *** X11
 This system doesn't use X11, but uses Wayland instead.

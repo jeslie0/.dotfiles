@@ -665,7 +665,8 @@ If the universal prefix argument is used then kill also the window."
 #+end_src
 ** TODO Fillings
 #+BEGIN_SRC elisp
-;; (add-hook 'prog-mode-hook 'auto-fill-mode)
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+(setq comment-auto-fill-only-comments t)
 (add-hook 'text-mode-hook 'visual-line-mode)
 #+END_SRC
 ** recentf
@@ -1118,7 +1119,7 @@ Provides better documentation.
 
   :config
   (defun buffer-visit-dashboard ()
-    (interactive)counsel-projectile-switch-project-by-name
+    (interactive)
     (switch-to-buffer "*dashboard*")
     (dashboard-refresh-buffer))
   (dashboard-setup-startup-hook)
@@ -1138,11 +1139,11 @@ Provides better documentation.
   :hook ((prog-mode LaTeX-mode) . outshine-mode))
 #+end_src
 ** Aggressive indent
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package aggressive-indent
   :defer t
-  :init
-  (global-aggressive-indent-mode 1)
+  ;; :init
+  ;; (global-aggressive-indent-mode 1)
   :config
   (add-to-list 'aggressive-indent-excluded-modes 'cc-mode)
   (add-to-list 'aggressive-indent-excluded-modes 'c-mode)
@@ -2982,6 +2983,12 @@ Calling org-babel languages in the following form saves a lot on startup time.
   :after org
   :config
   (setq org-latex-src-block-backend 'engraved))
+#+END_SRC
+**** org-link
+#+BEGIN_SRC elisp
+(use-package orglink
+  :init
+  (global-orglink-mode))
 #+END_SRC
 *** LaTeX
 **** Keybindings
