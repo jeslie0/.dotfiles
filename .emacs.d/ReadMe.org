@@ -2586,12 +2586,6 @@ We need a function to find the lsp server when it's installed through a nix shel
   (add-to-list 'org-file-apps '("\\.pdf" . "zathura %s"))
   :custom
   (org-agenda-files '("~/Documents/Calendar/Agenda.org"))
-  ;;                     ;; "~/Documents/Org/GTD/inbox.org"
-  ;;                     ;; "~/Documents/Org/GTD/gtd.org"
-  ;;                     ;; "~/Documents/Org/GTD/tickler.org"
-  ;;                     ;; "~/Documents/Org/GTD/Mobile Inbox.org"
-  ;;                     ))
-  ;; (org-format-latex-options '(:foreground auto :background "Transparent"))
   ;; Org capture
   (org-capture-templates
    '(("t" "Todo [inbox]" entry
