@@ -2351,8 +2351,9 @@ exec "swaybgchanger ~/Images/Wallpapers/ 900"
 #
   # output HDMI-A-1 resolution 1920x1080 position 1920,0
 # output eDP-1 res 1920x1080@60.000Hz pos 0,0
-output eDP-1 res 3840x2160@60.000Hz pos 0,0
-output eDP-1 scale 2
+output eDP-1 pos 0 0 res 3840x2160
+output DP-3 pos 1920 0 res 1280x1024@75.025Hz
+# output eDP-1 scale 2
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 #+end_src
 *** Idle Configuation
@@ -3742,14 +3743,18 @@ console = {
 # time.timeZone = "America/Toronto";
 time.timeZone = "Europe/London";
 #+end_src
-*** X11
-This system doesn't use X11, but uses Wayland instead.
+*** Graphics
+This system doesn't use X11, but uses Wayland instead. Tangle this block for gaming, then run =sway --unsupported-gpu=
 #+begin_src nix :tangle no
-# Enable the X11 windowing system.
-services.xserver.enable = true;
-# Configure keymap in X11
-# services.xserver.layout = "us";
-# services.xserver.xkbOptions = "eurosign:e";
+services.xserver.videoDrivers = [ "nvidia" ];
+
+hardware.opengl.enable = true;
+
+# # Enable the X11 windowing system.
+# services.xserver.enable = true;
+
+# # Configure keymap in X11
+# services.xserver.layout = "gb";
 #+end_src
 *** Sway
 #+begin_src nix
@@ -3857,6 +3862,15 @@ users.users.james = {
   extraGroups = [ "wheel" "networkmanager" "video" ];
 };
 #+end_src
+*** Steam
+#+begin_src nix
+programs.steam = {
+  enable = true;
+  remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+  dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+};
+#+end_src
+
 *** System Packages
 The list of packages installed globally. To search for a package in the nixpkgs repository, type =nix search nixpkgs <search>=.
 #+begin_src nix
@@ -3865,7 +3879,7 @@ environment.systemPackages = with pkgs;
     vim
 
     # Browsers
-    firefox-wayland
+    firefox
     nyxt
     qutebrowser
 
@@ -3895,6 +3909,7 @@ environment.systemPackages = with pkgs;
     zulip-term
     netcat
     mpv
+    youtube-dl
     imv
     rpi-imager
     openvpn
