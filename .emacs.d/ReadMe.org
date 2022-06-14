@@ -342,7 +342,7 @@ Taken from [[https://emacsredux.com/blog/2013/05/04/rename-file-and-buffer/][ema
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (general-define-key
  :states 'normal
- "p" 'counsel-yank-pop
+ "p" 'consult-yank-pop
  "C-r" 'undo-tree-redo
  "u" 'undo-tree-undo)
 #+end_src
@@ -3354,6 +3354,40 @@ This gives a nice view to Elfeed, but makes it hard to watch videos.
   :config
   (elfeed-score-enable))
 #+END_SRC
+*** elfeed-tube
+#+BEGIN_SRC elisp
+(use-package elfeed-tube
+  :straight (:host github :repo "karthink/elfeed-tube")
+  :after elfeed
+  :demand t
+  :bind (:map elfeed-show-mode-map
+         ("F" . elfeed-tube-fetch)
+         ([remap save-buffer] . elfeed-tube-save)
+         :map elfeed-search-mode-map
+         ("F" . elfeed-tube-fetch)
+         ([remap save-buffer] . elfeed-tube-save))
+  :config
+  ;; (setq elfeed-tube-auto-save-p nil) ;; t is auto-save (not default)
+  ;; (setq elfeed-tube-auto-fetch-p t) ;;  t is auto-fetch (default)
+  (elfeed-tube-setup)
+
+
+  (elfeed-tube-add-feeds '("veritasium"
+                         "https://www.youtube.com/playlist?list=PLEoMzSkcN8oMc34dTjyFmTUWbXTKrNfZA"
+                         "quanta magazine"
+                         "julia computing"
+                         "https://www.youtube.com/watch?v=bSVfItpvG5Q"
+                         "https://youtu.be/7CM7Ef-dPWQ"
+                         "tom scott"))
+  )
+
+(use-package elfeed-tube-mpv
+  :straight (:host github :repo "karthink/elfeed-tube")
+  :bind (:map elfeed-show-mode-map
+              ("C-c C-f" . elfeed-tube-mpv-follow-mode)
+              ("C-c C-w" . elfeed-tube-mpv-where)))
+
+#+END_SRC
 ** TODO Elpher
 #+begin_src elisp
 (use-package elpher
@@ -3853,6 +3887,11 @@ there are no attachments."
     "h" '(:ignore t :which-key "html")
     "ho" 'org-mime-edit-mail-in-org-mode
     "hh" 'org-mime-htmlize))
+#+END_SRC
+** mpv
+#+BEGIN_SRC elisp
+(use-package mpv
+  :defer t)
 #+END_SRC
 * Avy
 #+begin_src elisp
