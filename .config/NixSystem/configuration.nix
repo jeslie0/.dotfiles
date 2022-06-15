@@ -69,11 +69,20 @@ console = {
 # time.timeZone = "America/Toronto";
 time.timeZone = "Europe/London";
 
-boot.blacklistedKernelModules = [ "nouveau" "bbswitch" ];
-boot.extraModulePackages = [ pkgs.linuxPackages.nvidia_x11 ];
+services.xserver.videoDrivers = [ "nvidia" ];
+hardware.nvidia = {
+    modesetting.enable = true;
+    prime = {
+      sync.enable = true;
+      nvidiaBusId = "PCI:1:0:0";
+      intelBusId = "PCI:0:2:0";
+    };
+  };
+# boot.blacklistedKernelModules = [ "nouveau" "bbswitch" ];
+# boot.extraModulePackages = [ pkgs.linuxPackages.nvidia_x11 ];
 
-hardware.bumblebee.enable = true;
-hardware.bumblebee.pmMethod = "none";
+# hardware.bumblebee.enable = true;
+# hardware.bumblebee.pmMethod = "none";
 # Enable nvidia driver
 # services.xserver.videoDrivers = [ "nouveau" ];
 
