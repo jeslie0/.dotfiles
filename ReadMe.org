@@ -3745,16 +3745,35 @@ time.timeZone = "Europe/London";
 #+end_src
 *** Graphics
 This system doesn't use X11, but uses Wayland instead. Tangle this block for gaming, then run =sway --unsupported-gpu=
-#+begin_src nix :tangle no
-services.xserver.videoDrivers = [ "nvidia" ];
+#+begin_src nix
+boot.blacklistedKernelModules = [ "nouveau" "bbswitch" ];
+boot.extraModulePackages = [ pkgs.linuxPackages.nvidia_x11 ];
 
+hardware.bumblebee.enable = true;
+hardware.bumblebee.pmMethod = "none";
+# Enable nvidia driver
+# services.xserver.videoDrivers = [ "nouveau" ];
+
+# Block intel and open source nvidia driver
+# boot.blacklistedKernelModules = [ "modesetting" "nouveau" "i915" ];
+# boot.kernelPackages = pkgs.linuxPackages_latest;
+# services.xserver.videoDrivers = ["nvidia" "i915"];
+# boot.blacklistedKernelModules = ["nouveau"];
+
+# Enable OpenGL
 hardware.opengl.enable = true;
 
-# # Enable the X11 windowing system.
-# services.xserver.enable = true;
+# Enable the X11 windowing system.
+services.xserver.enable = true;
+
+# Enable i3
+services.xserver.windowManager.i3.enable = true;
+
+# Enable GDM display manager
+# services.xserver.displayManager.gdm.enable = true;
 
 # # Configure keymap in X11
-# services.xserver.layout = "gb";
+services.xserver.layout = "gb";
 #+end_src
 *** Sway
 #+begin_src nix
@@ -3972,7 +3991,12 @@ environment.systemPackages = with pkgs;
     nmap
     nnn
     qbittorrent
+
+
+    # Games
+    polymc
   ];
+
 
 programs.light.enable = true;
     #+end_src
