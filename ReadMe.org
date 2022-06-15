@@ -3746,19 +3746,15 @@ time.timeZone = "Europe/London";
 *** Graphics
 This system doesn't use X11, but uses Wayland instead. Tangle this block for gaming, then run =sway --unsupported-gpu=
 #+begin_src nix
-boot.blacklistedKernelModules = [ "nouveau" "bbswitch" ];
-boot.extraModulePackages = [ pkgs.linuxPackages.nvidia_x11 ];
-
-hardware.bumblebee.enable = true;
-hardware.bumblebee.pmMethod = "none";
-# Enable nvidia driver
-# services.xserver.videoDrivers = [ "nouveau" ];
-
-# Block intel and open source nvidia driver
-# boot.blacklistedKernelModules = [ "modesetting" "nouveau" "i915" ];
-# boot.kernelPackages = pkgs.linuxPackages_latest;
-# services.xserver.videoDrivers = ["nvidia" "i915"];
-# boot.blacklistedKernelModules = ["nouveau"];
+services.xserver.videoDrivers = [ "nvidia" ];
+hardware.nvidia = {
+    modesetting.enable = true;
+    prime = {
+      sync.enable = true;
+      nvidiaBusId = "PCI:1:0:0";
+      intelBusId = "PCI:0:2:0";
+    };
+  };
 
 # Enable OpenGL
 hardware.opengl.enable = true;
