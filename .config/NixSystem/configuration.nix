@@ -69,6 +69,35 @@ console = {
 # time.timeZone = "America/Toronto";
 time.timeZone = "Europe/London";
 
+boot.blacklistedKernelModules = [ "nouveau" "bbswitch" ];
+boot.extraModulePackages = [ pkgs.linuxPackages.nvidia_x11 ];
+
+hardware.bumblebee.enable = true;
+hardware.bumblebee.pmMethod = "none";
+# Enable nvidia driver
+# services.xserver.videoDrivers = [ "nouveau" ];
+
+# Block intel and open source nvidia driver
+# boot.blacklistedKernelModules = [ "modesetting" "nouveau" "i915" ];
+# boot.kernelPackages = pkgs.linuxPackages_latest;
+# services.xserver.videoDrivers = ["nvidia" "i915"];
+# boot.blacklistedKernelModules = ["nouveau"];
+
+# Enable OpenGL
+hardware.opengl.enable = true;
+
+# Enable the X11 windowing system.
+services.xserver.enable = true;
+
+# Enable i3
+services.xserver.windowManager.i3.enable = true;
+
+# Enable GDM display manager
+# services.xserver.displayManager.gdm.enable = true;
+
+# # Configure keymap in X11
+services.xserver.layout = "gb";
+
 programs.sway = {
   enable = true;
   wrapperFeatures.gtk = true;
@@ -261,7 +290,12 @@ environment.systemPackages = with pkgs;
     nmap
     nnn
     qbittorrent
+
+
+    # Games
+    polymc
   ];
+
 
 programs.light.enable = true;
 
