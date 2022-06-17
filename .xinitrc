@@ -1,0 +1,1 @@
+setxkbdmap -option caps:swapescape

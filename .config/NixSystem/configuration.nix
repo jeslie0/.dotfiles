@@ -69,44 +69,6 @@ console = {
 # time.timeZone = "America/Toronto";
 time.timeZone = "Europe/London";
 
-services.xserver.videoDrivers = [ "nvidia" ];
-hardware.nvidia = {
-    modesetting.enable = true;
-    prime = {
-      sync.enable = true;
-      nvidiaBusId = "PCI:1:0:0";
-      intelBusId = "PCI:0:2:0";
-    };
-  };
-# boot.blacklistedKernelModules = [ "nouveau" "bbswitch" ];
-# boot.extraModulePackages = [ pkgs.linuxPackages.nvidia_x11 ];
-
-# hardware.bumblebee.enable = true;
-# hardware.bumblebee.pmMethod = "none";
-# Enable nvidia driver
-# services.xserver.videoDrivers = [ "nouveau" ];
-
-# Block intel and open source nvidia driver
-# boot.blacklistedKernelModules = [ "modesetting" "nouveau" "i915" ];
-# boot.kernelPackages = pkgs.linuxPackages_latest;
-# services.xserver.videoDrivers = ["nvidia" "i915"];
-# boot.blacklistedKernelModules = ["nouveau"];
-
-# Enable OpenGL
-hardware.opengl.enable = true;
-
-# Enable the X11 windowing system.
-services.xserver.enable = true;
-
-# Enable i3
-services.xserver.windowManager.i3.enable = true;
-
-# Enable GDM display manager
-# services.xserver.displayManager.gdm.enable = true;
-
-# # Configure keymap in X11
-services.xserver.layout = "gb";
-
 programs.sway = {
   enable = true;
   wrapperFeatures.gtk = true;
@@ -125,6 +87,10 @@ programs.sway = {
     rofi
     waybar
     swaynotificationcenter
+    gammastep
+    wlroots
+    slurp
+    grim
     self.inputs.passbemenuGitHub.defaultPackage.${system}
     self.inputs.swaybgchangerGitHub.defaultPackage.${system}
     self.inputs.bemenuFocusGitHub.defaultPackage.${system}
@@ -132,10 +98,15 @@ programs.sway = {
   ];
 };
 
-services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
-services.emacs.enable = true;
+programs.fish.enable = true;
+
+services.emacs = {
+  enable = true;
+  package = with pkgs;
+    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
+  };
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
-];
+                   ];
 
 fonts.fonts = with pkgs; [ cantarell-fonts
                            emacs-all-the-icons-fonts
@@ -207,8 +178,30 @@ environment.systemPackages = with pkgs;
 
     # Browsers
     firefox
+    chromium
     nyxt
     qutebrowser
+
+    # Communication
+    signal-desktop
+    discord
+    zulip
+    zoom-us
+
+    # Media
+    mpv
+    imv
+    youtube-dl
+    spotify
+    (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
+
+    # Nix
+    cachix
+    nix-index
+    nix-prefetch-git
+    cabal2nix
+    home-manager
+    nixfmt
 
     # Tools
     git
@@ -216,9 +209,7 @@ environment.systemPackages = with pkgs;
     cryptsetup
     wget
     autoconf
-    nix-index
     pulseaudioFull
-    cachix
     gcc
     isync
     aspell
@@ -227,41 +218,17 @@ environment.systemPackages = with pkgs;
     pass
     magic-wormhole
     pavucontrol
-    signal-desktop
     sqlite
     stow
     texlive.combined.scheme-full
     zathura
     neofetch
-    zulip-term
     netcat
-    mpv
-    youtube-dl
-    imv
-    rpi-imager
     openvpn
 
-    # Haskell
-    nix-prefetch-git
-    cabal2nix
-    # cabal-install
-    # haskellPackages.apply-refact
-    # haskellPackages.hlint
-    # haskellPackages.stylish-haskell
-    # haskellPackages.hasktags
-    # haskellPackages.hindent
 
     playerctl
-    wlroots
-    slurp
-    gammastep
-    grim
-    syncthing
-    home-manager
-    spotify
-    python39
 
-    fish
     ripgrep
     bat
     exa
@@ -280,29 +247,27 @@ environment.systemPackages = with pkgs;
     gnome3.adwaita-icon-theme
     self.inputs.agdaGitHub.packages.${system}.Agda
 
-    nixfmt
     mkvtoolnix
     sbcl
     pandoc
 
     ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]))
-    (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
 
     # From home-manager
     pinentry_emacs
     pciutils
-    chromium
-    zoom-us
-    obs-studio
     pcmanfm
     gnuplot
     nmap
     nnn
     qbittorrent
 
-
     # Games
+    obs-studio
     polymc
+    steam-run
+    protontricks
+    lutris
   ];
 
 

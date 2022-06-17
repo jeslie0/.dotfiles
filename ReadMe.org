@@ -3624,7 +3624,11 @@ set adjust-open			"width"
     myfonts.inputs.nixpkgs.follows = "nixpkgs";
 
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
-    emacs-overlay.url = "github:nix-community/emacs-overlay/ef3088863916b0604dbd5c3ba402b7f52c89c53d";
+    emacs-overlay.url = "github:nix-community/emacs-overlay/5a16283b229aa4e7403a35b01ef2cc538c33dc03";
+    # emacs-overlay.inputs = {
+    #   flake-utils.url = "github:numtide/flake-utils/a4b154ebbdc88c8498a5c7b01589addc9e9cb678";
+    #   nixpkgs.url = "github:NixOS/nixpkgs/934e076a441e318897aa17540f6cf7caadc69028";
+    # };
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
@@ -3743,10 +3747,26 @@ console = {
 # time.timeZone = "America/Toronto";
 time.timeZone = "Europe/London";
 #+end_src
-*** Graphics
-This system doesn't use X11, but uses Wayland instead. Tangle this block for gaming, then run =sway --unsupported-gpu=
-#+begin_src nix
-services.xserver.videoDrivers = [ "nvidia" ];
+*** X11 and Nvidia Graphics
+This system doesn't use X11, but uses Wayland instead. Tangle this block for gaming, and lightdm and i3 will start. Run =sway --unsupported-gpu= for sway.
+#+begin_src nix :tangle no
+services.xserver = {
+  # Enable the X11 windowing system.
+  enable = true;
+
+  # Enable nvidia drivers
+  videoDrivers = [ "nvidia" ];
+
+  # Enable i3 window manager
+  windowManager.i3.enable = true;
+
+  # use GB keyboard layout
+  layout = "gb";
+
+  # Swap Capslock and Escape keys
+  xkbOptions = "caps:swapescape";
+  };
+
 hardware.nvidia = {
     modesetting.enable = true;
     prime = {
@@ -3758,18 +3778,6 @@ hardware.nvidia = {
 
 # Enable OpenGL
 hardware.opengl.enable = true;
-
-# Enable the X11 windowing system.
-services.xserver.enable = true;
-
-# Enable i3
-services.xserver.windowManager.i3.enable = true;
-
-# Enable GDM display manager
-# services.xserver.displayManager.gdm.enable = true;
-
-# # Configure keymap in X11
-services.xserver.layout = "gb";
 #+end_src
 *** Sway
 #+begin_src nix
@@ -3791,6 +3799,10 @@ programs.sway = {
     rofi
     waybar
     swaynotificationcenter
+    gammastep
+    wlroots
+    slurp
+    grim
     self.inputs.passbemenuGitHub.defaultPackage.${system}
     self.inputs.swaybgchangerGitHub.defaultPackage.${system}
     self.inputs.bemenuFocusGitHub.defaultPackage.${system}
@@ -3798,13 +3810,20 @@ programs.sway = {
   ];
 };
 #+end_src
+*** fish
+#+begin_src nix
+programs.fish.enable = true;
+#+end_src
 *** EmacsPgtkNativeComp
 We use the pure GTK, native-compiled version of Emacs. To change the version used, this section and the corresponding flake input needs to be changed. As we want vterm enabled and we use emacsclient primarily, we add it to the service packages.
 #+begin_src nix
-services.emacs.package = with pkgs; ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
-services.emacs.enable = true;
+services.emacs = {
+  enable = true;
+  package = with pkgs;
+    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
+  };
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
-];
+                   ];
 #+end_src
 *** Fonts
 #+begin_src nix
@@ -3895,8 +3914,30 @@ environment.systemPackages = with pkgs;
 
     # Browsers
     firefox
+    chromium
     nyxt
     qutebrowser
+
+    # Communication
+    signal-desktop
+    discord
+    zulip
+    zoom-us
+
+    # Media
+    mpv
+    imv
+    youtube-dl
+    spotify
+    (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
+
+    # Nix
+    cachix
+    nix-index
+    nix-prefetch-git
+    cabal2nix
+    home-manager
+    nixfmt
 
     # Tools
     git
@@ -3904,9 +3945,7 @@ environment.systemPackages = with pkgs;
     cryptsetup
     wget
     autoconf
-    nix-index
     pulseaudioFull
-    cachix
     gcc
     isync
     aspell
@@ -3915,41 +3954,17 @@ environment.systemPackages = with pkgs;
     pass
     magic-wormhole
     pavucontrol
-    signal-desktop
     sqlite
     stow
     texlive.combined.scheme-full
     zathura
     neofetch
-    zulip-term
     netcat
-    mpv
-    youtube-dl
-    imv
-    rpi-imager
     openvpn
 
-    # Haskell
-    nix-prefetch-git
-    cabal2nix
-    # cabal-install
-    # haskellPackages.apply-refact
-    # haskellPackages.hlint
-    # haskellPackages.stylish-haskell
-    # haskellPackages.hasktags
-    # haskellPackages.hindent
 
     playerctl
-    wlroots
-    slurp
-    gammastep
-    grim
-    syncthing
-    home-manager
-    spotify
-    python39
 
-    fish
     ripgrep
     bat
     exa
@@ -3968,29 +3983,27 @@ environment.systemPackages = with pkgs;
     gnome3.adwaita-icon-theme
     self.inputs.agdaGitHub.packages.${system}.Agda
 
-    nixfmt
     mkvtoolnix
     sbcl
     pandoc
 
     ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]))
-    (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
 
     # From home-manager
     pinentry_emacs
     pciutils
-    chromium
-    zoom-us
-    obs-studio
     pcmanfm
     gnuplot
     nmap
     nnn
     qbittorrent
 
-
     # Games
+    obs-studio
     polymc
+    steam-run
+    protontricks
+    lutris
   ];
 
 

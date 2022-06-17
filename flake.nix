@@ -27,7 +27,11 @@
     myfonts.inputs.nixpkgs.follows = "nixpkgs";
 
     # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
-    emacs-overlay.url = "github:nix-community/emacs-overlay/ef3088863916b0604dbd5c3ba402b7f52c89c53d";
+    emacs-overlay.url = "github:nix-community/emacs-overlay/5a16283b229aa4e7403a35b01ef2cc538c33dc03";
+    # emacs-overlay.inputs = {
+    #   flake-utils.url = "github:numtide/flake-utils/a4b154ebbdc88c8498a5c7b01589addc9e9cb678";
+    #   nixpkgs.url = "github:NixOS/nixpkgs/934e076a441e318897aa17540f6cf7caadc69028";
+    # };
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
