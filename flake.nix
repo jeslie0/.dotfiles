@@ -61,7 +61,7 @@
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
           inherit system;
-          modules = [ (import ./.config/NixSystem/configuration.nix { inherit self; }) ];
+          modules = [ (import ./.config/NixSystem/configuration.nix self) ];
         };
       };
 

@@ -3658,7 +3658,7 @@ set adjust-open			"width"
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
           inherit system;
-          modules = [ (import ./.config/NixSystem/configuration.nix { inherit self; }) ];
+          modules = [ (import ./.config/NixSystem/configuration.nix self) ];
         };
       };
 
@@ -3672,7 +3672,7 @@ set adjust-open			"width"
 :END:
 This section contains blocks that are tangled into configuration.nix. It is the heart of my NixOS system. Help is available in the configuration.nix(5) man page and in the NixOS manual (accessible by running =nixos-help=).
 #+begin_src nix
-{ self }:
+self:
 { config, pkgs, ... }:
 
 {
