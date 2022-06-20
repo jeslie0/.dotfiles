@@ -869,10 +869,8 @@ Allows for partial searching in vertico.
   (prefix-help-command #'embark-prefix-help-command))
 #+END_SRC
 **** embark-consult
-#+BEGIN_SRC elisp :tangle no
-(use-package embark-consult
-  :defer t
-  :after (embark consult))
+#+BEGIN_SRC elisp
+(use-package embark-consult)
 #+END_SRC
 * Project Management
 ** Projectile
@@ -2047,15 +2045,14 @@ For most programming languages, the development tools will be installed through 
 **** Initialisation
 #+BEGIN_SRC elisp
 (use-package sh-script
-  :defer t
-  :mode ("\\.sh\\'"
-	 "\\.zsh\\'"
-         "zlogin\\'"
-         "zlogout\\'"
-         "zpreztorc\\'"
-         "zprofile\\'"
-         "zshenv\\'"
-         "zshrc\\'")
+  ;; :mode ("\\.sh\\'"
+  ;;        "\\.zsh\\'"
+  ;;        "zlogin\\'"
+  ;;        "zlogout\\'"
+  ;;        "zpreztorc\\'"
+  ;;        "zprofile\\'"
+  ;;        "zshenv\\'"
+  ;;        "zshrc\\'")
   :general
   (jl/major-modes
     :keymaps 'sh-mode-map
@@ -2074,7 +2071,8 @@ For most programming languages, the development tools will be installed through 
     "ir" 'sh-repeat
     "is" 'sh-select
     "iu" 'sh-until
-    "ig" 'sh-while-getopts))
+    "ig" 'sh-while-getopts)
+  )
   #+END_SRC
 **** Shfmt
 Requires shfmt installed on system.
@@ -2090,10 +2088,8 @@ Requires shfmt installed on system.
 #+END_SRC
 **** Insert Shebang
 Not tested. Probably doesn't work.
-#+BEGIN_SRC elisp :tangle no
+#+BEGIN_SRC elisp
 (use-package insert-shebang
-  :defer t
-  :hook (sh-mode . insert-shebang-mode)
   :general
   (jl/major-modes
     :keymaps 'sh-mode-map
@@ -3355,7 +3351,7 @@ This gives a nice view to Elfeed, but makes it hard to watch videos.
   (elfeed-score-enable))
 #+END_SRC
 *** elfeed-tube
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package elfeed-tube
   :straight (:host github :repo "karthink/elfeed-tube")
   :after elfeed

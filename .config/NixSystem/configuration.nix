@@ -204,6 +204,7 @@ environment.systemPackages = with pkgs;
     nixfmt
 
     # Tools
+    shfmt
     git
     git-crypt
     cryptsetup
