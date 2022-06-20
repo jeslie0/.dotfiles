@@ -45,6 +45,13 @@
       lib = nixpkgs.lib;
 
     in {
+      nixosConfigurations = {
+        James-Nix = lib.nixosSystem {
+          inherit system;
+          modules = [ (import ./.config/NixSystem/configuration.nix self) ];
+        };
+      };
+
       homeManagerConfigurations = {
         james = home-manager.lib.homeManagerConfiguration {
           inherit system pkgs;
@@ -56,15 +63,18 @@
             ];
           };
         };
-      };
 
-      nixosConfigurations = {
-        James-Nix = lib.nixosSystem {
-          inherit system;
-          modules = [ (import ./.config/NixSystem/configuration.nix self) ];
+        work = home-manager.lib.homeManagerConfiguration {
+          inherit system pkgs;
+          username = "james";
+          homeDirectory = "/home/james";
+          configuration = {
+            imports = [
+              (import ./.config/NixSystem/work.nix self)
+            ];
+          };
         };
       };
-
 
     };
 }
