@@ -3822,7 +3822,14 @@ programs.sway = {
 #+end_src
 *** fish
 #+begin_src nix
-programs.fish.enable = true;
+programs.fish = {
+  enable = true;
+  shellAliases = { ls = "lsd"; cat = "bat"; };
+  shellInit = ''
+              starship init fish | source
+              set $fish_color_command cyan
+              '';
+  };
 #+end_src
 *** EmacsPgtkNativeComp
 We use the pure GTK, native-compiled version of Emacs. To change the version used, this section and the corresponding flake input needs to be changed. As we want vterm enabled and we use emacsclient primarily, we add it to the service packages.

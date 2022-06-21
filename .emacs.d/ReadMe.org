@@ -2087,8 +2087,8 @@ Requires shfmt installed on system.
     "=" 'shfmt-buffer))
 #+END_SRC
 **** Insert Shebang
-Not tested. Probably doesn't work.
-#+BEGIN_SRC elisp
+Works, but is really annoying.
+#+BEGIN_SRC elisp :tangle no
 (use-package insert-shebang
   :general
   (jl/major-modes
@@ -2158,7 +2158,7 @@ Not tested. Probably doesn't work.
   :defer t)
 #+END_SRC
 **** Nix-sandbox
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package nix-sandbox
   :defer t
   :custom

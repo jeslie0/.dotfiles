@@ -98,7 +98,14 @@ programs.sway = {
   ];
 };
 
-programs.fish.enable = true;
+programs.fish = {
+  enable = true;
+  shellAliases = { ls = "lsd"; cat = "bat"; };
+  shellInit = ''
+              starship init fish | source
+              set $fish_color_command cyan
+              '';
+  };
 
 services.emacs = {
   enable = true;
