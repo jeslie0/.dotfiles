@@ -3883,6 +3883,7 @@ environment = {
   variables = {
     XCURSOR_THEME = "Adwaita";
     XCURSOR_SIZE = "24";
+    LSP_USE_PLISTS="true";
   };
 };
 #+end_src
@@ -3979,6 +3980,7 @@ environment.systemPackages = with pkgs;
     neofetch
     netcat
     openvpn
+    python3
 
 
     playerctl
