@@ -150,6 +150,7 @@ environment = {
   variables = {
     XCURSOR_THEME = "Adwaita";
     XCURSOR_SIZE = "24";
+    LSP_USE_PLISTS="true";
   };
 };
 
@@ -233,6 +234,7 @@ environment.systemPackages = with pkgs;
     neofetch
     netcat
     openvpn
+    python3
 
 
     playerctl
