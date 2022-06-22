@@ -125,12 +125,13 @@
 #+end_src
 * Misc
 #+begin_src elisp
-(setq default-directory "/home/james/Documents/")
+(setq default-directory "~/Documents/")
 (setq dired-guess-shell-alist-user '(("\\.pdf\\'" "zathura")))
 (setq read-process-output-max (* 1024 1024))
 (setq-default indent-tabs-mode nil)
 (setq vc-follow-symlinks t)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+(add-hook 'prog-mode-hook #'electric-pair-local-mode)
 #+end_src
 * Package managers
 ** Straight.el
@@ -347,12 +348,15 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
 [_+_]         [_-_]         [_0_]
 [_k_]         [_j_]         ^
 "
+    ;; Increase
     ("k" text-scale-increase)
     ("+" text-scale-increase)
 
+    ;; Decrease
     ("j" text-scale-decrease)
     ("-" text-scale-decrease)
 
+    ;; Reset
     ("0" (text-scale-adjust 0))
     ("f" nil "finished" :exit t))
 
@@ -506,8 +510,17 @@ We use doom modeline.
 *** Keybindings
 #+begin_src elisp
 (defun jl/winum-keys ()
-  (defhydra window-transient-state ()
-    "Window Transient State"
+  (defhydra window-transient-state (:hint nil)
+    "
+^Select^               ^Move^              ^Split^               ^Resize^             ^Other
+^^^^^-------------------------------------------------------------------------------------------------------------
+[_j_/_k_]  down/up       [_J_/_K_] down/up     [_s_] horizontal     [_[_] shrink horiz   [_d_] close current
+[_h_/_l_]  left/right    [_H_/_L_] left/right  [_S_]^^^^ horiz & follow  [_]_] enlarge horiz  [_D_] close other
+[_1_.._9_] window 1..9   [_r_]^^   rotate fwd  [_v_]^^^^ vertical        [_{_] shrink verti   [_u_] restore prev layout
+[_a_]^^    ace-window    [_R_]^^   rotate bwd  [_V_]^^^^ verti & follow  [_}_] enlarge verti  [_U_] restore next layout
+[_o_]^^    other frame   ^^^^                                      [_m_/_|_/___] maximize   [_q_] quit
+[_w_]^^    other window
+"
     ;; Select
     ("j" evil-window-down)
     ("<down>" evil-window-down)
@@ -587,6 +600,26 @@ We use doom modeline.
   :diminish winum-mode
   :config
   (jl/winum-keys)
+  ;; Usefull functions
+(defun split-window-below-and-focus ()
+  "Split the window vertically and focus the new window."
+  (interactive)
+  (split-window-below)
+  (windmove-down)
+  (when (and (boundp 'golden-ratio-mode)
+             (symbol-value golden-ratio-mode))
+    (golden-ratio)))
+
+(defun split-window-right-and-focus ()
+  "Split the window horizontally and focus the new window."
+  (interactive)
+  (split-window-right)
+  (windmove-right)
+  (when (and (boundp 'golden-ratio-mode)
+             (symbol-value golden-ratio-mode))
+    (golden-ratio)))
+
+
 
   ;; Makes window keys appear in one place
   (push '(("\\(.*\\) 1" . "winum-select-window-1") . ("\\1 1..9" . "window 1..9"))
@@ -647,6 +680,7 @@ If the universal prefix argument is used then kill also the window."
     "bN" 'persp-next
     "bp" 'previous-buffer
     "bP" 'persp-prev
+    "br" 'rename-buffer
     "bs" '(persp-switch :which-key "switch perspective")
     "bS" 'persp-state-save
     "bL" 'persp-state-load
@@ -801,7 +835,7 @@ folder, otherwise delete a character backward"
     "SPC" '(execute-extended-command :which-key "M-x")
     "C-e" 'consult-flymake
     "C-s" 'consult-imenu
-    "C-<return>" 'consult-minor-mode-menu
+    "m"  'consult-minor-mode-menu
     "ff" '(find-file :which-key "find file")
     "tt" '(consult-theme :which-key "choose theme")
     "bb" 'persp-switch-to-buffer*
@@ -1655,7 +1689,7 @@ For most programming languages, the development tools will be installed through 
 **** Initialisation
 #+BEGIN_SRC elisp
 (use-package cc-mode
-  :hook ((c-mode-common . electric-pair-mode)
+  :hook ((c-mode-common . electric-pair-local-mode)
          (c-mode-common . electric-indent-mode)))
 #+END_SRC
 **** TODO clang-format
@@ -1994,7 +2028,7 @@ For most programming languages, the development tools will be installed through 
   "er" 'eval-region
   "eb" 'eval-buffer)
 
-(add-hook 'emacs-lisp-mode-hook 'electric-pair-mode)
+(add-hook 'emacs-lisp-mode-hook 'electric-pair-local-mode)
 #+END_SRC
 ***** Ielm
 #+BEGIN_SRC elisp
@@ -2562,7 +2596,6 @@ We need a function to find the lsp server when it's installed through a nix shel
    org-enable-reveal-js-support t
    org-protocol-default-template-key "w"
    org-image-actual-width nil
-   org-re-reveal-root "file:///home/james/emacs-packages/reveal.js"
    org-preview-latex-image-directory "~/Documents/Org/ltximg/"
    org-export-backends '(ascii beamer html icalendar latex md odt)
    ;; Latex in Org
@@ -2707,7 +2740,7 @@ We need a function to find the lsp server when it's installed through a nix shel
   :custom
   (org-roam-v2-ack t)
   (org-roam-graph-viewer #'browse-url-firefox)
-  (org-roam-directory "/home/james/Documents/Roam/")
+  (org-roam-directory "~/Documents/Roam/")
   (org-roam-node-display-template (concat "${title:*} " (propertize "${tags}" 'face 'org-tag)))
   :init
   (jl/org-roam-global-keys)
@@ -4329,7 +4362,9 @@ SCOPE can be:
 #+BEGIN_SRC elisp
 (use-package term
   :commands (term)
-  :defer t
+  :general
+  (jl/SPC-keys
+    "ast" 'term)
   :custom
   (explicit-shell-file-name "fish") ;; Change this to zsh, etc
   ;;(setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific args
@@ -4347,7 +4382,9 @@ SCOPE can be:
 ** Vterm
 #+BEGIN_SRC elisp
 (use-package vterm
-  :defer t
+  :general
+  (jl/SPC-keys
+    "asv" 'vterm)
   :straight nil
   :commands vterm
   :custom
