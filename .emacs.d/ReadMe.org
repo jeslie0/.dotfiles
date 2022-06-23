@@ -4666,3 +4666,8 @@ SCOPE can be:
   :config
   (envrc-global-mode))
 #+END_SRC
+* Other Config
+Tangle this if there is another configuration file you want to load after loading this one
+#+BEGIN_SRC elisp :tangle no
+(load-file "./config.el")
+#+END_SRC
