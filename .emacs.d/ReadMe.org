@@ -427,6 +427,13 @@ We use the [[https://github.com/abo-abo/hydra][Hydra]] package for transient buf
   :hook (LaTeX-mode . evil-tex-mode)
   :after (evil))
 #+END_SRC
+*** evil-tutor
+#+BEGIN_SRC elisp
+(use-package evil-tutor
+  :general
+  (jl/SPC-keys
+    "hv" 'evil-tutor-start))
+#+END_SRC
 ** Which-key
 Adds the popup for key commands with mulitple key presses.
 #+begin_src elisp
@@ -1075,7 +1082,7 @@ Provides better documentation.
 #+begin_src elisp
 (use-package helpful
   ;; :after ivy
-  :after vertico
+  ;; :after vertico
   :general
   (jl/SPC-keys
     "h" '(:ignore t :which-key "help")
@@ -2059,9 +2066,7 @@ For most programming languages, the development tools will be installed through 
     :states '(normal operator motion)
     :keymaps 'emacs-lisp-mode-map
     :major-modes t
-    "s" '(:ignore t :which-key "ielm")
-    "'" 'ielm
-    "si" 'ielm))
+    "'" 'ielm))
 #+END_SRC
 ***** Debug
 #+BEGIN_SRC elisp
@@ -2219,6 +2224,34 @@ We actually install the language server through Emacs, so we don't need to worry
                        (require 'lsp-java)
                        (setq lsp-java-server-install-dir "~/emacs-packages/java-language-server/"))))
 #+END_SRC
+*** Javascript
+**** Initialisation
+#+BEGIN_SRC elisp
+(use-package rjsx-mode
+  :general
+  (jl/major-modes
+    :keymaps 'rjsx-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "j" 'rjsx-jump-tag
+    "r" 'rjsx-rename-tag-at-point)
+  :mode ("\\.js\\'" . rjsx-mode))
+#+END_SRC
+**** xref-js2
+#+BEGIN_SRC elisp
+(use-package xref-js2
+  :general
+  (jl/major-modes
+    :keymaps 'rjsx-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "gG" 'xref-find-definitions)
+  :config
+  (setq xref-js2-search-program 'rg))
+(add-hook 'js2-mode-hook (lambda ()
+                           (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+#+END_SRC
+
 *** Python
 **** Python LSP
 We need a function to find the lsp server when it's installed through a nix shell.
@@ -4669,5 +4702,5 @@ SCOPE can be:
 * Other Config
 Tangle this if there is another configuration file you want to load after loading this one
 #+BEGIN_SRC elisp :tangle no
-(load-file "./config.el")
+(load-file (concat user-emacs-directory "/config.el"))
 #+END_SRC
