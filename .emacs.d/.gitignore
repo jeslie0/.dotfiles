@@ -42,11 +42,10 @@ straight/build-cache.el
 tmp
 tramp
 transient/
+.tutor/
+
 url/
 
-
 places
-
-#ReadMe.org#
 
 workspace/
