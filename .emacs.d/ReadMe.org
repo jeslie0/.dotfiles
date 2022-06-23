@@ -233,7 +233,7 @@ Shamelessly stolen from Spacemacs.
 (defun find-emacs-dotfile ()
   "Edit the `dotfile', in the current window."
   (interactive)
-  (find-file-existing "~/.emacs.d/ReadMe.org"))
+  (find-file-existing (concat user-emacs-directory "ReadMe.org")))
 
 (defun find-system-dotfile ()
   "Edit the `dotfile', in the current window."
@@ -702,7 +702,7 @@ If the universal prefix argument is used then kill also the window."
   :config
   (add-to-list 'recentf-exclude (expand-file-name "~/.elfeed/index"))
   (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/bookmarks"))
-  (add-to-list 'recentf-exclude (expand-file-name "~/.emacs.d/bookmarks"))
+  (add-to-list 'recentf-exclude (expand-file-name (concat user-emacs-directory "bookmarks")))
   (add-to-list 'recentf-exclude (expand-file-name "~/.dotfiles/.emacs.d/ReadMe.org")))
 #+END_SRC
 ** ligature.el
@@ -779,7 +779,7 @@ If the universal prefix argument is used then kill also the window."
   :custom
   (prescient-sort-length-enable t)
   (ivy-prescient-retain-classic-highlighting t)
-  (prescient-save-file "~/.emacs.d/prescient-data")
+  (prescient-save-file (concat user-emacs-directory "prescient-data"))
   :config
   (ivy-prescient-mode 1)
   (prescient-persist-mode 1))
@@ -1074,6 +1074,19 @@ Provides better documentation.
 (use-package helpful
   ;; :after ivy
   :after vertico
+  :general
+  (jl/SPC-keys
+    "h" '(:ignore t :which-key "help")
+
+    "hf" 'describe-function
+    "hv" 'describe-variable
+    "hm" 'describe-mode
+    "hb" 'describe-bindings
+    "hk" 'describe-key
+    "hs" 'describe-symbol
+
+    "he" 'help-with-tutorial
+    "hM" 'view-echo-area-messages)
   ;; :custom
   ;; (counsel-describe-function-function #'helpful-callable)
   ;; (counsel-describe-variable-function #'helpful-variable)
@@ -1125,7 +1138,7 @@ Provides better documentation.
   ;; Set the title
   (dashboard-banner-logo-title "Welcome to Emacs")
   ;; Set the logo
-  (dashboard-startup-banner "~/.emacs.d/Icons/EmacsLogo.svg")
+  (dashboard-startup-banner (concat user-emacs-directory "Icons/EmacsLogo.svg"))
   (dashboard-image-banner-max-width 300)
 
   ;; Content is not centered by default. To center, set
@@ -3543,7 +3556,7 @@ This gives a nice view to Elfeed, but makes it hard to watch videos.
   :commands (elpher)
   ;; :hook (elpher-mode . variable-pitch-mode)
   :custom
-  (elpher-bookmarks-file "~/.spacemacs.d/elpher-bookmarks")
+  (elpher-bookmarks-file (concat user-emacs-directory "elpher-bookmarks"))
   (elpher-start-page-url "gemini://gemini.circumlunar.space")
   :general
   (jl/SPC-keys
