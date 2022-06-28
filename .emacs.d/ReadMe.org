@@ -970,10 +970,9 @@ Allows for partial searching in vertico.
 *** Git Gutter
 #+BEGIN_SRC elisp
 (use-package git-gutter
-  :hook (prog-mode . git-gutter-mode)
+  :hook ((prog-mode text-mode) . git-gutter-mode)
   :config
-  (setq git-gutter:update-interval 0.02))
-
+  (setq git-gutter:update-interval 0.01))
 (use-package git-gutter-fringe
   :config
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
@@ -1041,6 +1040,8 @@ Allows for partial searching in vertico.
   ;; (treemacs-resize-icons 44)
   :config
   (progn (treemacs-follow-mode t)
+         (treemacs-indent-guide-mode t)
+         (treemacs-git-commit-diff-mode t)
 	 (treemacs-filewatch-mode t)
 	 (treemacs-fringe-indicator-mode 'always)
 	 (pcase (cons (not (null (executable-find "git")))
@@ -1575,6 +1576,7 @@ Provides better documentation.
     "=Bs" 'eglot-stderr-buffer)
   :custom
   (eglot-confirm-server-initiated-edits nil)
+  (eglot-extend-to-xref)
   :config
   (general-define-key
    :keymaps 'eglot-mode-map
@@ -4301,7 +4303,7 @@ there are no attachments."
   (global-flycheck-mode t))
 #+end_src
 *** Bashate
-#+BEGIN_SRC elisp
+#+BEGIN_SRC elisp :tangle no
 (use-package flycheck-bashate
   :defer t
   :hook (sh-mode . flycheck-bashate-setup))
