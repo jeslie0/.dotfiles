@@ -953,7 +953,8 @@ Allows for partial searching in vertico.
     "pb" 'consult-projectile-switch-to-buffer
     "pP" 'consult-projectile))
 #+END_SRC
-** Magit
+** Git/VC
+*** Initialisation
 #+begin_src elisp
 (use-package magit
   :commands (magit-status magit-blame)
@@ -966,6 +967,19 @@ Allows for partial searching in vertico.
   (evil-define-minor-mode-key 'normal 'git-commit-mode ",," 'with-editor-finish)
   (evil-define-minor-mode-key 'normal 'git-commit-mode ",a" 'with-editor-cancel))
 #+end_src
+*** Git Gutter
+#+BEGIN_SRC elisp
+(use-package git-gutter
+  :hook (prog-mode . git-gutter-mode)
+  :config
+  (setq git-gutter:update-interval 0.02))
+
+(use-package git-gutter-fringe
+  :config
+  (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:modified [224] nil nil '(center repeated))
+  (define-fringe-bitmap 'git-gutter-fr:deleted [128 192 224 240] nil nil 'bottom))
+#+END_SRC
 ** Treemacs
 *** Initialisation
 #+begin_src elisp
@@ -2205,15 +2219,6 @@ Works, but is really annoying.
 (use-package nixos-options
   :defer t)
 #+END_SRC
-**** Nix-sandbox
-#+BEGIN_SRC elisp :tangle no
-(use-package nix-sandbox
-  :defer t
-  :custom
-  (haskell-process-wrapper-function (lambda (args) (apply 'nix-shell-command (nix-current-sandbox) args)))
-  (flycheck-command-wrapper-function (lambda (command) (apply 'nix-shell-command (nix-current-sandbox) command)))
-  (flycheck-executable-find (lambda (cmd) (nix-executable-find (nix-current-sandbox) cmd))))
-#+end_src
 *** TODO Java
 **** lsp-java
 We actually install the language server through Emacs, so we don't need to worry about that - only where we store it.
@@ -3059,8 +3064,21 @@ Calling org-babel languages in the following form saves a lot on startup time.
 **** Keybindings
 #+begin_src elisp
 (defun jl/auctex-keys ()
+  ;; (jl/major-modes
+  ;;   :keymaps 'LaTeX-mode-map
+  ;;   :states '(normal visual motion)
+  ;;   :major-modes t
+  ;;   "xf" '(:ignore t :which-key "fonts")
+  ;;   "f" '(:ignore t :which-key "fill")
+  ;;   "h" '(:ignore t :which-key "help")
+  ;;   "x" '(:ignore t :which-key "text/fonts")
+  ;;   "z" '(:ignore t :which-key "fold")
+  ;;   "i" '(:ignore t :which-key "insert")
+  ;;   "p" '(:ignore t :which-key "preview")
+  ;;   "r" '(:ignore t :which-key "reftex"))
+
   (jl/major-modes
-    :keymaps 'latex-mode-map
+    :keymaps 'LaTeX-mode-map
     :states '(normal visual motion)
     :major-modes t
     "xf" '(:ignore t :which-key "fonts")
@@ -3070,12 +3088,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "z" '(:ignore t :which-key "fold")
     "i" '(:ignore t :which-key "insert")
     "p" '(:ignore t :which-key "preview")
-    "r" '(:ignore t :which-key "reftex"))
+    "r" '(:ignore t :which-key "reftex")
 
-  (jl/major-modes
-    :keymaps 'LaTeX-mode-map
-    :states '(normal visual motion)
-    :major-modes t
     "\\"  'TeX-insert-macro                            ;; C-c C-m
     "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
     "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
@@ -3156,14 +3170,14 @@ Calling org-babel languages in the following form saves a lot on startup time.
 **** Initialisation
 #+begin_src elisp
 (use-package tex
-  :defer t
+  :straight auctex
   :hook ((LaTeX-mode . outline-minor-mode)
 	 (LaTeX-mode . visual-line-mode)
 	 (LaTeX-mode . TeX-fold-mode)
 	 (LaTeX-mode . LaTeX-math-mode)
 	 (LaTeX-mode . TeX-source-correlate-mode)
 	 (LaTeX-mode . TeX-PDF-mode)
-         ;; (LaTeX-mode . (lambda () (variable-pitch-mode nil)))
+         ;L (LaTeX-mode . (lambda () (variable-pitch-mode nil)))
          )
   :custom
   (TeX-parse-self t) ;; Enable Parse on load
@@ -3185,7 +3199,6 @@ Calling org-babel languages in the following form saves a lot on startup time.
    )
   (TeX-view-program-selection '((output-pdf "Zathura")))
   (TeX-source-correlate-start-server t) ;; not sure if last line is neccessary
-  :straight auctex
   :init
   (jl/auctex-keys)
   :config
@@ -4210,6 +4223,8 @@ there are no attachments."
   (corfu-on-exact-match nil)     ;; Configure handling of exact matches
   (corfu-echo-documentation nil) ;; Disable documentation in the echo area
   (corfu-scroll-margin 5)        ;; Use scroll margin
+  (corfu-auto-delay 0)           ;; Don't wait to show corfu after
+                                 ;; prefix has been hit
   ;; Works with `indent-for-tab-command'. Make sure tab doesn't indent when you
   ;; want to perform completion
   (tab-always-indent 'complete)

@@ -47,7 +47,6 @@ Generally, commits should be prefixed with the type of thing being changed, in s
 :PROPERTIES:
 :header-args:yaml: :tangle ./.config/alacritty/alacritty.yml
 :END:
-
 #+BEGIN_SRC yaml
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 
@@ -159,19 +158,19 @@ window:
   #multiplier: 3
 
 # Font configuration
-#font:
+font:
   # Normal (roman) font face
-  #normal:
+  normal:
     # Font family
     #
     # Default:
     #   - (macOS) Menlo
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    #family: Source Code Pro
+    family: Fira Code
 
     # The `style` can be specified to pick a specific face.
-    #style: Regular
+    style: Regular
 
   # Bold font face
   #bold:
@@ -3855,6 +3854,7 @@ fonts.fonts = with pkgs; [ cantarell-fonts
                            source-code-pro
                            terminus_font
                            ubuntu_font_family
+                           nerdfonts
                            (self.inputs.myfonts.defaultPackage.${system})
                          ];
 #+end_src
@@ -3922,7 +3922,15 @@ programs.steam = {
   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
 };
 #+end_src
+*** Virtualbox
+#+begin_src nix
+virtualisation.virtualbox.host = {
+  enable = true;
+  enableExtensionPack = true;
+};
 
+users.extraGroups.vboxusers.members = ["james"];
+#+end_src
 *** System Packages
 The list of packages installed globally. To search for a package in the nixpkgs repository, type =nix search nixpkgs <search>=.
 #+begin_src nix
@@ -3956,6 +3964,7 @@ environment.systemPackages = with pkgs;
     cabal2nix
     home-manager
     nixfmt
+    rnix-lsp
 
     # Tools
     shfmt

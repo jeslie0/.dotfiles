@@ -126,6 +126,7 @@ fonts.fonts = with pkgs; [ cantarell-fonts
                            source-code-pro
                            terminus_font
                            ubuntu_font_family
+                           nerdfonts
                            (self.inputs.myfonts.defaultPackage.${system})
                          ];
 
@@ -180,6 +181,13 @@ programs.steam = {
   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
 };
 
+virtualisation.virtualbox.host = {
+  enable = true;
+  enableExtensionPack = true;
+};
+
+users.extraGroups.vboxusers.members = ["james"];
+
 environment.systemPackages = with pkgs;
   [ # Editors
     vim
@@ -210,6 +218,7 @@ environment.systemPackages = with pkgs;
     cabal2nix
     home-manager
     nixfmt
+    rnix-lsp
 
     # Tools
     shfmt
