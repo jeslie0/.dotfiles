@@ -972,7 +972,9 @@ Allows for partial searching in vertico.
 (use-package git-gutter
   :hook ((prog-mode text-mode) . git-gutter-mode)
   :config
-  (setq git-gutter:update-interval 0.01))
+  (setq git-gutter:update-interval 0.01
+        git-gutter:handled-backends '(git svn)))
+
 (use-package git-gutter-fringe
   :config
   (define-fringe-bitmap 'git-gutter-fr:added [224] nil nil '(center repeated))
