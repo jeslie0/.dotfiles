@@ -828,7 +828,14 @@ folder, otherwise delete a character backward"
   :custom
   (vertico-cycle t)
   :init
-  (vertico-mode))
+  (vertico-mode)
+  :config
+  (setq completion-in-region-function
+        (lambda (&rest args)
+          (apply (if vertico-mode
+                     #'consult-completion-in-region
+                   #'completion--in-region)
+                 args))))
 #+END_SRC
 *** Marginalia
 #+BEGIN_SRC elisp
