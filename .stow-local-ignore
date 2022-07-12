@@ -1,6 +1,8 @@
 .config/NixSystem
 .config/xfce4/terminal/accels.scm
 
+.emacs
+
 flake.nix
 flake.lock
 
