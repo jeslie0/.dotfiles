@@ -35,8 +35,8 @@ services.openssh.enable = true;
 # '';
 
 # Disable ipv6 for vpn
-networking.enableIPv6 = false;
-boot.kernelParams = [ "ipv6.disable=1" ];
+# networking.enableIPv6 = false;
+# boot.kernelParams = [ "ipv6.disable=1" ];
 
 # Open ports in the firewall.
 networking.firewall.allowedTCPPorts = [ 2000 ];
@@ -109,6 +109,7 @@ programs.fish = {
 
 services.emacs = {
   enable = true;
+  defaultEditor = true;
   package = with pkgs;
     ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
   };
