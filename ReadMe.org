@@ -4189,7 +4189,7 @@ https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 https://nixos.org/channels/nixos-unstable nixos
 #+end_src
 ** .emacs.d
-The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
+The ReadMe is found [[file:.emacs/ReadMe.org][here]].
 ** .stow-local-ignore
 :PROPERTIES:
 :header-args:conf: :tangle ./.stow-local-ignore
@@ -4197,6 +4197,8 @@ The ReadMe is found [[file:.emacs.d/ReadMe.org][here]].
 #+begin_src conf
 .config/NixSystem
 .config/xfce4/terminal/accels.scm
+
+.emacs
 
 flake.nix
 flake.lock
