@@ -3722,8 +3722,8 @@ services.openssh.enable = true;
 # '';
 
 # Disable ipv6 for vpn
-networking.enableIPv6 = false;
-boot.kernelParams = [ "ipv6.disable=1" ];
+# networking.enableIPv6 = false;
+# boot.kernelParams = [ "ipv6.disable=1" ];
 
 # Open ports in the firewall.
 networking.firewall.allowedTCPPorts = [ 2000 ];
@@ -3835,6 +3835,7 @@ We use the pure GTK, native-compiled version of Emacs. To change the version use
 #+begin_src nix
 services.emacs = {
   enable = true;
+  defaultEditor = true;
   package = with pkgs;
     ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
   };
@@ -4086,6 +4087,10 @@ programs.mtr.enable = true;
 programs.gnupg.agent = {
   enable = true;
 };
+#+end_src
+
+#+begin_src nix :tangle no
+nix.settings.sandbox = "relaxed";
 #+end_src
 
 #+begin_src nix
