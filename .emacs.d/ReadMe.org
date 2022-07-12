@@ -1048,8 +1048,53 @@ Allows for partial searching in vertico.
   :commands (treemacs)
   :general
   (jl/SPC-keys
+
+    "T" '(:ignore t :which-key "Treemacs")
     "0"  'treemacs-select-window
     "ft" 'treemacs)
+
+  (jl/SPC-keys
+    :prefix "SPC T"
+
+    "a" 'treemacs-add-project-to-workspace
+    "d" 'treemacs-remove-project-from-workspace
+    "r" 'treemacs-rename-project
+
+    "c" '(:ignore t :which-key "collapse")
+    "ca" 'treemacs-collapse-all-projects
+    "cp" 'treemacs-collapse-project
+    "cP" 'treemacs-collapse-other-projects
+
+    "w" '(:ignore t :which-key "workspace")
+    "wc" 'treemacs-create-workspace
+    "wd" 'treemacs-remove-workspace
+    "we" 'treemacs-edit-workspaces
+    "wf" 'treemacs-set-fallback-workspace
+    "wn" 'treemacs-next-workspace
+    "wr" 'treemacs-rename-workspace
+    "ws" 'treemacs-switch-workspace)
+
+  (jl/major-modes
+    :keymaps 'treemacs-mode-map
+    :states '(normal visual operator)
+    :major-modes t
+    "a" 'treemacs-add-project-to-workspace
+    "d" 'treemacs-remove-project-from-workspace
+    "r" 'treemacs-rename-project
+
+    "c" '(:ignore t :which-key "collapse")
+    "ca" 'treemacs-collapse-all-projects
+    "cp" 'treemacs-collapse-project
+    "cP" 'treemacs-collapse-other-projects
+
+    "w" '(:ignore t :which-key "workspace")
+    "wc" 'treemacs-create-workspace
+    "wd" 'treemacs-remove-workspace
+    "we" 'treemacs-edit-workspaces
+    "wf" 'treemacs-set-fallback-workspace
+    "wn" 'treemacs-next-workspace
+    "wr" 'treemacs-rename-workspace
+    "ws" 'treemacs-switch-workspace)
   :init
   (with-eval-after-load 'winum
     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
@@ -1104,16 +1149,16 @@ Allows for partial searching in vertico.
   (progn (treemacs-follow-mode t)
          (treemacs-indent-guide-mode t)
          (treemacs-git-commit-diff-mode t)
-	 (treemacs-filewatch-mode t)
-	 (treemacs-fringe-indicator-mode 'always)
-	 (pcase (cons (not (null (executable-find "git")))
+         (treemacs-filewatch-mode t)
+         (treemacs-fringe-indicator-mode 'always)
+         (pcase (cons (not (null (executable-find "git")))
                       (not (null treemacs-python-executable)))
-	   (`(t . t)
-	    (treemacs-git-mode 'deferred))
-	   (`(t . _)
-	    (treemacs-git-mode 'simple)))
+           (`(t . t)
+            (treemacs-git-mode 'deferred))
+           (`(t . _)
+            (treemacs-git-mode 'simple)))
 
-	 (treemacs-hide-gitignored-files-mode nil)))
+         (treemacs-hide-gitignored-files-mode nil)))
         #+END_SRC
 *** Treemacs evil
 #+BEGIN_SRC elisp
@@ -1235,9 +1280,9 @@ Provides better documentation.
   (dashboard-set-heading-icons t)
   (dashboard-set-file-icons t)
   (dashboard-set-init-info t)
-  ;; (dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
   (dashboard-items '((recents . 5)
 		     (projects . 5)
+                     (bookmarks . 5)
 ))
 
   (initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
@@ -1647,6 +1692,16 @@ Provides better documentation.
   (add-to-list 'eglot-server-programs '((tex-mode context-mode texinfo-mode bibtex-mode) "texlab"))
   (add-to-list 'eglot-server-programs '(python-mode . ("python-language-server" ""))))
 #+END_SRC
+*** tree-sitter
+#+BEGIN_SRC elisp :tangle no
+(use-package tree-sitter
+  :hook ((prog-mode) . tree-sitter-mode)
+  :config
+  (global-tree-sitter-mode))
+
+(use-package tree-sitter-langs
+  :after tree-sitter)
+#+END_SRC
 ** Proof Assistants
 *** Agda
 #+begin_src elisp
@@ -1832,13 +1887,6 @@ For most programming languages, the development tools will be installed through 
   (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
 
 (use-package omnisharp
-  :defer t)
-
-(use-package tree-sitter
-  :defer t)
-(use-package tree-sitter-langs
-  :defer t)
-(use-package tree-sitter-indent
   :defer t)
 #+END_SRC
 *** Elm
@@ -3128,21 +3176,8 @@ Calling org-babel languages in the following form saves a lot on startup time.
 **** Keybindings
 #+begin_src elisp
 (defun jl/auctex-keys ()
-  ;; (jl/major-modes
-  ;;   :keymaps 'LaTeX-mode-map
-  ;;   :states '(normal visual motion)
-  ;;   :major-modes t
-  ;;   "xf" '(:ignore t :which-key "fonts")
-  ;;   "f" '(:ignore t :which-key "fill")
-  ;;   "h" '(:ignore t :which-key "help")
-  ;;   "x" '(:ignore t :which-key "text/fonts")
-  ;;   "z" '(:ignore t :which-key "fold")
-  ;;   "i" '(:ignore t :which-key "insert")
-  ;;   "p" '(:ignore t :which-key "preview")
-  ;;   "r" '(:ignore t :which-key "reftex"))
-
   (jl/major-modes
-    :keymaps 'LaTeX-mode-map
+    :keymaps 'latex-mode-map
     :states '(normal visual motion)
     :major-modes t
     "xf" '(:ignore t :which-key "fonts")
@@ -3152,7 +3187,20 @@ Calling org-babel languages in the following form saves a lot on startup time.
     "z" '(:ignore t :which-key "fold")
     "i" '(:ignore t :which-key "insert")
     "p" '(:ignore t :which-key "preview")
-    "r" '(:ignore t :which-key "reftex")
+    "r" '(:ignore t :which-key "reftex"))
+
+  (jl/major-modes
+    :keymaps 'LaTeX-mode-map
+    :states '(normal visual motion)
+    :major-modes t
+    ;; "xf" '(:ignore t :which-key "fonts")
+    ;; "f" '(:ignore t :which-key "fill")
+    ;; "h" '(:ignore t :which-key "help")
+    ;; "x" '(:ignore t :which-key "text/fonts")
+    ;; "z" '(:ignore t :which-key "fold")
+    ;; "i" '(:ignore t :which-key "insert")
+    ;; "p" '(:ignore t :which-key "preview")
+    ;; "r" '(:ignore t :which-key "reftex")
 
     "\\"  'TeX-insert-macro                            ;; C-c C-m
     "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
@@ -3322,6 +3370,7 @@ Calling org-babel languages in the following form saves a lot on startup time.
 #+end_src
 #+begin_src elisp
 (use-package auctex-latexmk
+ :straight (:host github :repo "wang1zhen/auctex-latexmk" :branch "master" :files ("*.el"))
   :defer t
   :config
   (auctex-latexmk-setup))
@@ -4545,6 +4594,7 @@ SCOPE can be:
   :defer t
   :general
   (jl/SPC-keys
+    "S" '(:ignore t :which-key "Iedit")
     "Se" 'iedit-mode))
 #+end_src
 *** wgrep
