@@ -111,7 +111,7 @@ services.emacs = {
   enable = true;
   defaultEditor = true;
   package = with pkgs;
-    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]));
+    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite ]));
   };
 nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
                    ];
@@ -245,6 +245,7 @@ environment.systemPackages = with pkgs;
     netcat
     openvpn
     python3
+    nfs-utils
 
 
     playerctl
@@ -271,7 +272,7 @@ environment.systemPackages = with pkgs;
     sbcl
     pandoc
 
-    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm ]))
+    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite]))
 
     # From home-manager
     pinentry_emacs
@@ -280,7 +281,6 @@ environment.systemPackages = with pkgs;
     gnuplot
     nmap
     nnn
-    qbittorrent
 
     # Games
     obs-studio
@@ -288,6 +288,11 @@ environment.systemPackages = with pkgs;
     steam-run
     protontricks
     lutris
+
+    ghc
+    cabal-install
+    haskell-language-server
+    clang-tools
   ];
 
 
