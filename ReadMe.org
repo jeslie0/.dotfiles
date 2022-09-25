@@ -17,6 +17,7 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#nixpkgs][nixpkgs]]
   - [[#nyxt][Nyxt]]
   - [[#spotifyd][spotifyd]]
+  - [[#spotify-tui][spotify-tui]]
   - [[#sway][sway]]
   - [[#swaynotificationcenter][swaynotificationcenter]]
   - [[#systemd][systemd]]
@@ -2313,12 +2314,94 @@ volume_normalisation = false
 device_type = "computer"
 #+end_src
 
+** spotify-tui
+:PROPERTIES:
+:header-args:conf: :tangle ./.config/spotify-tui/config.yml
+:END:
+#+begin_src conf
+# The theme colours can be an rgb string of the form "255, 255, 255" or a string that references the colours from your terminal theme: Reset, Black, Red, Green, Yellow, Blue, Magenta, Cyan, Gray, DarkGray, LightRed, LightGreen, LightYellow, LightBlue, LightMagenta, LightCyan, White.
+theme:
+  active: Cyan # current playing song in list
+  banner: LightCyan # the "spotify-tui" banner on launch
+  error_border: Red # error dialog border
+  error_text: LightRed # error message text (e.g. "Spotify API reported error 404")
+  hint: Yellow # hint text in errors
+  hovered: Magenta # hovered pane border
+  inactive: Gray # borders of inactive panes
+  playbar_background: Black # background of progress bar
+  playbar_progress: LightCyan # filled-in part of the progress bar
+  playbar_progress_text: Cyan # song length and time played/left indicator in the progress bar
+  playbar_text: White # artist name in player pane
+  selected: LightCyan # a) selected pane border, b) hovered item in list, & c) track title in player
+  text: "255, 255, 255" # text in panes
+  header: White # header text in panes (e.g. 'Title', 'Artist', etc.)
+
+behavior:
+  seek_milliseconds: 5000
+  volume_increment: 10
+  # The lower the number the higher the "frames per second". You can decrease this number so that the audio visualisation is smoother but this can be expensive!
+  tick_rate_milliseconds: 250
+  # Enable text emphasis (typically italic/bold text styling). Disabling this might be important if the terminal config is otherwise restricted and rendering text escapes interferes with the UI.
+  enable_text_emphasis: true
+  # Controls whether to show a loading indicator in the top right of the UI whenever communicating with Spotify API
+  show_loading_indicator: true
+  # Disables the responsive layout that makes the search bar smaller on bigger
+  # screens and enforces a wide search bar
+  enforce_wide_search_bar: false
+  # Determines the text icon to display next to "liked" Spotify items, such as
+  # liked songs and albums, or followed artists. Can be any length string.
+  # These icons require a patched nerd font.
+  liked_icon: ♥
+  shuffle_icon: 🔀
+  repeat_track_icon: 🔂
+  repeat_context_icon: 🔁
+  playing_icon: ▶
+  paused_icon: ⏸
+  # Sets the window title to "spt - Spotify TUI" via ANSI escape code.
+  set_window_title: true
+
+keybindings:
+  # Key stroke can be used if it only uses two keys:
+  # ctrl-q works,
+  # ctrl-alt-q doesn't.
+  back: "ctrl-q"
+
+  jump_to_album: "a"
+
+  # Shift modifiers use a capital letter (also applies with other modifier keys
+  # like ctrl-A)
+  jump_to_artist_album: "A"
+
+  manage_devices: "d"
+  decrease_volume: "-"
+  increase_volume: "+"
+  toggle_playback: " "
+  seek_backwards: "<"
+  seek_forwards: ">"
+  next_track: "n"
+  previous_track: "p"
+  copy_song_url: "c"
+  copy_album_url: "C"
+  help: "?"
+  shuffle: "ctrl-s"
+  repeat: "r"
+  search: "/"
+  audio_analysis: "v"
+  jump_to_context: "o"
+  basic_view: "B"
+  add_item_to_queue: "z"
+#+end_src
+
 ** sway
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/sway/config
 :END:
 [[https://github.com/swaywm/sway][swaywm]]. Sway is my window manager of choice.
 This is my configuration for sway. The man page can be found be typing =man 5 sway=.
+*** DBUS
+#+begin_src conf :tanlge no
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway systemctl --user stop pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr systemctl --user start pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr
+#+end_src
 *** Variables
 #+begin_src conf
 ### Variables
@@ -3123,7 +3206,7 @@ WantedBy=default.target
     "clock": {
         // "timezone": "America/New_York",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-	"format": " {:%a %-d %b %H:%M:%S}",
+	"format": " {:%a %d %b %H:%M:%S}",
 	"interval": 1
     },
 
@@ -3600,7 +3683,7 @@ set adjust-open			"width"
   description = "James' NixOS system configuration Flake";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager.url = "github:nix-community/home-manager/master"; #Maybe change to unstable!!!
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -3624,12 +3707,11 @@ set adjust-open			"width"
     myfonts.url = "github:jeslie0/fonts";
     myfonts.inputs.nixpkgs.follows = "nixpkgs";
 
-    # This is a bleeding edge version of emacs. Sometimes, it doesn't get pulled from Cachix...
-    emacs-overlay.url = "github:nix-community/emacs-overlay/5a16283b229aa4e7403a35b01ef2cc538c33dc03";
-    # emacs-overlay.inputs = {
-    #   flake-utils.url = "github:numtide/flake-utils/a4b154ebbdc88c8498a5c7b01589addc9e9cb678";
-    #   nixpkgs.url = "github:NixOS/nixpkgs/934e076a441e318897aa17540f6cf7caadc69028";
-    # };
+    emacs-overlay = {
+      url = "github:jeslie0/emacs-overlay";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/f677051b8dc0b5e2a9348941c99eea8c4b0ff28f";
+      inputs.emacs-overlay.url = "github:nix-community/emacs-overlay/a705e6198d9cf4c5f7e1f4912f5e23f0b8bd7396";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
@@ -3638,6 +3720,7 @@ set adjust-open			"width"
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
+        overlays = [ self.inputs.emacs-overlay ];
       };
 
       lib = nixpkgs.lib;
@@ -3646,7 +3729,7 @@ set adjust-open			"width"
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
           inherit system;
-          modules = [ (import ./.config/NixSystem/configuration.nix self) ];
+          modules = [ (import ./.config/NixSystem/configuration.nix self system) ];
         };
       };
 
@@ -3668,7 +3751,7 @@ set adjust-open			"width"
           homeDirectory = "/home/james";
           configuration = {
             imports = [
-              (import ./.config/NixSystem/work.nix self)
+              (import ./.config/NixSystem/work.nix self system)
             ];
           };
         };
@@ -3683,10 +3766,18 @@ set adjust-open			"width"
 :END:
 This section contains blocks that are tangled into configuration.nix. It is the heart of my NixOS system. Help is available in the configuration.nix(5) man page and in the NixOS manual (accessible by running =nixos-help=).
 #+begin_src nix
-self:
+self: system:
 { config, pkgs, ... }:
-
-{
+#+end_src
+*** Emacs Packages
+#+begin_src nix
+let
+  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite]));
+in
+#+end_src
+*** Imports
+#+begin_src nix
+ {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -3838,11 +3929,8 @@ We use the pure GTK, native-compiled version of Emacs. To change the version use
 services.emacs = {
   enable = true;
   defaultEditor = true;
-  package = with pkgs;
-    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite ]));
-  };
-nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
-                   ];
+  package = emacsAndPackages;
+};
 #+end_src
 *** Fonts
 #+begin_src nix
@@ -3866,7 +3954,7 @@ fonts.fonts = with pkgs; [ cantarell-fonts
 # Firefox screensharing
 xdg.portal = {
   enable = true;
-  gtkUsePortal = true;
+  # gtkUsePortal = true;
   extraPortals = with pkgs; [ xdg-desktop-portal-wlr
                               xdg-desktop-portal-gtk ];
 };
@@ -3882,6 +3970,7 @@ environment = {
     MOZ_ENABLE_WAYLAND = "1";
     # XDG_CURRENT_DESKTOP = "sway";
     WEBKIT_FORCE_SANDBOX= "0";
+    WLR_DRM_NO_MODIFIERS="1";
   };
   variables = {
     XCURSOR_THEME = "Adwaita";
@@ -3958,6 +4047,8 @@ environment.systemPackages = with pkgs;
     imv
     youtube-dl
     spotify
+    spotify-tui
+    spotifyd
     (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
 
     # Nix
@@ -4020,8 +4111,7 @@ environment.systemPackages = with pkgs;
     sbcl
     pandoc
 
-    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite]))
-
+    emacsAndPackages
     # From home-manager
     pinentry_emacs
     pciutils
@@ -4046,6 +4136,28 @@ environment.systemPackages = with pkgs;
 
 programs.light.enable = true;
     #+end_src
+*** Spotifyd
+#+begin_src nix :tangle no
+services.spotifyd = {
+  enable = true;
+  settings = {
+    global = {
+      username = "g8r9m2iao5vg9kcqyqsd090pc";
+      password = ${builtins.readFile ./spotifyd.pass};
+      use_mpris = true;
+      backend = "alsa";
+      device = "default";
+      control = "default";
+      volume_controller = "alsa";
+      device_name = "James-Nix";
+      bitrate = 320;
+      cache_path = "/home/james/.cache/spotify/";
+      volume_normalisation = false;
+      device_type = "computer";
+    };
+  };
+};
+#+end_src
 *** Systemd
 **** Keychron
 This will hopefully allow me to use my function keys on my K6 keyboard.
@@ -4062,6 +4174,10 @@ systemd.services.keychron = {
   wantedBy = [ "multi-user.target" ];
 };
 #+end_src
+*** DBUS
+#+begin_src nix
+services.dbus.enable = true;
+#+end_src
 *** Printers
 Enable CUPS to print documents.
 #+BEGIN_SRC nix
@@ -4074,7 +4190,14 @@ services.avahi.nssmdns = true;
 #+begin_src nix
 # Enable sound.
 # sound.enable = true;
-# hardware.pulseaudio.enable = true;
+# hardware.pulseaudio = {
+#   enable = true;
+  # systemWide = true;
+  # extraConfig = ''
+  #               unload-module module-native-protocol-unix
+  #               load-module module-native-protocol-unix auth-anonymous=1
+  #               '';
+# };
 
 security.rtkit.enable = true;
 services.pipewire = {
