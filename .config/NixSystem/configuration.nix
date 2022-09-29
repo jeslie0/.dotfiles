@@ -169,6 +169,16 @@ nix.settings = {
 nix = {
   package = pkgs.nixUnstable;
   extraOptions = "experimental-features = nix-command flakes";
+  registry ={
+    self.flake = self;
+    james = {
+      from = { id = "james"; type = "indirect"; };
+      to = { owner = "jeslie0";
+             repo = "flake-templates";
+             type = "github";
+           };
+    };
+  };
 };
 
 # Define a user account. Don't forget to set a password with ‘passwd’.

@@ -4,19 +4,19 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    pinnedNixpkgs.url = "github:nixos/nixpkgs/c481b497d5c3754c50e89795c6d903dd0d130baa";
+
     home-manager = {
       url = "github:nix-community/home-manager"; #Maybe change to unstable!!!
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     agdaGitHub = {
-      url = "github:agda/agda";
-      rev = "022837331ad3c782e2bf915fda88e090b4d117dd";
+      url = "github:agda/agda/022837331ad3c782e2bf915fda88e090b4d117dd";
     };
 
     # hlsGitHub = {
-    #   url = "github:haskell/haskell-language-server";
-    #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
+    #   url = "github:haskell/haskell-language-server/745ef26f406dbdd5e4a538585f8519af9f1ccb09";
     # };
 
     passbemenuGitHub = {
@@ -58,6 +58,7 @@
         config = { allowUnfree = true; };
         overlays = [ self.inputs.emacs-overlay.overlays.default
                      (final: prev: {
+                       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages."x86_64-linux".virtualbox;
                        spotifyd = self.inputs.spotifyd.packages."x86_64-linux".default;
                      })
                    ];
@@ -69,7 +70,8 @@
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
           inherit system;
-          modules = [ (import ./.config/NixSystem/configuration.nix self system) ];
+          modules = [ (import ./.config/NixSystem/configuration.nix self system)
+                    ];
         };
       };
 
