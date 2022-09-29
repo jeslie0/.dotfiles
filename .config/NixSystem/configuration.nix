@@ -1,11 +1,15 @@
-self:
+self: system:
 { config, pkgs, ... }:
 
+let
+  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite]));
+in
+
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+ imports =
+   [ # Include the results of the hardware scan.
+     ./hardware-configuration.nix
+   ];
 
 # Use the systemd-boot EFI boot loader.
 # boot.loader.systemd-boot.enable = true; # Use this to use the UEFI bootloader, not GRUB.
@@ -110,11 +114,8 @@ programs.fish = {
 services.emacs = {
   enable = true;
   defaultEditor = true;
-  package = with pkgs;
-    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite ]));
-  };
-nixpkgs.overlays = [ (import self.inputs.emacs-overlay)
-                   ];
+  package = emacsAndPackages;
+};
 
 fonts.fonts = with pkgs; [ cantarell-fonts
                            emacs-all-the-icons-fonts
@@ -134,7 +135,7 @@ fonts.fonts = with pkgs; [ cantarell-fonts
 # Firefox screensharing
 xdg.portal = {
   enable = true;
-  gtkUsePortal = true;
+  # gtkUsePortal = true;
   extraPortals = with pkgs; [ xdg-desktop-portal-wlr
                               xdg-desktop-portal-gtk ];
 };
@@ -148,6 +149,7 @@ environment = {
     MOZ_ENABLE_WAYLAND = "1";
     # XDG_CURRENT_DESKTOP = "sway";
     WEBKIT_FORCE_SANDBOX= "0";
+    WLR_DRM_NO_MODIFIERS="1";
   };
   variables = {
     XCURSOR_THEME = "Adwaita";
@@ -210,7 +212,9 @@ environment.systemPackages = with pkgs;
     imv
     youtube-dl
     spotify
-    (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
+    spotify-tui
+    kodi
+    playerctl
 
     # Nix
     cachix
@@ -248,7 +252,6 @@ environment.systemPackages = with pkgs;
     nfs-utils
 
 
-    playerctl
 
     ripgrep
     bat
@@ -265,17 +268,17 @@ environment.systemPackages = with pkgs;
     coq
     direnv
     unzip
-    gnome3.adwaita-icon-theme
+    gnome.adwaita-icon-theme
     self.inputs.agdaGitHub.packages.${system}.Agda
 
     mkvtoolnix
     sbcl
     pandoc
 
-    ((emacsPackagesFor emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite]))
+    emacsAndPackages
 
     # From home-manager
-    pinentry_emacs
+    pinentry-emacs
     pciutils
     pcmanfm
     gnuplot
@@ -283,11 +286,11 @@ environment.systemPackages = with pkgs;
     nnn
 
     # Games
-    obs-studio
-    polymc
-    steam-run
-    protontricks
-    lutris
+    # obs-studio
+    # polymc
+    # steam-run
+    # protontricks
+    # lutris
 
     ghc
     cabal-install
@@ -298,14 +301,23 @@ environment.systemPackages = with pkgs;
 
 programs.light.enable = true;
 
+services.dbus.enable = true;
+
 services.printing.enable = true;
 services.printing.drivers = [ pkgs.gutenprint ];
 services.avahi.enable = true;
 services.avahi.nssmdns = true;
 
 # Enable sound.
-# sound.enable = true;
-# hardware.pulseaudio.enable = true;
+sound.enable = true;
+# hardware.pulseaudio = {
+#   enable = true;
+  # systemWide = true;
+  # extraConfig = ''
+  #               unload-module module-native-protocol-unix
+  #               load-module module-native-protocol-unix auth-anonymous=1
+  #               '';
+# };
 
 security.rtkit.enable = true;
 services.pipewire = {

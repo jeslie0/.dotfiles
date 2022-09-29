@@ -2927,6 +2927,10 @@ include /etc/sway/config.d/*
 bindswitch lid:on  output eDP-1 disable
 bindswitch lid:off output eDP-1 enable
 #+end_src
+*** spotifyd
+#+begin_src conf
+exec "/usr/bin/env -S spotifyd --no-daemon"
+#+end_src
 ** swaynotificationcenter
 :PROPERTIES:
 :header-args:conf: :tangle ~/.config/swaync/style.css
@@ -3127,7 +3131,7 @@ bindswitch lid:off output eDP-1 enable
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/systemd/system/spotifyd.service
 :END:
-#+begin_src conf
+#+begin_src conf :tangle no
 [Unit]
 Description=A spotify playing daemon
 Documentation=https://github.com/Spotifyd/spotifyd
@@ -3685,27 +3689,44 @@ set adjust-open			"width"
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/master"; #Maybe change to unstable!!!
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager"; #Maybe change to unstable!!!
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    agdaGitHub.url = "github:agda/agda/022837331ad3c782e2bf915fda88e090b4d117dd";
+    agdaGitHub = {
+      url = "github:agda/agda";
+      rev = "022837331ad3c782e2bf915fda88e090b4d117dd";
+    };
 
-    # hlsGitHub.url = "github:haskell/haskell-language-server/745ef26f406dbdd5e4a538585f8519af9f1ccb09";
+    # hlsGitHub = {
+    #   url = "github:haskell/haskell-language-server";
+    #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
+    # };
 
-    passbemenuGitHub.url = "github:jeslie0/passbemenu";
-    passbemenuGitHub.inputs.nixpkgs.follows = "nixpkgs";
+    passbemenuGitHub = {
+      url = "github:jeslie0/passbemenu";
+    };
 
-    swaybgchangerGitHub.url = "github:jeslie0/swaybgchanger";
-    swaybgchangerGitHub.inputs.nixpkgs.follows = "nixpkgs";
+    swaybgchangerGitHub = {
+      url = "github:jeslie0/swaybgchanger";
+    };
 
-    bemenuFocusGitHub.url = "github:jeslie0/bemenuFocus";
-    bemenuFocusGitHub.inputs.nixpkgs.follows = "nixpkgs";
+    bemenuFocusGitHub = {
+      url = "github:jeslie0/bemenuFocus";
+    };
 
-    swaylockeffectsGitHub.url = "github:jeslie0/swaylock-effects-git";
-    swaylockeffectsGitHub.inputs.nixpkgs.follows = "nixpkgs";
+    swaylockeffectsGitHub = {
+      url = "github:jeslie0/swaylock-effects-git";
+    };
 
-    myfonts.url = "github:jeslie0/fonts";
-    myfonts.inputs.nixpkgs.follows = "nixpkgs";
+    myfonts = {
+      url = "github:jeslie0/fonts";
+    };
+
+    spotifyd = {
+      url = "github:jeslie0/spotifyd";
+    };
 
     emacs-overlay = {
       url = "github:jeslie0/emacs-overlay";
@@ -3720,7 +3741,11 @@ set adjust-open			"width"
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
-        overlays = [ self.inputs.emacs-overlay ];
+        overlays = [ self.inputs.emacs-overlay.overlays.default
+                     (final: prev: {
+                       spotifyd = self.inputs.spotifyd.packages."x86_64-linux".default;
+                     })
+                   ];
       };
 
       lib = nixpkgs.lib;
@@ -3733,30 +3758,12 @@ set adjust-open			"width"
         };
       };
 
-      homeManagerConfigurations = {
+      homeConfigurations = {
         james = home-manager.lib.homeManagerConfiguration {
-          inherit system pkgs;
-          username = "james";
-          homeDirectory = "/home/james";
-          configuration = {
-            imports = [
-              ./.config/NixSystem/home.nix
-            ];
-          };
-        };
-
-        work = home-manager.lib.homeManagerConfiguration {
-          inherit system pkgs;
-          username = "james";
-          homeDirectory = "/home/james";
-          configuration = {
-            imports = [
-              (import ./.config/NixSystem/work.nix self system)
-            ];
-          };
+          inherit pkgs;
+          modules = [ (import ./.config/NixSystem/home.nix self)];
         };
       };
-
     };
 }
 #+end_src
@@ -4048,8 +4055,8 @@ environment.systemPackages = with pkgs;
     youtube-dl
     spotify
     spotify-tui
-    spotifyd
-    (kodi.passthru.withPackages (p: with p; [ vfs-sftp ]))
+    kodi
+    playerctl
 
     # Nix
     cachix
@@ -4087,7 +4094,6 @@ environment.systemPackages = with pkgs;
     nfs-utils
 
 
-    playerctl
 
     ripgrep
     bat
@@ -4104,7 +4110,7 @@ environment.systemPackages = with pkgs;
     coq
     direnv
     unzip
-    gnome3.adwaita-icon-theme
+    gnome.adwaita-icon-theme
     self.inputs.agdaGitHub.packages.${system}.Agda
 
     mkvtoolnix
@@ -4112,8 +4118,9 @@ environment.systemPackages = with pkgs;
     pandoc
 
     emacsAndPackages
+
     # From home-manager
-    pinentry_emacs
+    pinentry-emacs
     pciutils
     pcmanfm
     gnuplot
@@ -4121,11 +4128,11 @@ environment.systemPackages = with pkgs;
     nnn
 
     # Games
-    obs-studio
-    polymc
-    steam-run
-    protontricks
-    lutris
+    # obs-studio
+    # polymc
+    # steam-run
+    # protontricks
+    # lutris
 
     ghc
     cabal-install
@@ -4136,28 +4143,6 @@ environment.systemPackages = with pkgs;
 
 programs.light.enable = true;
     #+end_src
-*** Spotifyd
-#+begin_src nix :tangle no
-services.spotifyd = {
-  enable = true;
-  settings = {
-    global = {
-      username = "g8r9m2iao5vg9kcqyqsd090pc";
-      password = ${builtins.readFile ./spotifyd.pass};
-      use_mpris = true;
-      backend = "alsa";
-      device = "default";
-      control = "default";
-      volume_controller = "alsa";
-      device_name = "James-Nix";
-      bitrate = 320;
-      cache_path = "/home/james/.cache/spotify/";
-      volume_normalisation = false;
-      device_type = "computer";
-    };
-  };
-};
-#+end_src
 *** Systemd
 **** Keychron
 This will hopefully allow me to use my function keys on my K6 keyboard.
@@ -4189,7 +4174,7 @@ services.avahi.nssmdns = true;
 *** Miscellaneous
 #+begin_src nix
 # Enable sound.
-# sound.enable = true;
+sound.enable = true;
 # hardware.pulseaudio = {
 #   enable = true;
   # systemWide = true;
@@ -4253,41 +4238,39 @@ system.stateVersion = "21.05"; # Did you read the comment?
 :header-args:nix: :tangle ./.config/NixSystem/home.nix
 :END:
 #+begin_src nix
+self:
 { config, pkgs, ... }:
 
-{ # imports = [  ];
-
-  # Let Home Manager install and manage itself.
+{ # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  home.username = "james";
-  home.homeDirectory = "/home/james";
-
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-
-  # home.stateVersion = "21.11";
 
   nixpkgs.config.allowUnfree = true;
 
-  home.packages = with pkgs; [
-    # (import (fetchTarball https://github.com/haskell/haskell-language-server/archive/745ef26f406dbdd5e4a538585f8519af9f1ccb09.tar.gz)).defaultPackage.x86_64-linux
-    # (import (fetchFromGitHub {
-    #   owner = "haskell";
-    #   repo = "haskell-language-server";
-    #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
-    #   sha256 = "10vj4wb0gdvfnrg1d7r3dqjnkw34ryh7v4fvxsby6fvn1l2kvsj5";
-    # }))
-  ];
+  home = {
+    # Home Manager needs a bit of information about you and the
+    # paths it should manage.
+    username = "james";
+    homeDirectory = "/home/james";
+
+    packages = with pkgs;
+      [ # self.inputs.spotifyd.packages."x86_64-linux".default
+        spotifyd
+      ];
+
+    # This value determines the Home Manager release that your
+    # configuration is compatible with. This helps avoid breakage
+    # when a new Home Manager release introduces backwards
+    # incompatible changes.
+    #
+    # You can update Home Manager without changing this value. See
+    # the Home Manager release notes for a list of state version
+    # changes in each release.
+    stateVersion = "21.11";
+
+  };
 }
+
+
 #+end_src
 * Miscellaneous
 ** .gitconfig

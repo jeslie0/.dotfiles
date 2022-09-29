@@ -1,3 +1,5 @@
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway systemctl --user stop pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr systemctl --user start pipewire pipewire-media-session xdg-desktop-portal xdg-desktop-portal-wlr
+
 ### Variables
 #
 # Logo key. Use Mod1 for Alt.
@@ -468,3 +470,5 @@ include /etc/sway/config.d/*
 
 bindswitch lid:on  output eDP-1 disable
 bindswitch lid:off output eDP-1 enable
+
+exec "/usr/bin/env -S spotifyd --no-daemon"
