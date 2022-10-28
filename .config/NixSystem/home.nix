@@ -6,6 +6,12 @@ self:
 
   nixpkgs.config.allowUnfree = true;
 
+  services = {
+    spotifyd = {
+      enable = true;
+    };
+  };
+
   home = {
     # Home Manager needs a bit of information about you and the
     # paths it should manage.
@@ -14,7 +20,7 @@ self:
 
     packages = with pkgs;
       [ # self.inputs.spotifyd.packages."x86_64-linux".default
-        spotifyd
+        # spotifyd
       ];
 
     # This value determines the Home Manager release that your

@@ -2,7 +2,7 @@ self: system:
 { config, pkgs, ... }:
 
 let
-  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite]));
+  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
 in
 
 {

@@ -44,9 +44,10 @@
     };
 
     emacs-overlay = {
-      url = "github:jeslie0/emacs-overlay";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs/f677051b8dc0b5e2a9348941c99eea8c4b0ff28f";
-      inputs.emacs-overlay.url = "github:nix-community/emacs-overlay/a705e6198d9cf4c5f7e1f4912f5e23f0b8bd7396";
+      # url = "github:jeslie0/emacs-overlay";
+      url = "/home/james/Documents/Nix/emacs-overlay";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/c5924154f000e6306030300592f4282949b2db6c";
+      inputs.emacs-overlay.url = "github:nix-community/emacs-overlay/d04558957e2bef64780144486becbdc1c731fe7f";
     };
   };
 

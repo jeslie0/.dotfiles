@@ -47,16 +47,13 @@
       },
       "locked": {
         "lastModified": 1664305298,
-        "narHash": "sha256-j1eMQFzSF81HjeRyysemJB/q3w8U2L5jw8Cp1VSE+cg=",
-        "owner": "jeslie0",
-        "repo": "emacs-overlay",
-        "rev": "6af2b0e1436aa69cec4a8a24a49e5eeaaff2d6b2",
-        "type": "github"
+        "narHash": "sha256-beKlOBI9/ANAzv+U5aZgfFG5tlHZmG5x26wG8+NuGlA=",
+        "type": "git",
+        "url": "file:///home/james/Documents/Nix/emacs-overlay"
       },
       "original": {
-        "owner": "jeslie0",
-        "repo": "emacs-overlay",
-        "type": "github"
+        "type": "git",
+        "url": "file:///home/james/Documents/Nix/emacs-overlay"
       }
     },
     "emacs-overlay_2": {
@@ -65,11 +62,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1663560500,
-        "narHash": "sha256-cZYYTB+pTgg0ntW7f1WjtMVZjUAxAerL+Ju5C8FrI7E=",
+        "lastModified": 1665490401,
+        "narHash": "sha256-7MWIzEsYdc4GV2bf9R6cT2L+s9Cg4BzqK6wdVc85bZs=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "a705e6198d9cf4c5f7e1f4912f5e23f0b8bd7396",
+        "rev": "d04558957e2bef64780144486becbdc1c731fe7f",
         "type": "github"
       },
       "original": {
@@ -235,21 +232,6 @@
         "type": "github"
       }
     },
-    "james": {
-      "locked": {
-        "lastModified": 1660507151,
-        "narHash": "sha256-HchLidhYg3ayFBFqTfsMJiWZGZOamMmIa41TxErCBOg=",
-        "owner": "jeslie0",
-        "repo": "flake-templates",
-        "rev": "fe982545b6b88446a94710361b43e0068f163860",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jeslie0",
-        "repo": "flake-templates",
-        "type": "github"
-      }
-    },
     "myfonts": {
       "inputs": {
         "flake-utils": "flake-utils_5",
@@ -331,11 +313,11 @@
     },
     "nixpkgs_4": {
       "locked": {
-        "lastModified": 1663494472,
-        "narHash": "sha256-fSowlaoXXWcAM8m9wA6u+eTJJtvruYHMA+Lb/tFi/qM=",
+        "lastModified": 1665259268,
+        "narHash": "sha256-ONFhHBLv5nZKhwV/F2GOH16197PbvpyWhoO0AOyktkU=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "f677051b8dc0b5e2a9348941c99eea8c4b0ff28f",
+        "rev": "c5924154f000e6306030300592f4282949b2db6c",
         "type": "github"
       },
       "original": {
@@ -466,7 +448,6 @@
         "bemenuFocusGitHub": "bemenuFocusGitHub",
         "emacs-overlay": "emacs-overlay",
         "home-manager": "home-manager",
-        "james": "james",
         "myfonts": "myfonts",
         "nixpkgs": "nixpkgs_6",
         "passbemenuGitHub": "passbemenuGitHub",
