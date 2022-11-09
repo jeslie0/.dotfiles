@@ -10,7 +10,6 @@
  ("annalist.el" . "134fa3f0fb91a636a1c005c483516d4b64905a6d")
  ("app-launcher" . "d5015e394b0a666a8c7c4d4bdf786266e773b145")
  ("auctex" . "53b82804c9dd9dbea306876f3be84ebacbeb7e74")
- ("auctex-latexmk" . "4d353522650d7685acbf1d38f7dbc504f734bd84")
  ("auto-complete" . "8f33bc4fecb653d48d70a4902078f9d493eb882f")
  ("avy" . "ba5f035be33693d1a136a5cbeedb24327f551a92")
  ("biblio.el" . "517ec18f00f91b61481214b178f7ae0b8fbc499b")

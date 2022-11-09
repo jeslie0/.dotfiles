@@ -1,6 +1,13 @@
 ;; (setq consult--find-regexp-type 'basic
 ;;       consult--grep-regexp-type 'pcre
 ;;       consult--ripgrep-regexp-type 'extended)
+
+
+  ;; :hook (server-after-make-frame . (lambda () (load-theme
+  ;;       				       'doom-palenight t)))
+  ;; :init
+(load-theme 'doom-palenight t)
+
 (advice-add 'eglot--apply-text-edits :override
             (lambda (edits &optional version)
               (atomic-change-group

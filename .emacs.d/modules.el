@@ -16,11 +16,13 @@
                      jl-vc
                      jl-smerge
                      jl-treemacs
-                     jl-treemacs-projectile
+                     ;; jl-treemacs-projectile
                      jl-treemacs-magit
                      jl-treemacs-perspective
                      jl-helpful
                      jl-eldoc
+                     jl-docker
+
 
                      jl-dashboard
 
@@ -68,6 +70,8 @@
                      jl-java
                      jl-js
                      jl-rjsx
+                     jl-skewer
+
                      jl-js-doc
                      jl-python
 
@@ -108,11 +112,11 @@
 
                      ;;; Spelling & correction
                      jl-ispell
-                     ;; jl-flyspell
-                     ;; jl-consult-flyspell
+                     jl-flyspell
+                     jl-consult-flyspell
                      jl-flyspell-correct
-                     jl-spell-fu
-                     jl-flycheck
+                     ;; jl-spell-fu
+                     ;; jl-flycheck
                      jl-flymake
 
                      ;;; Auto completions
@@ -123,6 +127,7 @@
                      ;; jl-company
 
                      ;;; Tools
+                     jl-perspective
                      jl-undo-tree
                      jl-pandoc
                      jl-iedit
