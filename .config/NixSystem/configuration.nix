@@ -2,7 +2,11 @@ self: system:
 { config, pkgs, ... }:
 
 let
-  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  myEmacs = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  # myEmacs = pkgs.emacsWithPackagesFromUsePackage {
+  #   package = self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp;
+  #   extraEmacsPackages = epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql ];
+  # };
 in
 
 {
@@ -10,6 +14,14 @@ in
    [ # Include the results of the hardware scan.
      ./hardware-configuration.nix
    ];
+
+nixpkgs.overlays =
+  [ self.inputs.flakes.emacs-overlay.overlays.default
+    (final: prev: {
+      virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
+      spotifyd = self.inputs.myFlakes.spotifyd.packages.system.default;
+    })
+  ];
 
 # Use the systemd-boot EFI boot loader.
 # boot.loader.systemd-boot.enable = true; # Use this to use the UEFI bootloader, not GRUB.
@@ -114,7 +126,7 @@ programs.fish = {
 services.emacs = {
   enable = true;
   defaultEditor = true;
-  package = emacsAndPackages;
+  package = myEmacs;
 };
 
 fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux); [ cantarell-fonts
@@ -285,7 +297,7 @@ environment.systemPackages = with pkgs;
     sbcl
     pandoc
 
-    emacsAndPackages
+    myEmacs
 
     # From home-manager
     pinentry-emacs

@@ -17,6 +17,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Version 2.6.3 on my Cachix
     agdaGitHub = {
       type = "github";
       owner = "agda";
@@ -49,12 +50,6 @@
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
-        overlays = [ self.inputs.flakes.emacs-overlay.overlays.default
-                     (final: prev: {
-                       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.system.virtualbox;
-                       spotifyd = self.inputs.myFlakes.spotifyd.packages.system.default;
-                     })
-                   ];
       };
 
       lib = nixpkgs.lib;

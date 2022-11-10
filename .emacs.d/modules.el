@@ -67,7 +67,7 @@
                      jl-shells
                      ;; jl-insert-shebang
                      jl-nix
-                     jl-java
+                     ;; jl-java
                      jl-js
                      jl-rjsx
                      jl-skewer

@@ -3651,12 +3651,6 @@ set adjust-open			"width"
       pkgs = import nixpkgs {
         inherit system;
         config = { allowUnfree = true; };
-        overlays = [ self.inputs.flakes.emacs-overlay.overlays.default
-                     (final: prev: {
-                       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.system.virtualbox;
-                       spotifyd = self.inputs.myFlakes.spotifyd.packages.system.default;
-                     })
-                   ];
       };
 
       lib = nixpkgs.lib;
@@ -3691,7 +3685,13 @@ self: system:
 *** Emacs Packages
 #+begin_src nix
 let
-  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  myEmacs = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  # Use features from emacs-overlay. I don't need this just yet, as it includes your config file.
+  # myEmacs = pkgs.emacsWithPackagesFromUsePackage {
+  #   config = "";
+  #   package = self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp;
+  #   extraEmacsPackages = epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql ];
+  # };
 in
 #+end_src
 *** Imports
@@ -3702,6 +3702,17 @@ in
       ./hardware-configuration.nix
     ];
 #+end_src
+*** Overlays
+#+begin_src nix
+nixpkgs.overlays =
+  [ self.inputs.flakes.emacs-overlay.overlays.default
+    (final: prev: {
+      virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
+      spotifyd = self.inputs.myFlakes.spotifyd.packages.system.default;
+    })
+  ];
+#+end_src
+
 *** Bootloader
 #+begin_src nix
 # Use the systemd-boot EFI boot loader.
@@ -3848,7 +3859,7 @@ We use the pure GTK, native-compiled version of Emacs. To change the version use
 services.emacs = {
   enable = true;
   defaultEditor = true;
-  package = emacsAndPackages;
+  package = myEmacs;
 };
 #+end_src
 *** Fonts
@@ -4039,7 +4050,7 @@ environment.systemPackages = with pkgs;
     sbcl
     pandoc
 
-    emacsAndPackages
+    myEmacs
 
     # From home-manager
     pinentry-emacs
