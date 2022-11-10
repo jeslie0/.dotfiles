@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    pinnedNixpkgs.url = "github:nixos/nixpkgs/c481b497d5c3754c50e89795c6d903dd0d130baa";
+    pinnedNixpkgs.url = "github:nixos/nixpkgs/872fceeed60ae6b7766cc0a4cd5bf5901b9098ec";
 
     home-manager = {
       url = "github:nix-community/home-manager"; #Maybe change to unstable!!!
@@ -14,10 +14,6 @@
     agdaGitHub = {
       url = "github:agda/agda/022837331ad3c782e2bf915fda88e090b4d117dd";
     };
-
-    # hlsGitHub = {
-    #   url = "github:haskell/haskell-language-server/745ef26f406dbdd5e4a538585f8519af9f1ccb09";
-    # };
 
     passbemenuGitHub = {
       url = "github:jeslie0/passbemenu";
@@ -46,8 +42,8 @@
     emacs-overlay = {
       # url = "github:jeslie0/emacs-overlay";
       url = "/home/james/Documents/Nix/emacs-overlay";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs/c5924154f000e6306030300592f4282949b2db6c";
-      inputs.emacs-overlay.url = "github:nix-community/emacs-overlay/d04558957e2bef64780144486becbdc1c731fe7f";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/093268502280540a7f5bf1e2a6330a598ba3b7d0";
+      inputs.emacs-overlay.url = "github:nix-community/emacs-overlay/e58b5f1dac80f717f41121a0e4008b3050d79b9d";
     };
   };
 

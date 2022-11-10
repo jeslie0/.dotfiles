@@ -117,7 +117,7 @@ services.emacs = {
   package = emacsAndPackages;
 };
 
-fonts.fonts = with pkgs; [ cantarell-fonts
+fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux); [ cantarell-fonts
                            emacs-all-the-icons-fonts
                            dejavu_fonts
                            fira-code

@@ -14,7 +14,6 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#mbsync][mbsync]]
   - [[#mpv][mpv]]
   - [[#neofetch][neofetch]]
-  - [[#nixpkgs][nixpkgs]]
   - [[#nyxt][Nyxt]]
   - [[#spotifyd][spotifyd]]
   - [[#spotify-tui][spotify-tui]]
@@ -2006,89 +2005,6 @@ background_color=
 stdout="off"
 #+end_src
 
-** TODO nixpkgs
-*** flake.nix
-:PROPERTIES:
-:header-args:nix: :tangle ./.config/nixpkgs/flake.nix
-:END:
-#+begin_src nix
-{
-  description = "Home Manager configurations";
-
-  inputs = {
-    nixpkgs.url = "flake:nixpkgs";
-    homeManager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
-
-  outputs = { self, nixpkgs, homeManager }: {
-    homeConfigurations = {
-      "james@James-Nix" = homeManager.lib.homeManagerConfiguration {
-        configuration = ./home.nix;
-
-        system = "x86_64-linux";
-        homeDirectory = "/home/james";
-        username = "james";
-        stateVersion = "21.05";
-      };
-    };
-  };
-}
-#+end_src
-*** home.nix
-:PROPERTIES:
-:header-args:nix: :tangle ./.config/nixpkgs/home.nix
-:END:
-#+begin_src nix
-{ config, pkgs, ... }:
-
-{ # imports = [  ];
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  home.username = "james";
-  home.homeDirectory = "/home/james";
-
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-
-  home.stateVersion = "21.11";
-
-  nixpkgs.config.allowUnfree = true;
-
-  home.packages = with pkgs; [
-    pinentry_emacs
-    pciutils
-    jekyll
-    chromium
-    zoom-us
-    # (import (fetchTarball https://github.com/haskell/haskell-language-server/archive/745ef26f406dbdd5e4a538585f8519af9f1ccb09.tar.gz)).defaultPackage.x86_64-linux
-    # (import (fetchFromGitHub {
-    #   owner = "haskell";
-    #   repo = "haskell-language-server";
-    #   rev = "745ef26f406dbdd5e4a538585f8519af9f1ccb09";
-    #   sha256 = "10vj4wb0gdvfnrg1d7r3dqjnkw34ryh7v4fvxsby6fvn1l2kvsj5";
-    # }))
-    obs-studio
-    pcmanfm
-    gnuplot
-  ];
-
-
-}
-#+end_src
-
 ** Nyxt
 :PROPERTIES:
 :header-args:lisp: :tangle ./.config/nyxt/init.lisp
@@ -3689,7 +3605,7 @@ set adjust-open			"width"
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    pinnedNixpkgs.url = "github:nixos/nixpkgs/c481b497d5c3754c50e89795c6d903dd0d130baa";
+    pinnedNixpkgs.url = "github:nixos/nixpkgs/872fceeed60ae6b7766cc0a4cd5bf5901b9098ec";
 
     home-manager = {
       url = "github:nix-community/home-manager"; #Maybe change to unstable!!!
@@ -3699,10 +3615,6 @@ set adjust-open			"width"
     agdaGitHub = {
       url = "github:agda/agda/022837331ad3c782e2bf915fda88e090b4d117dd";
     };
-
-    # hlsGitHub = {
-    #   url = "github:haskell/haskell-language-server/745ef26f406dbdd5e4a538585f8519af9f1ccb09";
-    # };
 
     passbemenuGitHub = {
       url = "github:jeslie0/passbemenu";
@@ -3731,8 +3643,8 @@ set adjust-open			"width"
     emacs-overlay = {
       # url = "github:jeslie0/emacs-overlay";
       url = "/home/james/Documents/Nix/emacs-overlay";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs/c5924154f000e6306030300592f4282949b2db6c";
-      inputs.emacs-overlay.url = "github:nix-community/emacs-overlay/d04558957e2bef64780144486becbdc1c731fe7f";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/093268502280540a7f5bf1e2a6330a598ba3b7d0";
+      inputs.emacs-overlay.url = "github:nix-community/emacs-overlay/e58b5f1dac80f717f41121a0e4008b3050d79b9d";
     };
   };
 
@@ -3944,7 +3856,7 @@ services.emacs = {
 #+end_src
 *** Fonts
 #+begin_src nix
-fonts.fonts = with pkgs; [ cantarell-fonts
+fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux); [ cantarell-fonts
                            emacs-all-the-icons-fonts
                            dejavu_fonts
                            fira-code
