@@ -2,7 +2,7 @@ self: system:
 { config, pkgs, ... }:
 
 let
-  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  emacsAndPackages = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
 in
 
 {
@@ -95,10 +95,10 @@ programs.sway = {
     wlroots
     slurp
     grim
-    self.inputs.passbemenuGitHub.defaultPackage.${system}
-    self.inputs.swaybgchangerGitHub.defaultPackage.${system}
-    self.inputs.bemenuFocusGitHub.defaultPackage.${system}
-    self.inputs.swaylockeffectsGitHub.defaultPackage.${system}
+    self.inputs.flakes.passbemenu.defaultPackage.${system}
+    self.inputs.flakes.swaybgchanger.defaultPackage.${system}
+    self.inputs.flakes.bemenuFocus.defaultPackage.${system}
+    self.inputs.flakes.swaylock-effects.defaultPackage.${system}
   ];
 };
 
@@ -129,7 +129,7 @@ fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux); [ ca
                            terminus_font
                            ubuntu_font_family
                            nerdfonts
-                           (self.inputs.myfonts.defaultPackage.${system})
+                           (self.inputs.flakes.fonts.defaultPackage.${system})
                          ];
 
 # Firefox screensharing

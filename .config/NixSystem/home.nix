@@ -19,9 +19,7 @@ self:
     homeDirectory = "/home/james";
 
     packages = with pkgs;
-      [ # self.inputs.spotifyd.packages."x86_64-linux".default
-        # spotifyd
-      ];
+      [ ];
 
     # This value determines the Home Manager release that your
     # configuration is compatible with. This helps avoid breakage
