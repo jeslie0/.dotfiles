@@ -3618,6 +3618,7 @@ set adjust-open			"width"
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Version 2.6.3 on my Cachix
     agdaGitHub = {
       type = "github";
       owner = "agda";
