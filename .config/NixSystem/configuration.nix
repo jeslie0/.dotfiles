@@ -3,7 +3,9 @@ self: system:
 
 let
   myEmacs = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  # Use features from emacs-overlay. I don't need this just yet, as it includes your config file.
   # myEmacs = pkgs.emacsWithPackagesFromUsePackage {
+  #   config = "";
   #   package = self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp;
   #   extraEmacsPackages = epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql ];
   # };
@@ -19,7 +21,7 @@ nixpkgs.overlays =
   [ self.inputs.flakes.emacs-overlay.overlays.default
     (final: prev: {
       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
-      spotifyd = self.inputs.myFlakes.spotifyd.packages.system.default;
+      spotifyd = self.inputs.myFlakes.spotifyd.packages.${system}.default;
     })
   ];
 

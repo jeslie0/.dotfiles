@@ -3708,11 +3708,10 @@ nixpkgs.overlays =
   [ self.inputs.flakes.emacs-overlay.overlays.default
     (final: prev: {
       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
-      spotifyd = self.inputs.myFlakes.spotifyd.packages.system.default;
+      spotifyd = self.inputs.myFlakes.spotifyd.packages.${system}.default;
     })
   ];
 #+end_src
-
 *** Bootloader
 #+begin_src nix
 # Use the systemd-boot EFI boot loader.
@@ -4178,12 +4177,13 @@ self:
   programs.home-manager.enable = true;
 
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.overlays = [];
 
-  services = {
-    spotifyd = {
-      enable = true;
-    };
-  };
+  # services = {
+  #   spotifyd = {
+  #     enable = true;
+  #   };
+  # };
 
   home = {
     # Home Manager needs a bit of information about you and the

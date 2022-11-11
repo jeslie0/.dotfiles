@@ -122,7 +122,7 @@
                      ;;; Auto completions
                      jl-yasnippet
                      jl-corfu
-                     ;; jl-corfu-doc
+                     jl-corfu-doc
                      jl-cape
                      ;; jl-company
 
