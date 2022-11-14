@@ -3626,22 +3626,41 @@ set adjust-open			"width"
       rev = "022837331ad3c782e2bf915fda88e090b4d117dd";
     };
 
-    flakes = {
-      url = github:jeslie0/flakes;
-      inputs.emacs-overlay = {
-        url = github:jeslie0/emacs-overlay;
-        inputs.nixpkgs = {
+
+    emacs-overlay = {
+      url = github:jeslie0/emacs-overlay;
+      inputs = {
+        nixpkgs = {
           type = "github";
           owner = "nixos";
           repo = "nixpkgs";
-          rev = "093268502280540a7f5bf1e2a6330a598ba3b7d0"; };
+          rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
 
-        inputs.emacs-overlay = {
+        emacs-overlay = {
           type = "github";
           owner = "nix-community";
           repo = "emacs-overlay";
-          rev = "e58b5f1dac80f717f41121a0e4008b3050d79b9d"; };
+          rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
       };
+    };
+
+    flakes = {
+      url = github:jeslie0/flakes;
+      # inputs.emacs-overlay = {
+      #   inputs = {
+      #     nixpkgs = {
+      #       type = "github";
+      #       owner = "nixos";
+      #       repo = "nixpkgs";
+      #       rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
+
+      #     emacs-overlay = {
+      #       type = "github";
+      #       owner = "nix-community";
+      #       repo = "emacs-overlay";
+      #       rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
+      #   };
+      # };
     };
   };
 
@@ -3685,7 +3704,7 @@ self: system:
 *** Emacs Packages
 #+begin_src nix
 let
-  myEmacs = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  myEmacs = ((pkgs.emacsPackagesFor pkgs.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
   # Use features from emacs-overlay. I don't need this just yet, as it includes your config file.
   # myEmacs = pkgs.emacsWithPackagesFromUsePackage {
   #   config = "";
@@ -3705,7 +3724,7 @@ in
 *** Overlays
 #+begin_src nix
 nixpkgs.overlays =
-  [ self.inputs.flakes.emacs-overlay.overlays.default
+  [ self.inputs.emacs-overlay.overlays.default
     (final: prev: {
       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
       spotifyd = self.inputs.myFlakes.spotifyd.packages.${system}.default;
@@ -3863,20 +3882,21 @@ services.emacs = {
 #+end_src
 *** Fonts
 #+begin_src nix
-fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux); [ cantarell-fonts
-                           emacs-all-the-icons-fonts
-                           dejavu_fonts
-                           fira-code
-                           font-awesome
-                           liberation_ttf
-                           noto-fonts
-                           noto-fonts-emoji
-                           source-code-pro
-                           terminus_font
-                           ubuntu_font_family
-                           nerdfonts
-                           (self.inputs.flakes.fonts.defaultPackage.${system})
-                         ];
+fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux);
+  [ cantarell-fonts
+    emacs-all-the-icons-fonts
+    dejavu_fonts
+    fira-code
+    font-awesome
+    liberation_ttf
+    noto-fonts
+    noto-fonts-emoji
+    source-code-pro
+    terminus_font
+    ubuntu_font_family
+    nerdfonts
+    (self.inputs.flakes.fonts.defaultPackage.${system})
+  ];
 #+end_src
 *** Wayland Screensharing
 #+begin_src nix

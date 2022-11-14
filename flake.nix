@@ -25,22 +25,41 @@
       rev = "022837331ad3c782e2bf915fda88e090b4d117dd";
     };
 
-    flakes = {
-      url = github:jeslie0/flakes;
-      inputs.emacs-overlay = {
-        url = github:jeslie0/emacs-overlay;
-        inputs.nixpkgs = {
+
+    emacs-overlay = {
+      url = github:jeslie0/emacs-overlay;
+      inputs = {
+        nixpkgs = {
           type = "github";
           owner = "nixos";
           repo = "nixpkgs";
-          rev = "093268502280540a7f5bf1e2a6330a598ba3b7d0"; };
+          rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
 
-        inputs.emacs-overlay = {
+        emacs-overlay = {
           type = "github";
           owner = "nix-community";
           repo = "emacs-overlay";
-          rev = "e58b5f1dac80f717f41121a0e4008b3050d79b9d"; };
+          rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
       };
+    };
+
+    flakes = {
+      url = github:jeslie0/flakes;
+      # inputs.emacs-overlay = {
+      #   inputs = {
+      #     nixpkgs = {
+      #       type = "github";
+      #       owner = "nixos";
+      #       repo = "nixpkgs";
+      #       rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
+
+      #     emacs-overlay = {
+      #       type = "github";
+      #       owner = "nix-community";
+      #       repo = "emacs-overlay";
+      #       rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
+      #   };
+      # };
     };
   };
 

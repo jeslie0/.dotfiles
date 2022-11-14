@@ -2,7 +2,7 @@ self: system:
 { config, pkgs, ... }:
 
 let
-  myEmacs = ((pkgs.emacsPackagesFor self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+  myEmacs = ((pkgs.emacsPackagesFor pkgs.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
   # Use features from emacs-overlay. I don't need this just yet, as it includes your config file.
   # myEmacs = pkgs.emacsWithPackagesFromUsePackage {
   #   config = "";
@@ -18,7 +18,7 @@ in
    ];
 
 nixpkgs.overlays =
-  [ self.inputs.flakes.emacs-overlay.overlays.default
+  [ self.inputs.emacs-overlay.overlays.default
     (final: prev: {
       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
       spotifyd = self.inputs.myFlakes.spotifyd.packages.${system}.default;
@@ -131,20 +131,21 @@ services.emacs = {
   package = myEmacs;
 };
 
-fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux); [ cantarell-fonts
-                           emacs-all-the-icons-fonts
-                           dejavu_fonts
-                           fira-code
-                           font-awesome
-                           liberation_ttf
-                           noto-fonts
-                           noto-fonts-emoji
-                           source-code-pro
-                           terminus_font
-                           ubuntu_font_family
-                           nerdfonts
-                           (self.inputs.flakes.fonts.defaultPackage.${system})
-                         ];
+fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux);
+  [ cantarell-fonts
+    emacs-all-the-icons-fonts
+    dejavu_fonts
+    fira-code
+    font-awesome
+    liberation_ttf
+    noto-fonts
+    noto-fonts-emoji
+    source-code-pro
+    terminus_font
+    ubuntu_font_family
+    nerdfonts
+    (self.inputs.flakes.fonts.defaultPackage.${system})
+  ];
 
 # Firefox screensharing
 xdg.portal = {

@@ -81,6 +81,7 @@
                      ;; jl-org-protocol
                      ;; jl-ox-altacv
                      jl-ox-extra
+                     ;; jl-org-caldav
                      ;; jl-org-projectile
 
                      jl-auctex

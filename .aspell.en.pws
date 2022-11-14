@@ -1,4 +1,4 @@
-personal_ws-1.1 en 102 
+personal_ws-1.1 en 103 
 Abelian
 Agda
 Coq
@@ -43,6 +43,7 @@ cofibrations
 cohomology
 colimit
 colimits
+composable
 conjugacy
 contravariant
 coproduct

@@ -1,18 +1,16 @@
-;; (setq consult--find-regexp-type 'basic
-;;       consult--grep-regexp-type 'pcre
-;;       consult--ripgrep-regexp-type 'extended)
+(setq consult--find-regexp-type 'basic
+      consult--grep-regexp-type 'pcre
+      consult--ripgrep-regexp-type 'extended)
 
-
-  ;; :hook (server-after-make-frame . (lambda () (load-theme
-  ;;       				       'doom-palenight t)))
-  ;; :init
 (load-theme 'doom-palenight t)
+;; (load-theme 'vscode-dark-plus t)
 
 (advice-add
  'eglot--apply-text-edits :override
  (lambda (edits &optional version)
    (atomic-change-group
      (let* ((change-group (prepare-change-group))
+
             (howmany (length edits))
             (reporter (make-progress-reporter
                        (format "[eglot] applying %s edits to `%s'..."
