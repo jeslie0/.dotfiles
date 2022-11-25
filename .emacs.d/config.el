@@ -51,3 +51,44 @@
                      (reverse edits)))
        (undo-amalgamate-change-group change-group)
        (progress-reporter-done reporter)))))
+
+(defun org-roam-file-id (file)
+  "Returns the id for the given org-roam FILE."
+  (let* ((lines (with-temp-buffer
+                 (insert-file-contents file)
+                 (split-string (buffer-string) "\n" t)))
+         (id (car (cdr lines))))
+    (substring id 11)))
+
+(defun previous-day (day month year)
+  "Calculates the date of the day before the given one."
+  (let ((days-in-month `((1 . 31)
+                         (2 . ,(if (date-leap-year-p year)
+                                   29
+                                 28))
+                         (3 . 31)
+                         (4 . 30)
+                         (5 . 31)
+                         (6 . 30)
+                         (7 . 31)
+                         (8 . 31)
+                         (9 . 30)
+                         (10 . 31)
+                         (11 . 30)
+                         (12 . 31))))
+    (if (eq 1 day)
+        (if (eq 1 month)
+            `(31 12 ,(- year 1))
+          `(,(alist-get (- month 1) days-in-month) ,(- month 1) ,year))
+      `(,(- day 1) ,month ,year ))))
+
+
+(defun remote-table-func (day month year)
+  (if (equal (org-day-of-week day month year) 1)
+      "@7$3"
+    (let* ((new-date (previous-day day month year))
+          (new-day (car new-date))
+          (new-month (car (cdr new-date)))
+          (new-year (car (cdr (cdr new-date))))
+          (prev-org-file (format "%s%s%s-%s-%s.org" org-roam-directory org-roam-dailies-directory new-year new-month new-day ".org")))
+      (format "remote(%s, @8$3) + @7$3" (org-roam-file-id  prev-org-file)))))

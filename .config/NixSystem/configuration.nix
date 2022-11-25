@@ -174,11 +174,17 @@ environment = {
 };
 
 nix.settings = {
-  substituters = [ "https://nix-community.cachix.org"
-                   "https://jeslie0.cachix.org" ];
+  substituters = [
+    "https://cache.nixos.org/"
+    "https://nix-community.cachix.org"
+    "https://jeslie0.cachix.org"
+  ];
 
-  trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-                          "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8=" ];
+  trusted-public-keys = [
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8="
+  ];
 };
 
 nix = {
@@ -209,13 +215,6 @@ programs.steam = {
   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
 };
 
-virtualisation.virtualbox.host = {
-  enable = true;
-  enableExtensionPack = true;
-};
-
-users.extraGroups.vboxusers.members = ["james"];
-
 environment.systemPackages = with pkgs;
   [ # Editors
     vim
@@ -224,13 +223,13 @@ environment.systemPackages = with pkgs;
     firefox
     chromium
     nyxt
-    qutebrowser
+    # qutebrowser
 
     # Communication
     signal-desktop
-    discord
-    zulip
-    zoom-us
+    # discord
+    # zulip
+    # zoom-us
 
     # Media
     mpv
@@ -290,7 +289,7 @@ environment.systemPackages = with pkgs;
     fd
 
     mu
-    coq
+    # coq
     direnv
     unzip
     gnome.adwaita-icon-theme
@@ -308,7 +307,7 @@ environment.systemPackages = with pkgs;
     pcmanfm
     gnuplot
     nmap
-    nnn
+    # nnn
 
     # Games
     # obs-studio

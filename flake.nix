@@ -2,7 +2,12 @@
   description = "James' NixOS system configuration Flake";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
+    nixpkgs = {
+      type = "github";
+      owner = "nixos";
+      repo = "nixpkgs";
+      rev = "2788904d26dda6cfa1921c5abb7a2466ffe3cb8c";
+    };
 
     # For things like fonts, which we don't want to constantly update.
     pinnedNixpkgs = {
@@ -25,42 +30,13 @@
       rev = "022837331ad3c782e2bf915fda88e090b4d117dd";
     };
 
-
     emacs-overlay = {
-      url = github:jeslie0/emacs-overlay;
-      inputs = {
-        nixpkgs = {
-          type = "github";
-          owner = "nixos";
-          repo = "nixpkgs";
-          rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
+      type = "github";
+      owner = "nix-community";
+      repo = "emacs-overlay";
+      rev = "fa293d98210547e943c1e64df8d0e0aa24174eab"; };
 
-        emacs-overlay = {
-          type = "github";
-          owner = "nix-community";
-          repo = "emacs-overlay";
-          rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
-      };
-    };
-
-    flakes = {
-      url = github:jeslie0/flakes;
-      # inputs.emacs-overlay = {
-      #   inputs = {
-      #     nixpkgs = {
-      #       type = "github";
-      #       owner = "nixos";
-      #       repo = "nixpkgs";
-      #       rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
-
-      #     emacs-overlay = {
-      #       type = "github";
-      #       owner = "nix-community";
-      #       repo = "emacs-overlay";
-      #       rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
-      #   };
-      # };
-    };
+    flakes.url = github:jeslie0/flakes;
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:

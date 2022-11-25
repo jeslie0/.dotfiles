@@ -3603,7 +3603,12 @@ set adjust-open			"width"
   description = "James' NixOS system configuration Flake";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs/nixos-unstable;
+    nixpkgs = {
+      type = "github";
+      owner = "nixos";
+      repo = "nixpkgs";
+      rev = "2788904d26dda6cfa1921c5abb7a2466ffe3cb8c";
+    };
 
     # For things like fonts, which we don't want to constantly update.
     pinnedNixpkgs = {
@@ -3626,42 +3631,13 @@ set adjust-open			"width"
       rev = "022837331ad3c782e2bf915fda88e090b4d117dd";
     };
 
-
     emacs-overlay = {
-      url = github:jeslie0/emacs-overlay;
-      inputs = {
-        nixpkgs = {
-          type = "github";
-          owner = "nixos";
-          repo = "nixpkgs";
-          rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
+      type = "github";
+      owner = "nix-community";
+      repo = "emacs-overlay";
+      rev = "fa293d98210547e943c1e64df8d0e0aa24174eab"; };
 
-        emacs-overlay = {
-          type = "github";
-          owner = "nix-community";
-          repo = "emacs-overlay";
-          rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
-      };
-    };
-
-    flakes = {
-      url = github:jeslie0/flakes;
-      # inputs.emacs-overlay = {
-      #   inputs = {
-      #     nixpkgs = {
-      #       type = "github";
-      #       owner = "nixos";
-      #       repo = "nixpkgs";
-      #       rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec"; };
-
-      #     emacs-overlay = {
-      #       type = "github";
-      #       owner = "nix-community";
-      #       repo = "emacs-overlay";
-      #       rev = "5960fb7e82389435b6dffb909342c271589b36a9"; };
-      #   };
-      # };
-    };
+    flakes.url = github:jeslie0/flakes;
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
@@ -3931,13 +3907,19 @@ environment = {
 *** Binary Caches
 #+begin_src nix
 
-  nix.settings = {
-    substituters = [ "https://nix-community.cachix.org"
-                     "https://jeslie0.cachix.org" ];
+ nix.settings = {
+   substituters = [
+     "https://cache.nixos.org/"
+     "https://nix-community.cachix.org"
+     "https://jeslie0.cachix.org"
+   ];
 
-    trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-                            "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8=" ];
-  };
+   trusted-public-keys = [
+     "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+     "jeslie0.cachix.org-1:orKPykG+p5gEbLe/ETPIQdAbK5WtUl2C6CZ+aVn0dy8="
+   ];
+ };
 #+end_src
 *** Flake support
 #+begin_src nix
@@ -3974,7 +3956,7 @@ programs.steam = {
 };
 #+end_src
 *** Virtualbox
-#+begin_src nix
+#+begin_src nix :tangle no
 virtualisation.virtualbox.host = {
   enable = true;
   enableExtensionPack = true;
@@ -3993,13 +3975,13 @@ environment.systemPackages = with pkgs;
     firefox
     chromium
     nyxt
-    qutebrowser
+    # qutebrowser
 
     # Communication
     signal-desktop
-    discord
-    zulip
-    zoom-us
+    # discord
+    # zulip
+    # zoom-us
 
     # Media
     mpv
@@ -4059,7 +4041,7 @@ environment.systemPackages = with pkgs;
     fd
 
     mu
-    coq
+    # coq
     direnv
     unzip
     gnome.adwaita-icon-theme
@@ -4077,7 +4059,7 @@ environment.systemPackages = with pkgs;
     pcmanfm
     gnuplot
     nmap
-    nnn
+    # nnn
 
     # Games
     # obs-studio
@@ -4094,7 +4076,7 @@ environment.systemPackages = with pkgs;
 
 
 programs.light.enable = true;
-    #+end_src
+#+end_src
 *** Systemd
 **** Keychron
 This will hopefully allow me to use my function keys on my K6 keyboard.
