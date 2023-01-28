@@ -69,7 +69,7 @@
                      jl-nix
                      ;; jl-java
                      jl-js
-                     jl-rjsx
+                     ;; jl-rjsx
                      jl-skewer
 
                      jl-js-doc
@@ -123,7 +123,7 @@
                      ;;; Auto completions
                      jl-yasnippet
                      jl-corfu
-                     jl-corfu-doc
+                     ;; jl-corfu-doc
                      jl-cape
                      ;; jl-company
 

@@ -2,13 +2,11 @@ self: system:
 { config, pkgs, ... }:
 
 let
-  myEmacs = ((pkgs.emacsPackagesFor pkgs.emacsPgtkNativeComp).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
-  # Use features from emacs-overlay. I don't need this just yet, as it includes your config file.
-  # myEmacs = pkgs.emacsWithPackagesFromUsePackage {
-  #   config = "";
-  #   package = self.inputs.flakes.emacs-overlay.packages.${system}.emacsPgtkNativeComp;
-  #   extraEmacsPackages = epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql ];
-  # };
+
+myEmacs = ((pkgs.emacsPackagesFor pkgs.emacsPgtk).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+
+treeSitterPkgs = pkgs.tree-sitter.withPlugins (p: [ p.tree-sitter-cpp ]);
+
 in
 
 {
@@ -215,6 +213,11 @@ programs.steam = {
   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
 };
 
+virtualisation.docker.rootless ={
+  enable = true;
+  setSocketVariable = true;
+};
+
 environment.systemPackages = with pkgs;
   [ # Editors
     vim
@@ -253,6 +256,7 @@ environment.systemPackages = with pkgs;
     shfmt
     git
     git-crypt
+    subversion
     cryptsetup
     wget
     autoconf
@@ -287,6 +291,9 @@ environment.systemPackages = with pkgs;
     gping
     zoxide
     fd
+
+    treeSitterPkgs
+    self.inputs.compdb.packages.${system}.default
 
     mu
     # coq

@@ -6,7 +6,7 @@
       type = "github";
       owner = "nixos";
       repo = "nixpkgs";
-      rev = "2788904d26dda6cfa1921c5abb7a2466ffe3cb8c";
+      rev = "6e51c97f1c849efdfd4f3b78a4870e6aa2da4198";
     };
 
     # For things like fonts, which we don't want to constantly update.
@@ -34,9 +34,12 @@
       type = "github";
       owner = "nix-community";
       repo = "emacs-overlay";
-      rev = "fa293d98210547e943c1e64df8d0e0aa24174eab"; };
+      rev = "49e3c66d211d5110909375fe48d85c3c43753d61";
+    };
 
     flakes.url = github:jeslie0/flakes;
+
+    compdb.url = github:jeslie0/compdb;
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
