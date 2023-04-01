@@ -1,8 +1,10 @@
-personal_ws-1.1 en 103 
+personal_ws-1.1 en 107 
 Abelian
 Agda
+Combinatorics
 Coq
 Dinaturality
+ESlint
 Egbert
 Feeld
 Grothendieck
@@ -26,6 +28,7 @@ acyclic
 adjoint
 adjunction
 automorphism
+automorphisms
 bicategories
 bicategory
 bicomplete
@@ -79,6 +82,7 @@ isofibration
 isofibrations
 isomorphism
 isomorphisms
+linter
 monads
 monoid
 monoids

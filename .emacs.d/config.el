@@ -52,6 +52,47 @@
        (undo-amalgamate-change-group change-group)
        (progress-reporter-done reporter)))))
 
+
+;; (advice-add
+;;  'flymake-languagetool--start-server :override
+;;  (lambda (report-fn)
+;;   "Start the LanguageTool server if we didn’t already."
+;;   (let* ((source (current-buffer))
+;;          (cmd (or flymake-languagetool-server-command
+;;                   (list "java" "-cp" flymake-languagetool-server-jar
+;;                         "org.languagetool.server.HTTPServer"
+;;                         "--port" flymake-languagetool-server-port))))
+;;     (make-process
+;;      :name "languagetool-server" :noquery t :connection-type 'pipe
+;;      :buffer " *LanguageTool server*"
+;;      :command flymake-languagetool-server-command
+;;      :filter
+;;      (lambda (proc string)
+;;        (funcall #'internal-default-process-filter proc string)
+;;        (when (string-match ".*Server started\n$" string)
+;;          (with-current-buffer source
+;;            (setq flymake-languagetool--local t)
+;;            (flymake-languagetool--checker report-fn))
+;;          (set-process-filter proc nil)))
+;;      :sentinel
+;;      (lambda (proc _event)
+;;        (when (memq (process-status proc) '(exit signal))
+;;          (setq flymake-languagetool--local nil)
+;;          (kill-buffer (process-buffer proc))))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (defun org-roam-file-id (file)
   "Returns the id for the given org-roam FILE."
   (let* ((lines (with-temp-buffer
@@ -92,3 +133,6 @@
           (new-year (car (cdr (cdr new-date))))
           (prev-org-file (format "%s%s%s-%s-%s.org" org-roam-directory org-roam-dailies-directory new-year new-month new-day ".org")))
       (format "remote(%s, @8$3) + @7$3" (org-roam-file-id  prev-org-file)))))
+
+
+(setq treesit-font-lock-level 4)

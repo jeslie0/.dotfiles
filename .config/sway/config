@@ -27,9 +27,13 @@ exec "swaybgchanger ~/Images/Wallpapers/ 900"
 #
 # output HDMI-A-1 resolution 1920x1080 position 1920,0
 # output eDP-1 res 1920x1080@60.000Hz pos 0,0
-output eDP-1 pos 0 0 res 3840x2160
+
+# External monitor on the right
+# output eDP-1 pos 0 0 res 3840x2160
+output eDP-1 res 3840x2160
 output DP-1 scale 2
-output DP-1 res 3849x2160@60Hz
+# External monitor on the left
+output DP-1 pos 0 0 res 3849x2160@60Hz
 # output DP-3 pos 1920 0 res 1280x1024@75.025Hz
 # output eDP-1 scale 2
 # You can get the names of your outputs by running: swaymsg -t get_outputs

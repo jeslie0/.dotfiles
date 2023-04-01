@@ -6,6 +6,7 @@
                      ;;; Completion frameworks
                      ;; jl-ivy
                      jl-vertico
+                     ;; jl-embark
                      ;;; Project Management
                      ;; jl-projectile
                      jl-project
@@ -67,6 +68,7 @@
                      jl-shells
                      ;; jl-insert-shebang
                      jl-nix
+                     jl-purescript
                      ;; jl-java
                      jl-js
                      ;; jl-rjsx
@@ -77,7 +79,7 @@
 
                      ;;;; Text
                      jl-org
-                     ;; jl-ob-async
+                     jl-ob-async
                      ;; jl-org-protocol
                      ;; jl-ox-altacv
                      jl-ox-extra
@@ -119,6 +121,7 @@
                      ;; jl-spell-fu
                      ;; jl-flycheck
                      jl-flymake
+                     jl-flymake-languagetool
 
                      ;;; Auto completions
                      jl-yasnippet

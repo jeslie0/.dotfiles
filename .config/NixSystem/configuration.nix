@@ -3,7 +3,8 @@ self: system:
 
 let
 
-myEmacs = ((pkgs.emacsPackagesFor pkgs.emacsPgtk).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+myEmacs = ((pkgs.emacsPackagesFor self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools # epkgs.emacsql-sqlite epkgs.emacsql
+                                                                                                                    ]));
 
 treeSitterPkgs = pkgs.tree-sitter.withPlugins (p: [ p.tree-sitter-cpp ]);
 
@@ -220,19 +221,20 @@ virtualisation.docker.rootless ={
 
 environment.systemPackages = with pkgs;
   [ # Editors
+    myEmacs
     vim
 
     # Browsers
     firefox
     chromium
     nyxt
-    # qutebrowser
+    qutebrowser
 
     # Communication
     signal-desktop
-    # discord
-    # zulip
-    # zoom-us
+    discord
+    zulip
+    zoom-us
 
     # Media
     mpv
@@ -250,7 +252,6 @@ environment.systemPackages = with pkgs;
     cabal2nix
     home-manager
     nixfmt
-    rnix-lsp
 
     # Tools
     shfmt
@@ -261,8 +262,8 @@ environment.systemPackages = with pkgs;
     wget
     autoconf
     pulseaudioFull
-    gcc
     isync
+    mu
     aspell
     aspellDicts.en
     powertop
@@ -276,11 +277,8 @@ environment.systemPackages = with pkgs;
     neofetch
     netcat
     openvpn
-    python3
     nfs-utils
-
-
-
+    haskellPackages.eventlog2html
     ripgrep
     bat
     exa
@@ -291,22 +289,33 @@ environment.systemPackages = with pkgs;
     gping
     zoxide
     fd
-
-    treeSitterPkgs
+    htop
     self.inputs.compdb.packages.${system}.default
-
-    mu
-    # coq
     direnv
     unzip
     gnome.adwaita-icon-theme
-    self.inputs.agdaGitHub.packages.${system}.Agda
 
     mkvtoolnix
     sbcl
     pandoc
 
-    myEmacs
+
+
+    # Programming languages
+    agda
+    gcc
+    python3
+    ghc
+    cabal-install
+    coq
+
+    # Language servers
+    haskell-language-server
+    clang-tools
+    ltex-ls
+    lua53Packages.digestif
+    cmake-language-server
+    rnix-lsp
 
     # From home-manager
     pinentry-emacs
@@ -323,14 +332,22 @@ environment.systemPackages = with pkgs;
     # protontricks
     # lutris
 
-    ghc
-    cabal-install
-    haskell-language-server
-    clang-tools
   ];
 
 
 programs.light.enable = true;
+
+systemd.services.keychron = {
+  enable = true;
+  description = "The command to make the Keychron K6 function keys work";
+  unitConfig = {
+    Type = "oneshot";
+  };
+  serviceConfig = {
+    ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/module/hid_apple/parameters/fnmode'";
+  };
+  wantedBy = [ "multi-user.target" ];
+};
 
 services.dbus.enable = true;
 

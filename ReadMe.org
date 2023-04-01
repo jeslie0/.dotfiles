@@ -2349,9 +2349,13 @@ exec "swaybgchanger ~/Images/Wallpapers/ 900"
 #
 # output HDMI-A-1 resolution 1920x1080 position 1920,0
 # output eDP-1 res 1920x1080@60.000Hz pos 0,0
-output eDP-1 pos 0 0 res 3840x2160
+
+# External monitor on the right
+# output eDP-1 pos 0 0 res 3840x2160
+output eDP-1 res 3840x2160
 output DP-1 scale 2
-output DP-1 res 3849x2160@60Hz
+# External monitor on the left
+output DP-1 pos 0 0 res 3849x2160@60Hz
 # output DP-3 pos 1920 0 res 1280x1024@75.025Hz
 # output eDP-1 scale 2
 # You can get the names of your outputs by running: swaymsg -t get_outputs
@@ -3603,19 +3607,20 @@ set adjust-open			"width"
   description = "James' NixOS system configuration Flake";
 
   inputs = {
-    nixpkgs = {
-      type = "github";
-      owner = "nixos";
-      repo = "nixpkgs";
-      rev = "6e51c97f1c849efdfd4f3b78a4870e6aa2da4198";
-    };
+    nixpkgs.url = github:nixos/nixpkgs/nixpkgs-unstable;
+    # nixpkgs = {
+    #   type = "github";
+    #   owner = "nixos";
+    #   repo = "nixpkgs";
+    #    rev = "6e51c97f1c849efdfd4f3b78a4870e6aa2da4198";
+    # };
 
     # For things like fonts, which we don't want to constantly update.
     pinnedNixpkgs = {
       type = "github";
       owner = "nixos";
       repo = "nixpkgs";
-      rev = "872fceeed60ae6b7766cc0a4cd5bf5901b9098ec";
+      rev = "28319deb5ab05458d9cd5c7d99e1a24ec2e8fc4b";
     };
 
     home-manager = {
@@ -3623,19 +3628,24 @@ set adjust-open			"width"
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Version 2.6.3 on my Cachix
-    agdaGitHub = {
-      type = "github";
-      owner = "agda";
-      repo = "agda";
-      rev = "022837331ad3c782e2bf915fda88e090b4d117dd";
-    };
-
     emacs-overlay = {
       type = "github";
       owner = "nix-community";
       repo = "emacs-overlay";
       rev = "49e3c66d211d5110909375fe48d85c3c43753d61";
+    };
+
+    emacs-pgtk = {
+      type = "github";
+      owner = "nix-community";
+      repo = "emacs-overlay";
+      rev = "c595b26be85c85c352ac3f058f2726686ca3a1ee";
+      inputs.nixpkgs = {
+        type = "github";
+        owner = "nixos";
+        repo = "nixpkgs";
+        rev = "9b97ad7b4330aacda9b2343396eb3df8a853b4fc";
+      };
     };
 
     flakes.url = github:jeslie0/flakes;
@@ -3686,7 +3696,8 @@ let
 #+end_src
 *** Emacs Packages
 #+begin_src nix
-  myEmacs = ((pkgs.emacsPackagesFor pkgs.emacsPgtk).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools epkgs.emacsql-sqlite epkgs.emacsql]));
+myEmacs = ((pkgs.emacsPackagesFor self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools # epkgs.emacsql-sqlite epkgs.emacsql
+                                                                                                                    ]));
 #+end_src
 *** Treesitter
 #+begin_src nix
@@ -3982,19 +3993,20 @@ The list of packages installed globally. To search for a package in the nixpkgs 
 #+begin_src nix
 environment.systemPackages = with pkgs;
   [ # Editors
+    myEmacs
     vim
 
     # Browsers
     firefox
     chromium
     nyxt
-    # qutebrowser
+    qutebrowser
 
     # Communication
     signal-desktop
-    # discord
-    # zulip
-    # zoom-us
+    discord
+    zulip
+    zoom-us
 
     # Media
     mpv
@@ -4012,7 +4024,6 @@ environment.systemPackages = with pkgs;
     cabal2nix
     home-manager
     nixfmt
-    rnix-lsp
 
     # Tools
     shfmt
@@ -4023,8 +4034,8 @@ environment.systemPackages = with pkgs;
     wget
     autoconf
     pulseaudioFull
-    gcc
     isync
+    mu
     aspell
     aspellDicts.en
     powertop
@@ -4038,11 +4049,8 @@ environment.systemPackages = with pkgs;
     neofetch
     netcat
     openvpn
-    python3
     nfs-utils
-
-
-
+    haskellPackages.eventlog2html
     ripgrep
     bat
     exa
@@ -4053,22 +4061,33 @@ environment.systemPackages = with pkgs;
     gping
     zoxide
     fd
-
-    treeSitterPkgs
+    htop
     self.inputs.compdb.packages.${system}.default
-
-    mu
-    # coq
     direnv
     unzip
     gnome.adwaita-icon-theme
-    self.inputs.agdaGitHub.packages.${system}.Agda
 
     mkvtoolnix
     sbcl
     pandoc
 
-    myEmacs
+
+
+    # Programming languages
+    agda
+    gcc
+    python3
+    ghc
+    cabal-install
+    coq
+
+    # Language servers
+    haskell-language-server
+    clang-tools
+    ltex-ls
+    lua53Packages.digestif
+    cmake-language-server
+    rnix-lsp
 
     # From home-manager
     pinentry-emacs
@@ -4085,10 +4104,6 @@ environment.systemPackages = with pkgs;
     # protontricks
     # lutris
 
-    ghc
-    cabal-install
-    haskell-language-server
-    clang-tools
   ];
 
 
@@ -4097,7 +4112,7 @@ programs.light.enable = true;
 *** Systemd
 **** Keychron
 This will hopefully allow me to use my function keys on my K6 keyboard.
-#+begin_src nix :tangle no
+#+begin_src nix
 systemd.services.keychron = {
   enable = true;
   description = "The command to make the Keychron K6 function keys work";
