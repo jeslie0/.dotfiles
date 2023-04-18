@@ -232,9 +232,7 @@ environment.systemPackages = with pkgs;
 
     # Communication
     signal-desktop
-    discord
     zulip
-    zoom-us
 
     # Media
     mpv

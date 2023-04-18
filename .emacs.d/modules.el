@@ -99,8 +99,8 @@
 
                      ;;; Readers
                      jl-elfeed
-                     ;; jl-elfeed-tube
-                     ;; jl-elfeed-goodies
+                     jl-elfeed-tube
+                     jl-elfeed-goodies
                      jl-elpher
                      jl-erc
                      ;; jl-erc-image

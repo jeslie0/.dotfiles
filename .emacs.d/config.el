@@ -136,3 +136,26 @@
 
 
 (setq treesit-font-lock-level 4)
+
+;; (elfeed-tube-add-feeds '(
+;;                          ;; Ordinary Things
+;;                          "OrdinaryThings"
+;;                          ;; Veritasium
+;;                          "veritasium"
+;;                          ;; Quanta Magazine
+;;                          "QuantaScienceChannel"
+;;                          ;; Tom Scott
+;;                          "TomScottGo"
+;;                          ;; Carefree Wandering
+;;                          "carefreewandering"
+;;                          ;; Kurzgesagt
+;;                          "kurzgesagt"
+;;                          ;; James Hoffmann
+;;                          "jameshoffmann"
+;;                          ;; Magnus Midtbo
+;;                          "magmidt"
+;;                          ;; Tweag
+;;                          "tweag"
+;;                          ;; System Crafters
+;;                          "SystemCrafters"
+;;                          ))
