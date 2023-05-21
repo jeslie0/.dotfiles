@@ -3660,7 +3660,7 @@ set adjust-open			"width"
     in {
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
-          inherit system;
+          inherit pkgs system;
           modules = [ (import ./.config/NixSystem/configuration.nix self system) ];
         };
       };
@@ -3689,8 +3689,18 @@ let
 #+end_src
 *** Emacs Packages
 #+begin_src nix
-myEmacs = ((pkgs.emacsPackagesFor self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools # epkgs.emacsql-sqlite epkgs.emacsql
-                                                                                                                    ]));
+# emacsPgtk = self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk.overrideAttrs (prev: {
+#   postFixup = builtins.replaceStrings [ "/bin/emacs" ] [ "/bin/.emacs-*-wrapped" ] prev.postFixup;
+# });
+emacsPgtk = self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk.overrideAttrs (prev: {
+  passthru = prev.passthru // {
+    treeSitter = true;
+  };
+});
+myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkgs;
+  [ vterm
+    treesit-grammars.with-all-grammars
+  ]));
 #+end_src
 *** Treesitter
 #+begin_src nix
@@ -3723,7 +3733,6 @@ nixpkgs.overlays =
 # Use the systemd-boot EFI boot loader.
 # boot.loader.systemd-boot.enable = true; # Use this to use the UEFI bootloader, not GRUB.
 boot.loader.grub.enable = true;
-boot.loader.grub.version = 2;
 boot.loader.grub.device = "nodev";
 boot.loader.grub.efiSupport = true;
 # boot.loader.grub.useOSProber = true; # Allows other operating systems to be found, but takes a long time to reload.
@@ -3862,11 +3871,11 @@ programs.fish = {
 *** EmacsPgtkNativeComp
 We use the pure GTK, native-compiled version of Emacs. To change the version used, this section and the corresponding flake input needs to be changed. As we want vterm enabled and we use emacsclient primarily, we add it to the service packages.
 #+begin_src nix
-services.emacs = {
-  enable = true;
-  defaultEditor = true;
-  package = myEmacs;
-};
+# services.emacs = {
+#   enable = true;
+#   defaultEditor = true;
+#   package = myEmacs;
+# };
 #+end_src
 *** Fonts
 #+begin_src nix
@@ -3938,7 +3947,7 @@ nix = {
   package = pkgs.nixUnstable;
   extraOptions = "experimental-features = nix-command flakes";
   registry ={
-    nixpkgs.flake = nixpkgs;
+    nixpkgs.flake = self.inputs.nixpkgs;
     james = {
       from = { id = "james"; type = "indirect"; };
       to = { owner = "jeslie0";
@@ -4082,6 +4091,8 @@ environment.systemPackages = with pkgs;
     nil
     nodePackages.typescript
     nodePackages.typescript-language-server
+
+    # Treesitter languages
 
     # From home-manager
     pinentry-emacs

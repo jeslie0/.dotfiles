@@ -3,8 +3,18 @@ self: system:
 
 let
 
-myEmacs = ((pkgs.emacsPackagesFor self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk).emacsWithPackages (epkgs: [ epkgs.vterm epkgs.pdf-tools # epkgs.emacsql-sqlite epkgs.emacsql
-                                                                                                                    ]));
+# emacsPgtk = self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk.overrideAttrs (prev: {
+#   postFixup = builtins.replaceStrings [ "/bin/emacs" ] [ "/bin/.emacs-*-wrapped" ] prev.postFixup;
+# });
+emacsPgtk = self.inputs.emacs-pgtk.packages.x86_64-linux.emacsPgtk.overrideAttrs (prev: {
+  passthru = prev.passthru // {
+    treeSitter = true;
+  };
+});
+myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkgs;
+  [ vterm
+    treesit-grammars.with-all-grammars
+  ]));
 
 treeSitterPkgs = pkgs.tree-sitter.withPlugins (p: [ p.tree-sitter-cpp ]);
 
@@ -27,7 +37,6 @@ nixpkgs.overlays =
 # Use the systemd-boot EFI boot loader.
 # boot.loader.systemd-boot.enable = true; # Use this to use the UEFI bootloader, not GRUB.
 boot.loader.grub.enable = true;
-boot.loader.grub.version = 2;
 boot.loader.grub.device = "nodev";
 boot.loader.grub.efiSupport = true;
 # boot.loader.grub.useOSProber = true; # Allows other operating systems to be found, but takes a long time to reload.
@@ -125,11 +134,11 @@ programs.fish = {
               '';
   };
 
-services.emacs = {
-  enable = true;
-  defaultEditor = true;
-  package = myEmacs;
-};
+# services.emacs = {
+#   enable = true;
+#   defaultEditor = true;
+#   package = myEmacs;
+# };
 
 fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux);
   [ cantarell-fonts
@@ -191,7 +200,7 @@ nix = {
   package = pkgs.nixUnstable;
   extraOptions = "experimental-features = nix-command flakes";
   registry ={
-    nixpkgs.flake = nixpkgs;
+    nixpkgs.flake = self.inputs.nixpkgs;
     james = {
       from = { id = "james"; type = "indirect"; };
       to = { owner = "jeslie0";
@@ -317,6 +326,8 @@ environment.systemPackages = with pkgs;
     nil
     nodePackages.typescript
     nodePackages.typescript-language-server
+
+    # Treesitter languages
 
     # From home-manager
     pinentry-emacs
