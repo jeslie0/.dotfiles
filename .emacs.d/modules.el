@@ -2,6 +2,8 @@
                      jl-misc
                      jl-cleaning
                      jl-keybindings
+                     ;;; UI
+                     jl-ligature
                      jl-UIconfiguration
                      ;;; Completion frameworks
                      ;; jl-ivy
