@@ -110,7 +110,7 @@ programs.sway = {
     slurp
     grim
     self.inputs.flakes.passbemenu.defaultPackage.${system}
-    self.inputs.flakes.swaybgchanger.defaultPackage.${system}
+    # self.inputs.flakes.swaybgchanger.defaultPackage.${system}
     self.inputs.flakes.bemenuFocus.defaultPackage.${system}
     self.inputs.flakes.swaylock-effects.defaultPackage.${system}
   ];
@@ -191,7 +191,7 @@ nix = {
   package = pkgs.nixUnstable;
   extraOptions = "experimental-features = nix-command flakes";
   registry ={
-    self.flake = self;
+    nixpkgs.flake = nixpkgs;
     james = {
       from = { id = "james"; type = "indirect"; };
       to = { owner = "jeslie0";
@@ -314,7 +314,9 @@ environment.systemPackages = with pkgs;
     ltex-ls
     lua53Packages.digestif
     cmake-language-server
-    rnix-lsp
+    nil
+    nodePackages.typescript
+    nodePackages.typescript-language-server
 
     # From home-manager
     pinentry-emacs
