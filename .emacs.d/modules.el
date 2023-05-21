@@ -12,6 +12,7 @@
                      jl-project
                      jl-magit
                      ;; jl-magit-forge
+                     jl-magit-todos
                      ;; jl-git-gutter
                      jl-diff-hl
                      jl-vc
@@ -131,6 +132,7 @@
                      ;; jl-company
 
                      ;;; Tools
+                     jl-editorconfig
                      jl-perspective
                      jl-undo-tree
                      jl-pandoc

@@ -91,6 +91,7 @@ programs.sway = {
   wrapperFeatures.gtk = true;
   extraPackages = with pkgs; [
     # swaylock-effects # using nix flake
+    swaybg
     swayidle
     wl-clipboard
     alacritty

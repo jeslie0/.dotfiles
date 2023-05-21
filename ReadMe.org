@@ -2343,7 +2343,7 @@ set $menu dmenu_path | bemenu -m "$(bemenuFocus)" | xargs swaymsg exec --
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 # output * bg /home/james/Images/Wallpapers/wp6705749-moutains-ultra-hd-wallpapers.jpg fill
 # This gives backgrounds changing every 10 mins.
-exec "swaybgchanger ~/Images/Wallpapers/ 900"
+exec "swaybg -i ~/Images/Wallpapers/4kMountain.jpg"
 #
 # Example configuration:
 #
@@ -3830,6 +3830,7 @@ programs.sway = {
   wrapperFeatures.gtk = true;
   extraPackages = with pkgs; [
     # swaylock-effects # using nix flake
+    swaybg
     swayidle
     wl-clipboard
     alacritty
@@ -3848,7 +3849,7 @@ programs.sway = {
     slurp
     grim
     self.inputs.flakes.passbemenu.defaultPackage.${system}
-    self.inputs.flakes.swaybgchanger.defaultPackage.${system}
+    # self.inputs.flakes.swaybgchanger.defaultPackage.${system}
     self.inputs.flakes.bemenuFocus.defaultPackage.${system}
     self.inputs.flakes.swaylock-effects.defaultPackage.${system}
   ];
@@ -3944,7 +3945,7 @@ nix = {
   package = pkgs.nixUnstable;
   extraOptions = "experimental-features = nix-command flakes";
   registry ={
-    self.flake = self;
+    nixpkgs.flake = nixpkgs;
     james = {
       from = { id = "james"; type = "indirect"; };
       to = { owner = "jeslie0";
@@ -4085,7 +4086,9 @@ environment.systemPackages = with pkgs;
     ltex-ls
     lua53Packages.digestif
     cmake-language-server
-    rnix-lsp
+    nil
+    nodePackages.typescript
+    nodePackages.typescript-language-server
 
     # From home-manager
     pinentry-emacs

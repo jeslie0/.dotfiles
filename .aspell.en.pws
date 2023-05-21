@@ -1,4 +1,4 @@
-personal_ws-1.1 en 107 
+personal_ws-1.1 en 113 
 Abelian
 Agda
 Combinatorics
@@ -7,6 +7,7 @@ Dinaturality
 ESlint
 Egbert
 Feeld
+Garmin
 Grothendieck
 Heliax
 HoTT
@@ -20,10 +21,12 @@ NixOS
 Precategory
 Riehl
 Rijke
+Strava
 Sylow
 Topos
 Unitors
 Yoneda
+abelian
 acyclic
 adjoint
 adjunction
@@ -33,6 +36,7 @@ bicategories
 bicategory
 bicomplete
 bijection
+bijective
 bimodule
 cardinality
 cartesian
@@ -77,6 +81,7 @@ homotopical
 homotopies
 homotopy
 injective
+injectivity
 invertible
 isofibration
 isofibrations
@@ -98,6 +103,7 @@ profunctors
 pushout
 pushouts
 quasicategories
+quasicategory
 representable
 sheafification
 simplicial
