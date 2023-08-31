@@ -140,7 +140,7 @@ programs.fish = {
 #   package = myEmacs;
 # };
 
-fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux);
+fonts.packages = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux);
   [ cantarell-fonts
     emacs-all-the-icons-fonts
     dejavu_fonts
@@ -310,7 +310,7 @@ environment.systemPackages = with pkgs;
 
 
     # Programming languages
-    agda
+    self.inputs.agda.defaultPackage.${system}
     gcc
     python3
     ghc
@@ -318,6 +318,7 @@ environment.systemPackages = with pkgs;
     coq
 
     # Language servers
+    # self.inputs.hls.packages.${system}.default
     haskell-language-server
     clang-tools
     ltex-ls
@@ -326,6 +327,14 @@ environment.systemPackages = with pkgs;
     nil
     nodePackages.typescript
     nodePackages.typescript-language-server
+
+    elmPackages.elm
+    elmPackages.elm-language-server
+    elmPackages.elm-format
+    elmPackages.elm-live
+    elmPackages.elm-doc-preview
+
+
 
     # Treesitter languages
 
@@ -338,11 +347,12 @@ environment.systemPackages = with pkgs;
     # nnn
 
     # Games
-    # obs-studio
-    # polymc
-    # steam-run
-    # protontricks
-    # lutris
+    obs-studio
+    prismlauncher
+    steam-run
+    protontricks
+    lutris
+    minecraft
 
   ];
 

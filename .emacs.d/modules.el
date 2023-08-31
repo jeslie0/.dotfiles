@@ -5,6 +5,7 @@
                      ;;; UI
                      jl-ligature
                      jl-UIconfiguration
+                     jl-nerd-icons
                      ;;; Completion frameworks
                      ;; jl-ivy
                      jl-vertico
@@ -74,6 +75,7 @@
                      jl-purescript
                      ;; jl-java
                      jl-js
+                     jl-typescript
                      ;; jl-rjsx
                      jl-skewer
 

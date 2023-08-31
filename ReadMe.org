@@ -2354,6 +2354,8 @@ exec "swaybg -i ~/Images/Wallpapers/4kMountain.jpg"
 # output eDP-1 pos 0 0 res 3840x2160
 output eDP-1 res 3840x2160
 output DP-1 scale 2
+# use scale 1 for getting rid of xwayland blurryness
+# output DP-1 scale 1
 # External monitor on the left
 output DP-1 pos 0 0 res 3849x2160@60Hz
 # output DP-3 pos 1920 0 res 1280x1024@75.025Hz
@@ -3645,6 +3647,9 @@ set adjust-open			"width"
     flakes.url = github:jeslie0/flakes;
 
     compdb.url = github:jeslie0/compdb;
+
+    agda.url = github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5;
+
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
@@ -3804,19 +3809,26 @@ services.xserver = {
   videoDrivers = [ "nvidia" ];
 
   # Enable i3 window manager
-  windowManager.i3.enable = true;
+  # windowManager.i3.enable = true;
 
   # use GB keyboard layout
   layout = "gb";
 
   # Swap Capslock and Escape keys
   xkbOptions = "caps:swapescape";
-  };
+};
+#+end_src
 
+#+begin_src nix :tangle no
+services.xserver.videoDrivers = ["nvidia"];
 hardware.nvidia = {
     modesetting.enable = true;
     prime = {
-      sync.enable = true;
+      # offload = {
+      #   enable = true;
+      #   enableOffloadCmd = true;
+      # };
+
       nvidiaBusId = "PCI:1:0:0";
       intelBusId = "PCI:0:2:0";
     };
@@ -3825,6 +3837,7 @@ hardware.nvidia = {
 # Enable OpenGL
 hardware.opengl.enable = true;
 #+end_src
+
 *** Sway
 #+begin_src nix
 programs.sway = {
@@ -3879,7 +3892,7 @@ We use the pure GTK, native-compiled version of Emacs. To change the version use
 #+end_src
 *** Fonts
 #+begin_src nix
-fonts.fonts = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux);
+fonts.packages = with (self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux);
   [ cantarell-fonts
     emacs-all-the-icons-fonts
     dejavu_fonts
@@ -4075,7 +4088,7 @@ environment.systemPackages = with pkgs;
 
 
     # Programming languages
-    agda
+    self.inputs.agda.defaultPackage.${system}
     gcc
     python3
     ghc
@@ -4083,6 +4096,7 @@ environment.systemPackages = with pkgs;
     coq
 
     # Language servers
+    # self.inputs.hls.packages.${system}.default
     haskell-language-server
     clang-tools
     ltex-ls
@@ -4091,6 +4105,14 @@ environment.systemPackages = with pkgs;
     nil
     nodePackages.typescript
     nodePackages.typescript-language-server
+
+    elmPackages.elm
+    elmPackages.elm-language-server
+    elmPackages.elm-format
+    elmPackages.elm-live
+    elmPackages.elm-doc-preview
+
+
 
     # Treesitter languages
 
@@ -4103,11 +4125,12 @@ environment.systemPackages = with pkgs;
     # nnn
 
     # Games
-    # obs-studio
-    # polymc
-    # steam-run
-    # protontricks
-    # lutris
+    obs-studio
+    prismlauncher
+    steam-run
+    protontricks
+    lutris
+    minecraft
 
   ];
 

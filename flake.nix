@@ -40,6 +40,9 @@
     flakes.url = github:jeslie0/flakes;
 
     compdb.url = github:jeslie0/compdb;
+
+    agda.url = github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5;
+
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
@@ -55,7 +58,7 @@
     in {
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
-          inherit system;
+          inherit pkgs system;
           modules = [ (import ./.config/NixSystem/configuration.nix self system) ];
         };
       };

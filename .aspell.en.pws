@@ -1,4 +1,4 @@
-personal_ws-1.1 en 113 
+personal_ws-1.1 en 122 
 Abelian
 Agda
 Combinatorics
@@ -15,12 +15,15 @@ Homological
 Injectivity
 Isomorphisms
 Kapulkin
+Lawvere
 Mohabat
 Monoidal
 NixOS
 Precategory
+Representables
 Riehl
 Rijke
+Stabilizer
 Strava
 Sylow
 Topos
@@ -40,6 +43,7 @@ bijective
 bimodule
 cardinality
 cartesian
+centralizer
 codiagonal
 coend
 coequaliser
@@ -80,6 +84,7 @@ homotopic
 homotopical
 homotopies
 homotopy
+indice
 injective
 injectivity
 invertible
@@ -105,8 +110,12 @@ pushouts
 quasicategories
 quasicategory
 representable
+representables
 sheafification
 simplicial
+stabilizer
+stabilizer's
+stabilizers
 surjective
 surjectivity
 toposes
