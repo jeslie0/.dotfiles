@@ -14,6 +14,7 @@ emacsPgtk = pkgs.emacs29-pgtk.overrideAttrs (prev: {
 });
 myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkgs;
   [ vterm
+    # treeSitterPkgs
     treesit-grammars.with-all-grammars
   ]));
 
@@ -293,7 +294,6 @@ environment.systemPackages = with pkgs;
     haskellPackages.eventlog2html
     ripgrep
     bat
-    exa
     lsd
     du-dust
     fd
@@ -411,7 +411,10 @@ programs.gnupg.agent = {
 };
 
 # Enable unfree software
-nixpkgs.config.allowUnfree = true;
+nixpkgs.config = {
+  allowUnfree = true;
+  allowBroken = false;
+};
 # Clean /tmp/ folder?
 # boot.cleanTmpDir = true;
 

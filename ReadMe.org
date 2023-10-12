@@ -3659,9 +3659,7 @@ set adjust-open			"width"
         inherit system;
         config = { allowUnfree = true; };
       };
-
       lib = nixpkgs.lib;
-
     in {
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
@@ -3705,6 +3703,7 @@ emacsPgtk = pkgs.emacs29-pgtk.overrideAttrs (prev: {
 });
 myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkgs;
   [ vterm
+    # treeSitterPkgs
     treesit-grammars.with-all-grammars
   ]));
 #+end_src
@@ -4071,7 +4070,6 @@ environment.systemPackages = with pkgs;
     haskellPackages.eventlog2html
     ripgrep
     bat
-    exa
     lsd
     du-dust
     fd
@@ -4208,7 +4206,10 @@ nix.settings.sandbox = "relaxed";
 
 #+begin_src nix
 # Enable unfree software
-nixpkgs.config.allowUnfree = true;
+nixpkgs.config = {
+  allowUnfree = true;
+  allowBroken = false;
+};
 # Clean /tmp/ folder?
 # boot.cleanTmpDir = true;
 
@@ -4242,7 +4243,7 @@ self:
 { # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  nixpkgs.config.allowUnfree = true;
+  # nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [];
 
   # services = {

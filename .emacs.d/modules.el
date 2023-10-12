@@ -54,7 +54,8 @@
                      jl-lsp
                      ;; jl-lsp-ivy
                      jl-eglot
-                     jl-tree-sitter
+                     ;; jl-tree-sitter ;; deprecated
+                     jl-treesit
 
                      ;;;; Proof assistants
                      jl-agda
@@ -131,7 +132,6 @@
                      ;;; Auto completions
                      jl-yasnippet
                      jl-corfu
-                     ;; jl-corfu-doc
                      jl-cape
                      ;; jl-company
 

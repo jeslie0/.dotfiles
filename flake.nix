@@ -52,9 +52,7 @@
         inherit system;
         config = { allowUnfree = true; };
       };
-
       lib = nixpkgs.lib;
-
     in {
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
