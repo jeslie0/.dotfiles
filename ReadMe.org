@@ -3650,6 +3650,8 @@ set adjust-open			"width"
 
     agda.url = github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5;
 
+    grub-themes.url = "github:jeslie0/nixos-grub-themes";
+
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:
@@ -3704,6 +3706,7 @@ emacsPgtk = pkgs.emacs29-pgtk.overrideAttrs (prev: {
 myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkgs;
   [ vterm
     # treeSitterPkgs
+    mu4e
     treesit-grammars.with-all-grammars
   ]));
 #+end_src
@@ -3743,6 +3746,7 @@ boot.loader.grub.efiSupport = true;
 # boot.loader.grub.useOSProber = true; # Allows other operating systems to be found, but takes a long time to reload.
 # boot.loader.grub.gfxmodeEfi = "1920x1080";
 boot.loader.efi.canTouchEfiVariables = true;
+boot.loader.grub.theme = self.inputs.grub-themes.packages.${system}.big-sur;
 #+end_src
 *** Networking
 #+begin_src nix
@@ -3798,7 +3802,7 @@ console = {
 # time.timeZone = "America/Toronto";
 time.timeZone = "Europe/London";
 #+end_src
-*** X11 and Nvidia Graphics
+*** X11 and Nvidia Graphics and I3
 This system doesn't use X11, but uses Wayland instead. Tangle this block for gaming, and lightdm and i3 will start. Run =sway --unsupported-gpu= for sway.
 #+begin_src nix :tangle no
 services.xserver = {
@@ -3819,25 +3823,48 @@ services.xserver = {
 };
 #+end_src
 
-#+begin_src nix :tangle no
-services.xserver.videoDrivers = ["nvidia"];
-hardware.nvidia = {
-    modesetting.enable = true;
-    prime = {
-      # offload = {
-      #   enable = true;
-      #   enableOffloadCmd = true;
-      # };
+#+begin_src nix
+specialisation = {
+  nvidia.configuration = {
+    system.nixos.tags = ["nvidia"];
 
-      nvidiaBusId = "PCI:1:0:0";
-      intelBusId = "PCI:0:2:0";
+    services.xserver = {
+      # Enable the X11 windowing system.
+      enable = true;
+
+      # Enable nvidia drivers
+      videoDrivers = [ "nvidia" ];
+
+      # Enable i3 window manager
+      windowManager.i3.enable = true;
+
+      # use GB keyboard layout
+      layout = "gb";
+
+      # Swap Capslock and Escape keys
+      xkbOptions = "caps:swapescape";
     };
+
+    hardware.nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      nvidiaSettings = true;
+      prime = {
+        sync.enable = true;
+        nvidiaBusId = "PCI:1:0:0";
+        intelBusId = "PCI:0:2:0";
+      };
+    };
+
+    hardware.opengl = {
+      enable = true;
+      driSupport = true;
+      driSupport32Bit = true;
+    };
+
   };
-
-# Enable OpenGL
-hardware.opengl.enable = true;
+};
 #+end_src
-
 *** Sway
 #+begin_src nix
 programs.sway = {
@@ -3981,9 +4008,10 @@ nix = {
 users.users.james = {
   isNormalUser = true;
   initialPassword = "james";
-  extraGroups = [ "wheel" "networkmanager" "video" ];
+  extraGroups = [ "wheel" "networkmanager" "video" "wireshark" ];
 };
 #+end_src
+
 *** Steam
 #+begin_src nix
 programs.steam = {
@@ -4008,6 +4036,11 @@ virtualisation.docker.rootless ={
   setSocketVariable = true;
 };
 #+end_src
+*** Wireshark
+#+begin_src nix
+programs.wireshark.enable = true;
+#+end_src
+
 *** System Packages
 The list of packages installed globally. To search for a package in the nixpkgs repository, type =nix search nixpkgs <search>=.
 #+begin_src nix
@@ -4034,6 +4067,7 @@ environment.systemPackages = with pkgs;
     spotify-tui
     kodi
     playerctl
+    maestral
 
     # Nix
     cachix
@@ -4082,10 +4116,12 @@ environment.systemPackages = with pkgs;
     direnv
     unzip
     gnome.adwaita-icon-theme
+    wireshark
 
     mkvtoolnix
     sbcl
     pandoc
+    calibre
 
 
 
@@ -4133,7 +4169,6 @@ environment.systemPackages = with pkgs;
     protontricks
     lutris
     minecraft
-
   ];
 
 
@@ -4142,7 +4177,7 @@ programs.light.enable = true;
 *** Systemd
 **** Keychron
 This will hopefully allow me to use my function keys on my K6 keyboard.
-#+begin_src nix
+#+begin_src nix :tangle no
 systemd.services.keychron = {
   enable = true;
   description = "The command to make the Keychron K6 function keys work";
@@ -4195,8 +4230,11 @@ services.xserver.libinput.enable = true;
 # started in user sessions.
 programs.mtr.enable = true;
 
-programs.gnupg.agent = {
-  enable = true;
+programs.gnupg ={
+  package = self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux.gnupg;
+  agent = {
+    enable = true;
+  };
 };
 #+end_src
 
@@ -4206,10 +4244,11 @@ nix.settings.sandbox = "relaxed";
 
 #+begin_src nix
 # Enable unfree software
-nixpkgs.config = {
-  allowUnfree = true;
-  allowBroken = false;
-};
+# This is set in the flake.
+# nixpkgs.config = {
+#   allowUnfree = true;
+#   allowBroken = false;
+# };
 # Clean /tmp/ folder?
 # boot.cleanTmpDir = true;
 

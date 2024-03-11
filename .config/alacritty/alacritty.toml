@@ -1,0 +1,12 @@
+[env]
+TERM = "alacritty"
+
+[font.normal]
+family = "Fira Code"
+style = "Regular"
+
+[shell]
+program = "fish"
+
+[window]
+opacity = 0.8

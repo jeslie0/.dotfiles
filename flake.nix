@@ -43,6 +43,8 @@
 
     agda.url = github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5;
 
+    grub-themes.url = "github:jeslie0/nixos-grub-themes";
+
   };
 
   outputs = { self, nixpkgs, home-manager,  ... }:

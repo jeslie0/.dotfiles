@@ -15,6 +15,7 @@ emacsPgtk = pkgs.emacs29-pgtk.overrideAttrs (prev: {
 myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkgs;
   [ vterm
     # treeSitterPkgs
+    mu4e
     treesit-grammars.with-all-grammars
   ]));
 
@@ -44,6 +45,7 @@ boot.loader.grub.efiSupport = true;
 # boot.loader.grub.useOSProber = true; # Allows other operating systems to be found, but takes a long time to reload.
 # boot.loader.grub.gfxmodeEfi = "1920x1080";
 boot.loader.efi.canTouchEfiVariables = true;
+boot.loader.grub.theme = self.inputs.grub-themes.packages.${system}.big-sur;
 
 networking.hostName = "James-Nix"; # Define your hostname.
 networking.networkmanager.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -96,6 +98,47 @@ console = {
 # Set your time zone.
 # time.timeZone = "America/Toronto";
 time.timeZone = "Europe/London";
+
+specialisation = {
+  nvidia.configuration = {
+    system.nixos.tags = ["nvidia"];
+
+    services.xserver = {
+      # Enable the X11 windowing system.
+      enable = true;
+
+      # Enable nvidia drivers
+      videoDrivers = [ "nvidia" ];
+
+      # Enable i3 window manager
+      windowManager.i3.enable = true;
+
+      # use GB keyboard layout
+      layout = "gb";
+
+      # Swap Capslock and Escape keys
+      xkbOptions = "caps:swapescape";
+    };
+
+    hardware.nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      nvidiaSettings = true;
+      prime = {
+        sync.enable = true;
+        nvidiaBusId = "PCI:1:0:0";
+        intelBusId = "PCI:0:2:0";
+      };
+    };
+
+    hardware.opengl = {
+      enable = true;
+      driSupport = true;
+      driSupport32Bit = true;
+    };
+
+  };
+};
 
 programs.sway = {
   enable = true;
@@ -221,7 +264,7 @@ nix = {
 users.users.james = {
   isNormalUser = true;
   initialPassword = "james";
-  extraGroups = [ "wheel" "networkmanager" "video" ];
+  extraGroups = [ "wheel" "networkmanager" "video" "wireshark" ];
 };
 
 programs.steam = {
@@ -234,6 +277,8 @@ virtualisation.docker.rootless ={
   enable = true;
   setSocketVariable = true;
 };
+
+programs.wireshark.enable = true;
 
 environment.systemPackages = with pkgs;
   [ # Editors
@@ -258,6 +303,7 @@ environment.systemPackages = with pkgs;
     spotify-tui
     kodi
     playerctl
+    maestral
 
     # Nix
     cachix
@@ -306,10 +352,12 @@ environment.systemPackages = with pkgs;
     direnv
     unzip
     gnome.adwaita-icon-theme
+    wireshark
 
     mkvtoolnix
     sbcl
     pandoc
+    calibre
 
 
 
@@ -357,23 +405,10 @@ environment.systemPackages = with pkgs;
     protontricks
     lutris
     minecraft
-
   ];
 
 
 programs.light.enable = true;
-
-systemd.services.keychron = {
-  enable = true;
-  description = "The command to make the Keychron K6 function keys work";
-  unitConfig = {
-    Type = "oneshot";
-  };
-  serviceConfig = {
-    ExecStart = "${pkgs.bash}/bin/bash -c 'echo 0 > /sys/module/hid_apple/parameters/fnmode'";
-  };
-  wantedBy = [ "multi-user.target" ];
-};
 
 services.dbus.enable = true;
 
@@ -406,15 +441,19 @@ services.xserver.libinput.enable = true;
 # started in user sessions.
 programs.mtr.enable = true;
 
-programs.gnupg.agent = {
-  enable = true;
+programs.gnupg ={
+  package = self.inputs.pinnedNixpkgs.legacyPackages.x86_64-linux.gnupg;
+  agent = {
+    enable = true;
+  };
 };
 
 # Enable unfree software
-nixpkgs.config = {
-  allowUnfree = true;
-  allowBroken = false;
-};
+# This is set in the flake.
+# nixpkgs.config = {
+#   allowUnfree = true;
+#   allowBroken = false;
+# };
 # Clean /tmp/ folder?
 # boot.cleanTmpDir = true;
 

@@ -880,6 +880,24 @@
         "type": "github"
       }
     },
+    "flake-utils_39": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1701680307,
+        "narHash": "sha256-kAuep2h5ajznlPMD9rnQyffWG8EM/C73lejGofXvdM8=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "4022d587cbbfd70fe950c1e2083a02621806a725",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "flake-utils_4": {
       "locked": {
         "lastModified": 1667395993,
@@ -1068,6 +1086,25 @@
         "type": "github"
       }
     },
+    "grub-themes": {
+      "inputs": {
+        "flake-utils": "flake-utils_39",
+        "nixpkgs": "nixpkgs_41"
+      },
+      "locked": {
+        "lastModified": 1702252128,
+        "narHash": "sha256-huXuigiIUvR6YEAnfhw6KcPPkr2dD8Wg+2sYSNUKN5U=",
+        "owner": "jeslie0",
+        "repo": "nixos-grub-themes",
+        "rev": "0a5885d6cbb02ba2742d1ed76dcf57c76645a0a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jeslie0",
+        "repo": "nixos-grub-themes",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1123,11 +1160,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1696940889,
-        "narHash": "sha256-p2Wic74A1tZpFcld1wSEbFQQbrZ/tPDuLieCnspamQo=",
+        "lastModified": 1706306660,
+        "narHash": "sha256-lZvgkHtVeduGByPb0Tz9LpAi4olfkEm8XPgv0o7GRsk=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6bba64781e4b7c1f91a733583defbd3e46b49408",
+        "rev": "b2f56952074cb46e93902ecaabfb04dd93733434",
         "type": "github"
       },
       "original": {
@@ -1825,11 +1862,27 @@
     },
     "nixpkgs_41": {
       "locked": {
-        "lastModified": 1697009197,
-        "narHash": "sha256-viVRhBTFT8fPJTb1N3brQIpFZnttmwo3JVKNuWRVc3s=",
+        "lastModified": 1702151865,
+        "narHash": "sha256-9VAt19t6yQa7pHZLDbil/QctAgVsA66DLnzdRGqDisg=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "01441e14af5e29c9d27ace398e6dd0b293e25a54",
+        "rev": "666fc80e7b2afb570462423cb0e1cf1a3a34fedd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_42": {
+      "locked": {
+        "lastModified": 1706173671,
+        "narHash": "sha256-lciR7kQUK2FCAYuszyd7zyRRmTaXVeoZsCyK6QFpGdk=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "4fddc9be4eaf195d631333908f2a454b03628ee5",
         "type": "github"
       },
       "original": {
@@ -2029,8 +2082,9 @@
         "emacs-overlay": "emacs-overlay",
         "emacs-pgtk": "emacs-pgtk",
         "flakes": "flakes",
+        "grub-themes": "grub-themes",
         "home-manager": "home-manager_3",
-        "nixpkgs": "nixpkgs_41",
+        "nixpkgs": "nixpkgs_42",
         "pinnedNixpkgs": "pinnedNixpkgs_3"
       }
     },
@@ -2202,6 +2256,21 @@
       "original": {
         "owner": "jeslie0",
         "repo": "swaylock-effects-git",
+        "type": "github"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
         "type": "github"
       }
     },

@@ -6,6 +6,10 @@
                      jl-ligature
                      jl-UIconfiguration
                      jl-nerd-icons
+                     jl-doom-themes
+                     jl-dracula-theme
+                     jl-nord-theme
+                     jl-vs-code-plus-theme
                      ;;; Completion frameworks
                      ;; jl-ivy
                      jl-vertico
@@ -19,6 +23,7 @@
                      ;; jl-git-gutter
                      jl-diff-hl
                      jl-vc
+                     jl-vc-msg
                      jl-smerge
                      jl-treemacs
                      ;; jl-treemacs-projectile
@@ -158,7 +163,7 @@
                      jl-vterm
                      jl-eshell
 
-                     ;;; Fun
+                     ;; Fun
                      ;; jl-snow
                      ;; jl-fireplace
                      ;; jl-nyan

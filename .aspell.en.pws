@@ -1,4 +1,4 @@
-personal_ws-1.1 en 122 
+personal_ws-1.1 en 124 
 Abelian
 Agda
 Combinatorics
@@ -87,6 +87,7 @@ homotopy
 indice
 injective
 injectivity
+interweaved
 invertible
 isofibration
 isofibrations
@@ -105,6 +106,7 @@ presheaves
 presyntax
 profunctor
 profunctors
+projective
 pushout
 pushouts
 quasicategories

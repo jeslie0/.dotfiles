@@ -205,8 +205,11 @@ bar {
 default_border none
 hide_edge_borders both
 
-# default_floating_border 
+set $builtin +eDP-1-1
+set $external +DP-1-1
+include $HOME/.config/i3/workspace.conf
 exec "xrandr --dpi 192"
+exec "xrander --output DP-1-1 --auto --left-of eDP-1-1"
 # include /home/james/.config/sway/gaps
 
 bindsym Ctrl+$mod+e exec 'emacsclient --create-frame --alternate-editor=""'
