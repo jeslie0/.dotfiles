@@ -17,6 +17,7 @@ myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkg
     # treeSitterPkgs
     mu4e
     treesit-grammars.with-all-grammars
+    epkgs.pdf-tools
   ]));
 
 treeSitterPkgs = pkgs.tree-sitter.withPlugins (p: [ p.tree-sitter-cpp ]);
@@ -300,7 +301,6 @@ environment.systemPackages = with pkgs;
     imv
     youtube-dl
     spotify
-    spotify-tui
     kodi
     playerctl
     maestral
@@ -353,6 +353,7 @@ environment.systemPackages = with pkgs;
     unzip
     gnome.adwaita-icon-theme
     wireshark
+    ghostscript
 
     mkvtoolnix
     sbcl

@@ -3708,6 +3708,7 @@ myEmacs = ((pkgs.emacsPackagesFor emacsPgtk).emacsWithPackages (epkgs: with epkg
     # treeSitterPkgs
     mu4e
     treesit-grammars.with-all-grammars
+    epkgs.pdf-tools
   ]));
 #+end_src
 *** Treesitter
@@ -4064,7 +4065,6 @@ environment.systemPackages = with pkgs;
     imv
     youtube-dl
     spotify
-    spotify-tui
     kodi
     playerctl
     maestral
@@ -4117,6 +4117,7 @@ environment.systemPackages = with pkgs;
     unzip
     gnome.adwaita-icon-theme
     wireshark
+    ghostscript
 
     mkvtoolnix
     sbcl
@@ -4200,7 +4201,7 @@ Enable CUPS to print documents.
 services.printing.enable = true;
 services.printing.drivers = [ pkgs.gutenprint ];
 services.avahi.enable = true;
-services.avahi.nssmdns = true;
+services.avahi.nssmdns4 = true;
 #+END_SRC
 *** Miscellaneous
 #+begin_src nix

@@ -75,3 +75,5 @@
 ;;                          ;; System Crafters
 ;;                          "SystemCrafters"
 ;;                          ))
+
+(setq doc-view-resolution 200)
