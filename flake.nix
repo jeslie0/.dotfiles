@@ -2,7 +2,8 @@
   description = "James' NixOS system configuration Flake";
 
   inputs = {
-    nixpkgs.url = github:nixos/nixpkgs/nixpkgs-unstable;
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     # For things like fonts, which we don't want to constantly update.
     pinnedNixpkgs = {
@@ -13,7 +14,7 @@
     };
 
     home-manager = {
-      url = github:nix-community/home-manager;
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -24,30 +25,21 @@
       rev = "25cbd5b0f32cab75356a0a8e73aa2913529db36a";
     };
 
-    emacs-pgtk = {
-      type = "github";
-      owner = "nix-community";
-      repo = "emacs-overlay";
-      rev = "25cbd5b0f32cab75356a0a8e73aa2913529db36a";
-      inputs.nixpkgs = {
-        type = "github";
-        owner = "nixos";
-        repo = "nixpkgs";
-        rev = "3005f20ce0aaa58169cdee57c8aa12e5f1b6e1b3";
-      };
+    emacs-lsp-booster = {
+      url = "github:slotThe/emacs-lsp-booster-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    flakes.url = github:jeslie0/flakes;
+    flakes.url = "github:jeslie0/flakes";
 
-    compdb.url = github:jeslie0/compdb;
+    compdb.url = "github:jeslie0/compdb";
 
-    agda.url = github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5;
+    agda.url = "github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5";
 
     grub-themes.url = "github:jeslie0/nixos-grub-themes";
-
   };
 
-  outputs = { self, nixpkgs, home-manager,  ... }:
+  outputs = { self, nixpkgs, nixos-hardware, home-manager,  ... }:
     let
       system = "x86_64-linux"; #current system
       pkgs = import nixpkgs {
@@ -59,7 +51,9 @@
       nixosConfigurations = {
         James-Nix = lib.nixosSystem {
           inherit pkgs system;
-          modules = [ (import ./.config/NixSystem/configuration.nix self system) ];
+          modules = [ (import ./.config/NixSystem/configuration.nix self system)
+                      nixos-hardware.nixosModules.dell-xps-15-9570-intel
+                    ];
         };
       };
 

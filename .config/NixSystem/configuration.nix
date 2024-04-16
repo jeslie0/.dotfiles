@@ -121,16 +121,16 @@ specialisation = {
       xkbOptions = "caps:swapescape";
     };
 
-    hardware.nvidia = {
-      modesetting.enable = true;
-      powerManagement.enable = false;
-      nvidiaSettings = true;
-      prime = {
-        sync.enable = true;
-        nvidiaBusId = "PCI:1:0:0";
-        intelBusId = "PCI:0:2:0";
-      };
-    };
+    # hardware.nvidia = {
+    #   modesetting.enable = true;
+    #   powerManagement.enable = false;
+    #   nvidiaSettings = true;
+    #   prime = {
+    #     sync.enable = true;
+    #     nvidiaBusId = "PCI:1:0:0";
+    #     intelBusId = "PCI:0:2:0";
+    #   };
+    # };
 
     hardware.opengl = {
       enable = true;
@@ -284,6 +284,7 @@ programs.wireshark.enable = true;
 environment.systemPackages = with pkgs;
   [ # Editors
     myEmacs
+    pkgs.emacs-lsp-booster
     vim
 
     # Browsers
@@ -416,7 +417,7 @@ services.dbus.enable = true;
 services.printing.enable = true;
 services.printing.drivers = [ pkgs.gutenprint ];
 services.avahi.enable = true;
-services.avahi.nssmdns = true;
+services.avahi.nssmdns4 = true;
 
 # Enable sound.
 sound.enable = true;

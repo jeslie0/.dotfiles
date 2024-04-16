@@ -5,6 +5,7 @@
                      ;;; UI
                      jl-ligature
                      jl-UIconfiguration
+                     ;; jl-nano
                      jl-nerd-icons
                      jl-doom-themes
                      jl-dracula-theme
@@ -162,6 +163,7 @@
                      jl-term
                      jl-vterm
                      jl-eshell
+
 
                      ;; Fun
                      ;; jl-snow
