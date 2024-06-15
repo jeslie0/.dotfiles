@@ -115,22 +115,25 @@ specialisation = {
       windowManager.i3.enable = true;
 
       # use GB keyboard layout
-      layout = "gb";
+      xkb.layout = "gb";
 
       # Swap Capslock and Escape keys
-      xkbOptions = "caps:swapescape";
+      xkb.options = "caps:swapescape";
+
+      # Use lightDM
+      displayManager.lightdm.enable = true;
     };
 
-    # hardware.nvidia = {
+    hardware.nvidia = {
     #   modesetting.enable = true;
     #   powerManagement.enable = false;
     #   nvidiaSettings = true;
-    #   prime = {
-    #     sync.enable = true;
-    #     nvidiaBusId = "PCI:1:0:0";
-    #     intelBusId = "PCI:0:2:0";
-    #   };
-    # };
+      prime = {
+        sync.enable = true;
+        nvidiaBusId = "PCI:1:0:0";
+        intelBusId = "PCI:0:2:0";
+      };
+    };
 
     hardware.opengl = {
       enable = true;
@@ -145,29 +148,31 @@ programs.sway = {
   enable = true;
   wrapperFeatures.gtk = true;
   extraPackages = with pkgs; [
-    # swaylock-effects # using nix flake
+    swaylock-effects # using nix flake
     swaybg
+    rofi-pass-wayland
     swayidle
     wl-clipboard
     alacritty
-    xfce.xfce4-terminal
+    # xfce.xfce4-terminal
     magic-wormhole
-    dmenu
-    dmenu-wayland
-    bemenu
+    # dmenu
+    # dmenu-wayland
+    # bemenu
+    rofi-wayland-unwrapped
     i3status
     starship
-    rofi
+    # rofi
     waybar
     swaynotificationcenter
     gammastep
     wlroots
     slurp
     grim
-    self.inputs.flakes.passbemenu.defaultPackage.${system}
+    # self.inputs.flakes.passbemenu.defaultPackage.${system}
     # self.inputs.flakes.swaybgchanger.defaultPackage.${system}
-    self.inputs.flakes.bemenuFocus.defaultPackage.${system}
-    self.inputs.flakes.swaylock-effects.defaultPackage.${system}
+    # self.inputs.flakes.bemenuFocus.defaultPackage.${system}
+    # self.inputs.flakes.swaylock-effects.defaultPackage.${system}
   ];
 };
 
@@ -312,7 +317,7 @@ environment.systemPackages = with pkgs;
     nix-prefetch-git
     cabal2nix
     home-manager
-    nixfmt
+    nixfmt-classic
 
     # Tools
     shfmt

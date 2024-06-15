@@ -2334,7 +2334,8 @@ set $term alacritty
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | bemenu -m "$(bemenuFocus)" | xargs swaymsg exec --
+# set $menu dmenu_path | bemenu -m "$(bemenuFocus)" | xargs swaymsg exec --
+set $menu rofi -show drun
 #+end_src
 *** Output
 #+begin_src conf
@@ -2585,7 +2586,7 @@ bindsym Ctrl+$mod+f exec 'firefox'
 bindsym Ctrl+$mod+s exec 'signal-desktop --enable-features=UseOzonePlatform --ozone-platform=wayland'
 bindsym Ctrl+$mod+m exec 'spotify --enable-features=UseOzonePlatform --ozone-platform=wayland'
 bindsym Ctrl+$mod+z exec 'zathura'
-bindsym Ctrl+$mod+p exec 'passbemenu'
+bindsym Ctrl+$mod+p exec 'rofi-pass'
 #+end_src
 *** Status bar
 **** i3 status
@@ -2848,10 +2849,6 @@ include /etc/sway/config.d/*
 #+begin_src conf
 bindswitch lid:on  output eDP-1 disable
 bindswitch lid:off output eDP-1 enable
-#+end_src
-*** spotifyd
-#+begin_src conf
-exec "/usr/bin/env -S spotifyd --no-daemon"
 #+end_src
 ** swaynotificationcenter
 :PROPERTIES:
@@ -3834,22 +3831,25 @@ specialisation = {
       windowManager.i3.enable = true;
 
       # use GB keyboard layout
-      layout = "gb";
+      xkb.layout = "gb";
 
       # Swap Capslock and Escape keys
-      xkbOptions = "caps:swapescape";
+      xkb.options = "caps:swapescape";
+
+      # Use lightDM
+      displayManager.lightdm.enable = true;
     };
 
-    # hardware.nvidia = {
+    hardware.nvidia = {
     #   modesetting.enable = true;
     #   powerManagement.enable = false;
     #   nvidiaSettings = true;
-    #   prime = {
-    #     sync.enable = true;
-    #     nvidiaBusId = "PCI:1:0:0";
-    #     intelBusId = "PCI:0:2:0";
-    #   };
-    # };
+      prime = {
+        sync.enable = true;
+        nvidiaBusId = "PCI:1:0:0";
+        intelBusId = "PCI:0:2:0";
+      };
+    };
 
     hardware.opengl = {
       enable = true;
@@ -3866,29 +3866,22 @@ programs.sway = {
   enable = true;
   wrapperFeatures.gtk = true;
   extraPackages = with pkgs; [
-    # swaylock-effects # using nix flake
+    swaylock-effects # using nix flake
     swaybg
+    rofi-pass-wayland
+    rofi-wayland-unwrapped
     swayidle
     wl-clipboard
     alacritty
-    xfce.xfce4-terminal
     magic-wormhole
-    dmenu
-    dmenu-wayland
-    bemenu
     i3status
     starship
-    rofi
     waybar
     swaynotificationcenter
     gammastep
     wlroots
     slurp
     grim
-    self.inputs.flakes.passbemenu.defaultPackage.${system}
-    # self.inputs.flakes.swaybgchanger.defaultPackage.${system}
-    self.inputs.flakes.bemenuFocus.defaultPackage.${system}
-    self.inputs.flakes.swaylock-effects.defaultPackage.${system}
   ];
 };
 #+end_src
@@ -4070,7 +4063,7 @@ environment.systemPackages = with pkgs;
     nix-prefetch-git
     cabal2nix
     home-manager
-    nixfmt
+    nixfmt-classic
 
     # Tools
     shfmt
