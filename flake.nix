@@ -32,9 +32,7 @@
 
     flakes.url = "github:jeslie0/flakes";
 
-    compdb.url = "github:jeslie0/compdb";
-
-    agda.url = "github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5";
+    # agda.url = "github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5";
 
     grub-themes.url = "github:jeslie0/nixos-grub-themes";
   };
@@ -52,7 +50,7 @@
         James-Nix = lib.nixosSystem {
           inherit pkgs system;
           modules = [ (import ./.config/NixSystem/configuration.nix self system)
-                      nixos-hardware.nixosModules.dell-xps-15-9570-intel
+                      nixos-hardware.nixosModules.dell-xps-15-9570
                     ];
         };
       };

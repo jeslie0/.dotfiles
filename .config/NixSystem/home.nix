@@ -7,12 +7,6 @@ self:
   # nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [];
 
-  # services = {
-  #   spotifyd = {
-  #     enable = true;
-  #   };
-  # };
-
   home = {
     # Home Manager needs a bit of information about you and the
     # paths it should manage.

@@ -15,7 +15,6 @@ This file is how I manage my personal dotfiles. I use Emacs to tangle the source
   - [[#mpv][mpv]]
   - [[#neofetch][neofetch]]
   - [[#nyxt][Nyxt]]
-  - [[#spotifyd][spotifyd]]
   - [[#spotify-tui][spotify-tui]]
   - [[#sway][sway]]
   - [[#swaynotificationcenter][swaynotificationcenter]]
@@ -2142,94 +2141,6 @@ stdout="off"
                              nyxt/web-mode::annotate-visible-only-p))
 #+end_src
 
-** spotifyd
-:PROPERTIES:
-:header-args:conf: :tangle ./.config/spotifyd/spotifyd.conf
-:END:
-[[https://github.com/Spotifyd/spotifyd][spotifyd]]. A spotify daemon. I currently do not use this.
-#+begin_src conf
-[global]
-# Your Spotify account name.
-username = "g8r9m2iao5vg9kcqyqsd090pc"
-
-# Your Spotify account password.
-# password = password
-
-# A command that gets executed and can be used to
-# retrieve your password.
-# The command should return the password on stdout.
-#
-# This is an alternative to the `password` field. Both
-# can't be used simultaneously.
-password_cmd = "pass spotify.com/jamesleslie@posteo.net"
-use_mpris = true
-# If set to true, `spotifyd` tries to look up your
-# password in the system's password storage.
-#
-# This is an alternative to the `password` field. Both
-# can't be used simultaneously.
-# use_keyring = true
-
-# The audio backend used to play the your music. To get
-# a list of possible backends, run `spotifyd --help`.
-backend = "alsa"
-
-# The alsa audio device to stream audio to. To get a
-# list of valid devices, run `aplay -L`,
-device = "default"  # omit for macOS
-
-# # The alsa control device. By default this is the same
-# # name as the `device` field.
-control = "default"  # omit for macOS
-
-# # The alsa mixer used by `spotifyd`.
-# mixer = "PCM"
-
-# The volume controller. Each one behaves different to
-# volume increases. For possible values, run
-# `spotifyd --help`.
-volume_controller = "alsa"  # use softvol for macOS
-
-# # A command that gets executed in your shell after each song changes.
-# # on_song_change_hook = "command_to_run_on_playback_events"
-
-# The name that gets displayed under the connect tab on
-# official clients. Spaces are not allowed!
-# device_name = "James-Arch"
-device_name = "James-Nix"
-
-# The audio bitrate. 96, 160 or 320 kbit/s
-bitrate = 320
-
-# The director used to cache audio data. This setting can save
-# a lot of bandwidth when activated, as it will avoid re-downloading
-# audio files when replaying them.
-#
-# Note: The file path does not get expanded. Environment variables and
-# shell placeholders like $HOME or ~ don't work!
-cache_path = "/home/james/.cache/spotify/" # cache_directory
-
-# # If set to true, audio data does NOT get cached.
-# # no_audio_cache = true
-
-# If set to true, enables volume normalisation between songs.
-volume_normalisation = false
-
-# # The normalisation pregain that is applied for each song.
-# # normalisation_pregain = -10
-
-# # The port `spotifyd` uses to announce its service over the network.
-# zeroconf_port = 1234
-
-# # The proxy `spotifyd` will use to connect to spotify.
-# # proxy = "http://proxy.example.org:8080"
-
-# The displayed device type in Spotify clients.
-# Can be unknown, computer, tablet, smartphone, speaker, tv,
-# avr (Audio/Video Receiver), stb (Set-Top Box), and audiodongle.
-device_type = "computer"
-#+end_src
-
 ** spotify-tui
 :PROPERTIES:
 :header-args:conf: :tangle ./.config/spotify-tui/config.yml
@@ -3046,27 +2957,6 @@ bindswitch lid:off output eDP-1 enable
 #+end_src
 
 ** systemd
-*** Spotifyd
-:PROPERTIES:
-:header-args:conf: :tangle ./.config/systemd/system/spotifyd.service
-:END:
-#+begin_src conf :tangle no
-[Unit]
-Description=A spotify playing daemon
-Documentation=https://github.com/Spotifyd/spotifyd
-Wants=sound.target
-After=sound.target
-Wants=network-online.target
-After=network-online.target
-
-[Service]
-ExecStart=/usr/bin/spotifyd --no-daemon
-Restart=always
-RestartSec=12
-
-[Install]
-WantedBy=default.target
-#+end_src
 ** waybar
 [[https://github.com/Alexays/Waybar][waybar]]. This is the status bar that I will be switching to at some point in the future.
 *** config
@@ -3636,9 +3526,7 @@ set adjust-open			"width"
 
     flakes.url = "github:jeslie0/flakes";
 
-    compdb.url = "github:jeslie0/compdb";
-
-    agda.url = "github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5";
+    # agda.url = "github:agda/agda/abf7388900e9c94d94879185d7ec09e847b5fef5";
 
     grub-themes.url = "github:jeslie0/nixos-grub-themes";
   };
@@ -3656,7 +3544,7 @@ set adjust-open			"width"
         James-Nix = lib.nixosSystem {
           inherit pkgs system;
           modules = [ (import ./.config/NixSystem/configuration.nix self system)
-                      nixos-hardware.nixosModules.dell-xps-15-9570-intel
+                      nixos-hardware.nixosModules.dell-xps-15-9570
                     ];
         };
       };
@@ -3724,7 +3612,6 @@ nixpkgs.overlays =
   [ self.inputs.emacs-overlay.overlays.default
     (final: prev: {
       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
-      spotifyd = self.inputs.myFlakes.spotifyd.packages.${system}.default;
     })
   ];
 #+end_src
@@ -3820,12 +3707,23 @@ specialisation = {
   nvidia.configuration = {
     system.nixos.tags = ["nvidia"];
 
-    services.xserver = {
-      # Enable the X11 windowing system.
-      enable = true;
+    boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+    boot.initrd.kernelModules = [ "nvidia" ];
 
+
+    # Enable openGL
+    hardware.opengl = {
+      enable = true;
+      driSupport = true;
+      driSupport32Bit = true;
+    };
+
+    # Load nvidia driver for Xorg and Wayland
+    services.xserver = {
       # Enable nvidia drivers
       videoDrivers = [ "nvidia" ];
+      # Enable the X11 windowing system.
+      enable = true;
 
       # Enable i3 window manager
       windowManager.i3.enable = true;
@@ -3841,20 +3739,22 @@ specialisation = {
     };
 
     hardware.nvidia = {
-    #   modesetting.enable = true;
+      # Modesetting is required
+      modesetting.enable = true;
+
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
     #   powerManagement.enable = false;
-    #   nvidiaSettings = true;
+      nvidiaSettings = true;
+
       prime = {
-        sync.enable = true;
+        # sync.enable = true;
+        offload = {
+          enable = true;
+          enableOffloadCmd = true; # Provides `nvidia-offload` command.
+        };
         nvidiaBusId = "PCI:1:0:0";
         intelBusId = "PCI:0:2:0";
       };
-    };
-
-    hardware.opengl = {
-      enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
     };
 
   };
@@ -3884,6 +3784,10 @@ programs.sway = {
     grim
   ];
 };
+
+security.pam.loginLimits = [
+  { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+];
 #+end_src
 *** fish
 #+begin_src nix
@@ -3976,7 +3880,7 @@ nix.settings = {
 *** Flake support
 #+begin_src nix
 nix = {
-  package = pkgs.nixUnstable;
+  package = pkgs.nixVersions.latest;
   extraOptions = "experimental-features = nix-command flakes";
   registry ={
     nixpkgs.flake = self.inputs.nixpkgs;
@@ -4035,13 +3939,13 @@ The list of packages installed globally. To search for a package in the nixpkgs 
 environment.systemPackages = with pkgs;
   [ # Editors
     myEmacs
-    pkgs.emacs-lsp-booster
+    emacs-lsp-booster
     vim
 
     # Browsers
     firefox
     chromium
-    nyxt
+    # nyxt
     qutebrowser
 
     # Communication
@@ -4100,11 +4004,10 @@ environment.systemPackages = with pkgs;
     zoxide
     fd
     htop
-    self.inputs.compdb.packages.${system}.default
+    compdb
     direnv
     unzip
     gnome.adwaita-icon-theme
-    wireshark
     ghostscript
 
     mkvtoolnix
@@ -4115,25 +4018,25 @@ environment.systemPackages = with pkgs;
 
 
     # Programming languages
-    self.inputs.agda.defaultPackage.${system}
+    # self.inputs.agda.defaultPackage.${system}
+    agda
     gcc
     python3
     ghc
     cabal-install
     coq
+    elmPackages.elm
 
     # Language servers
     # self.inputs.hls.packages.${system}.default
     haskell-language-server
     clang-tools
-    ltex-ls
     lua53Packages.digestif
     cmake-language-server
     nil
     nodePackages.typescript
     nodePackages.typescript-language-server
 
-    elmPackages.elm
     elmPackages.elm-language-server
     elmPackages.elm-format
     elmPackages.elm-live
@@ -4157,7 +4060,7 @@ environment.systemPackages = with pkgs;
     steam-run
     protontricks
     lutris
-    minecraft
+    # minecraft
   ];
 
 
@@ -4211,7 +4114,7 @@ services.pipewire = {
   pulse.enable = true;
 };
 # Enable touchpad support (enabled default in most desktopManager).
-services.xserver.libinput.enable = true;
+services.libinput.enable = true;
 #+end_src
 
 #+begin_src nix
@@ -4273,12 +4176,6 @@ self:
 
   # nixpkgs.config.allowUnfree = true;
   nixpkgs.overlays = [];
-
-  # services = {
-  #   spotifyd = {
-  #     enable = true;
-  #   };
-  # };
 
   home = {
     # Home Manager needs a bit of information about you and the

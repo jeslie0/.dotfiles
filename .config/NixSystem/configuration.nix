@@ -34,7 +34,6 @@ nixpkgs.overlays =
   [ self.inputs.emacs-overlay.overlays.default
     (final: prev: {
       virtualbox = self.inputs.pinnedNixpkgs.legacyPackages.${system}.virtualbox;
-      spotifyd = self.inputs.myFlakes.spotifyd.packages.${system}.default;
     })
   ];
 
@@ -104,12 +103,23 @@ specialisation = {
   nvidia.configuration = {
     system.nixos.tags = ["nvidia"];
 
-    services.xserver = {
-      # Enable the X11 windowing system.
-      enable = true;
+    boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+    boot.initrd.kernelModules = [ "nvidia" ];
 
+
+    # Enable openGL
+    hardware.opengl = {
+      enable = true;
+      driSupport = true;
+      driSupport32Bit = true;
+    };
+
+    # Load nvidia driver for Xorg and Wayland
+    services.xserver = {
       # Enable nvidia drivers
       videoDrivers = [ "nvidia" ];
+      # Enable the X11 windowing system.
+      enable = true;
 
       # Enable i3 window manager
       windowManager.i3.enable = true;
@@ -125,20 +135,22 @@ specialisation = {
     };
 
     hardware.nvidia = {
-    #   modesetting.enable = true;
+      # Modesetting is required
+      modesetting.enable = true;
+
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
     #   powerManagement.enable = false;
-    #   nvidiaSettings = true;
+      nvidiaSettings = true;
+
       prime = {
-        sync.enable = true;
+        # sync.enable = true;
+        offload = {
+          enable = true;
+          enableOffloadCmd = true; # Provides `nvidia-offload` command.
+        };
         nvidiaBusId = "PCI:1:0:0";
         intelBusId = "PCI:0:2:0";
       };
-    };
-
-    hardware.opengl = {
-      enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
     };
 
   };
@@ -151,30 +163,25 @@ programs.sway = {
     swaylock-effects # using nix flake
     swaybg
     rofi-pass-wayland
+    rofi-wayland-unwrapped
     swayidle
     wl-clipboard
     alacritty
-    # xfce.xfce4-terminal
     magic-wormhole
-    # dmenu
-    # dmenu-wayland
-    # bemenu
-    rofi-wayland-unwrapped
     i3status
     starship
-    # rofi
     waybar
     swaynotificationcenter
     gammastep
     wlroots
     slurp
     grim
-    # self.inputs.flakes.passbemenu.defaultPackage.${system}
-    # self.inputs.flakes.swaybgchanger.defaultPackage.${system}
-    # self.inputs.flakes.bemenuFocus.defaultPackage.${system}
-    # self.inputs.flakes.swaylock-effects.defaultPackage.${system}
   ];
 };
+
+security.pam.loginLimits = [
+  { domain = "@users"; item = "rtprio"; type = "-"; value = 1; }
+];
 
 programs.fish = {
   enable = true;
@@ -252,7 +259,7 @@ nix.settings = {
 };
 
 nix = {
-  package = pkgs.nixUnstable;
+  package = pkgs.nixVersions.latest;
   extraOptions = "experimental-features = nix-command flakes";
   registry ={
     nixpkgs.flake = self.inputs.nixpkgs;
@@ -289,13 +296,13 @@ programs.wireshark.enable = true;
 environment.systemPackages = with pkgs;
   [ # Editors
     myEmacs
-    pkgs.emacs-lsp-booster
+    emacs-lsp-booster
     vim
 
     # Browsers
     firefox
     chromium
-    nyxt
+    # nyxt
     qutebrowser
 
     # Communication
@@ -354,11 +361,10 @@ environment.systemPackages = with pkgs;
     zoxide
     fd
     htop
-    self.inputs.compdb.packages.${system}.default
+    compdb
     direnv
     unzip
     gnome.adwaita-icon-theme
-    wireshark
     ghostscript
 
     mkvtoolnix
@@ -369,25 +375,25 @@ environment.systemPackages = with pkgs;
 
 
     # Programming languages
-    self.inputs.agda.defaultPackage.${system}
+    # self.inputs.agda.defaultPackage.${system}
+    agda
     gcc
     python3
     ghc
     cabal-install
     coq
+    elmPackages.elm
 
     # Language servers
     # self.inputs.hls.packages.${system}.default
     haskell-language-server
     clang-tools
-    ltex-ls
     lua53Packages.digestif
     cmake-language-server
     nil
     nodePackages.typescript
     nodePackages.typescript-language-server
 
-    elmPackages.elm
     elmPackages.elm-language-server
     elmPackages.elm-format
     elmPackages.elm-live
@@ -411,7 +417,7 @@ environment.systemPackages = with pkgs;
     steam-run
     protontricks
     lutris
-    minecraft
+    # minecraft
   ];
 
 
@@ -442,7 +448,7 @@ services.pipewire = {
   pulse.enable = true;
 };
 # Enable touchpad support (enabled default in most desktopManager).
-services.xserver.libinput.enable = true;
+services.libinput.enable = true;
 
 # Some programs need SUID wrappers, can be configured further or are
 # started in user sessions.
